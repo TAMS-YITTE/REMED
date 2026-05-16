@@ -118,7 +118,7 @@ function AnnoncesContent() {
               <p className="font-semibold">Vous ne trouvez pas ce qu&apos;il vous faut ?</p>
               <p className="text-blue-300 text-sm mt-0.5">Optez pour du neuf avec Medlease — leasing médical sans apport</p>
             </div>
-            <Link href="mailto:socktamsir@gmail.com?subject=Demande%20d'offre%20Medlease"
+            <Link href="mailto:remed-contact@equipmedly.com?subject=Demande%20d'offre%20Medlease"
               className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors whitespace-nowrap">
               Découvrir Medlease <ArrowRight className="w-4 h-4" />
             </Link>

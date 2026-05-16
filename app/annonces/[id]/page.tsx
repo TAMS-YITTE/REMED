@@ -108,7 +108,7 @@ export default function AnnoncePage() {
                 Ce type de matériel neuf coûte environ <strong>{fmt(annonce.prix * 3)}–{fmt(annonce.prix * 5)} €</strong>.
                 En leasing Medlease : à partir de <strong>~{leasingEstimate} €/mois</strong> sur 36 mois.
               </p>
-              <Link href="mailto:socktamsir@gmail.com?subject=Demande%20d'offre%20Medlease"
+              <Link href="mailto:remed-contact@equipmedly.com?subject=Demande%20d'offre%20Medlease"
                 className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors">
                 Obtenir une offre Medlease <ArrowRight className="w-4 h-4" />
               </Link>

@@ -111,7 +111,7 @@ export default function HomePage() {
           <p className="text-blue-300 text-sm mb-2">Vous ne trouvez pas votre bonheur en occasion ?</p>
           <h2 className="text-2xl font-bold mb-3">Optez pour du neuf avec Medlease</h2>
           <p className="text-blue-200 mb-6">Financez votre matériel médical neuf en leasing. Loyer fixe, sans apport, sans surprise.</p>
-          <Link href="https://medlease.fr" target="_blank" rel="noopener noreferrer"
+          <Link href="mailto:socktamsir@gmail.com?subject=Demande%20d'offre%20Medlease"
             className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors">
             Découvrir Medlease <ArrowRight className="w-4 h-4" />
           </Link>

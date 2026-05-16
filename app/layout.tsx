@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main className="flex-1">{children}</main>
         <footer className="bg-blue-950 text-blue-400 text-xs text-center py-4 mt-auto">
-          © {new Date().getFullYear()} ReMed.fr — Marketplace de matériel médical d&apos;occasion entre professionnels
+          © {new Date().getFullYear()} ReMedly.fr — Marketplace de matériel médical d&apos;occasion entre professionnels
         </footer>
       </body>
     </html>

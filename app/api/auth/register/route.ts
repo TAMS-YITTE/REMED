@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { createUser, getUserByEmail } from "@/lib/storage";
 import { signToken, setSessionCookie } from "@/lib/auth";
+import { sendEmail, templates } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const { prenom, nom, email, password } = await req.json();
@@ -12,6 +13,13 @@ export async function POST(req: NextRequest) {
   const user = await createUser({ prenom, nom, email, passwordHash });
   const token = await signToken({ userId: user.id });
   await setSessionCookie(token);
+
+  await sendEmail({
+    to: email,
+    subject: "Bienvenue sur ReMed",
+    html: templates.bienvenueVendeur({ prenom }),
+  });
+
   const { passwordHash: _, ...publicUser } = user;
   return NextResponse.json(publicUser, { status: 201 });
 }

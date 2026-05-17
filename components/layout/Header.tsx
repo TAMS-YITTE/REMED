@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X, RefreshCw, User, Plus } from "lucide-react";
 
 type Me = { prenom: string } | null;
@@ -8,10 +9,11 @@ type Me = { prenom: string } | null;
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [me, setMe] = useState<Me>(undefined as unknown as Me);
+  const pathname = usePathname();
 
   useEffect(() => {
-    fetch("/api/auth/me").then((r) => r.json()).then(setMe).catch(() => setMe(null));
-  }, []);
+    fetch("/api/auth/me", { cache: "no-store" }).then((r) => r.json()).then(setMe).catch(() => setMe(null));
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 bg-blue-950 shadow-lg">

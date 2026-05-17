@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, MapPin, Zap, Tag, ArrowRight } from "lucide-react";
 
-type Annonce = { id: string; titre: string; description: string; categorie: string; etat: string; prix: number; ville: string; region: string; marque?: string; urgent: boolean; createdAt: string };
+type Annonce = { id: string; titre: string; description: string; categorie: string; etat: string; prix: number; ville: string; region: string; marque?: string; urgent: boolean; createdAt: string; is_seed?: boolean };
 
 const CATEGORIES = ["Imagerie & Radiologie", "Dentisterie", "Kinésithérapie & Rééducation", "Chirurgie & Bloc", "Consultation & Diagnostic", "Ophtalmologie", "Cardiologie", "Mobilier médical", "Stérilisation", "Autre"];
 const REGIONS = ["Île-de-France", "Auvergne-Rhône-Alpes", "Provence-Alpes-Côte d'Azur", "Occitanie", "Nouvelle-Aquitaine", "Grand Est", "Hauts-de-France", "Bretagne", "Normandie", "Pays de la Loire", "Bourgogne-Franche-Comté", "Centre-Val de Loire", "Corse"];
@@ -88,13 +88,18 @@ function AnnoncesContent() {
             {annonces.map((a) => (
               <Link key={a.id} href={`/annonces/${a.id}`}
                 className="bg-white border border-gray-100 hover:border-cyan-200 hover:shadow-sm rounded-2xl p-5 transition-all block">
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-3 gap-2">
                   <span className="text-xs bg-gray-50 text-gray-500 px-2 py-1 rounded-lg">{a.categorie}</span>
-                  {a.urgent && (
-                    <span className="flex items-center gap-1 text-xs bg-red-50 text-red-600 px-2 py-1 rounded-full font-medium">
-                      <Zap className="w-3 h-3" /> Urgent
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {a.is_seed && (
+                      <span className="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-full font-medium border border-amber-100">Exemple</span>
+                    )}
+                    {a.urgent && (
+                      <span className="flex items-center gap-1 text-xs bg-red-50 text-red-600 px-2 py-1 rounded-full font-medium">
+                        <Zap className="w-3 h-3" /> Urgent
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{a.titre}</h3>
                 {a.marque && <p className="text-xs text-gray-400 mb-2">{a.marque}</p>}

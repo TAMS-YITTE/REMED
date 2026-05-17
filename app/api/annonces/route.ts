@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
     urgent: !!r.urgent, contactEmail: r.contact_email,
     contactTel: r.contact_tel ?? undefined,
     createdAt: r.created_at, updatedAt: r.updated_at,
+    is_seed: !!r.is_seed,
   }));
   return NextResponse.json(mapped);
 }

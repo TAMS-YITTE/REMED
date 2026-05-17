@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { MapPin, ArrowLeft, Zap, Phone, Mail, ArrowRight, Calendar, Package } from "lucide-react";
 
-type Annonce = { id: string; titre: string; description: string; categorie: string; etat: string; prix: number; ville: string; region: string; marque?: string; modele?: string; annee?: number; contactEmail: string; contactTel?: string; urgent: boolean; createdAt: string };
+type Annonce = { id: string; titre: string; description: string; categorie: string; etat: string; prix: number; ville: string; region: string; marque?: string; modele?: string; annee?: number; contactEmail: string; contactTel?: string; urgent: boolean; createdAt: string; is_seed?: boolean };
 
 const ETAT_COLOR: Record<string, string> = {
   "Neuf (jamais utilisé)": "bg-green-50 text-green-700 border-green-100",
@@ -69,6 +69,12 @@ export default function AnnoncePage() {
 
               <h1 className="text-xl font-bold text-gray-900 mb-2">{annonce.titre}</h1>
               <div className="text-3xl font-bold text-cyan-700 mb-4">{fmt(annonce.prix)} €</div>
+
+              {annonce.is_seed && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl px-4 py-3 mb-4">
+                  <strong>⚠️ Annonce exemple</strong> — Cette annonce est une démonstration. Aucun vendeur réel n&apos;est associé.
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-3 mb-5">
                 {annonce.marque && (

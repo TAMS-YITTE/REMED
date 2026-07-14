@@ -1,122 +1,184 @@
-import Link from "next/link";
-import { RefreshCw, ArrowRight, ShieldCheck, Zap, TrendingDown, Search, Tag, Truck } from "lucide-react";
+'use client';
 
-const CATEGORIES = [
-  { label: "Imagerie & Radiologie", emoji: "🔬" },
-  { label: "Dentisterie", emoji: "🦷" },
-  { label: "Kinésithérapie & Rééducation", emoji: "💪" },
-  { label: "Chirurgie & Bloc", emoji: "🔧" },
-  { label: "Consultation & Diagnostic", emoji: "🩺" },
-  { label: "Ophtalmologie", emoji: "👁" },
-  { label: "Cardiologie", emoji: "❤️" },
-  { label: "Mobilier médical", emoji: "🛏" },
-];
+import { AuthButton } from '@/components/AuthButton';
+import Link from 'next/link';
+import { FormEvent, useState } from 'react';
 
-const STEPS = [
-  { icon: Tag, title: "Déposez votre annonce", desc: "Décrivez votre matériel, fixez votre prix, publiez en 2 minutes." },
-  { icon: Search, title: "Un acheteur vous contacte", desc: "Les praticiens intéressés vous envoient un message directement." },
-  { icon: Truck, title: "Concluez la vente", desc: "Organisez la livraison ou le retrait et encaissez." },
-];
+export default function Home() {
+  const [heroSuccess, setHeroSuccess] = useState(false);
+  const [bottomSuccess, setBottomSuccess] = useState(false);
 
-export default function HomePage() {
+  const handleWaitlist = async (e: FormEvent<HTMLFormElement>, isHero: boolean) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+    const btn = form.querySelector('button');
+
+    if (btn) {
+      btn.textContent = '...';
+      btn.disabled = true;
+    }
+
+    try {
+      // Remplacer par un vrai endpoint
+      await new Promise(r => setTimeout(r, 500));
+      if (isHero) setHeroSuccess(true);
+      else setBottomSuccess(true);
+    } catch (e) {
+      if (btn) {
+        btn.textContent = 'Réessaie →';
+        btn.disabled = false;
+      }
+    }
+  };
+
   return (
-    <div>
-      {/* Hero */}
-      <section className="bg-blue-950 text-white py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-900 text-cyan-400 text-sm px-3 py-1 rounded-full mb-6">
-            <RefreshCw className="w-4 h-4" />
-            Marketplace médicale entre professionnels
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-5 leading-tight">
-            Le matériel médical d&apos;occasion,<br />
-            <span className="text-cyan-400">entre praticiens.</span>
-          </h1>
-          <p className="text-blue-200 text-lg mb-10 max-w-2xl mx-auto">
-            Vendez votre équipement inutilisé. Achetez du matériel de qualité à prix réduit. 100% entre professionnels de santé.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/annonces"
-              className="flex items-center justify-center gap-2 bg-white text-blue-950 font-semibold px-6 py-3 rounded-xl hover:bg-gray-100 transition-colors">
-              <Search className="w-4 h-4" /> Parcourir les annonces
-            </Link>
-            <Link href="/deposer"
-              className="flex items-center justify-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors">
-              Vendre mon matériel <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+    <main className="bg-white text-gray-900">
+      {/* NAVIGATION */}
+      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-200 sticky top-0 bg-white z-10">
+        <Link href="/" className="text-lg font-semibold tracking-tight text-gray-900 no-underline">
+          rem<span className="text-[#534AB7]">e</span>dly
+        </Link>
+        <div className="flex items-center gap-4">
+          <AuthButton />
         </div>
+      </nav>
+
+      {/* Bandeau MiCA */}
+      <div className="bg-[#FFF3CD] border-l-4 border-[#F7931A] px-4 py-2.5 text-[13px] text-gray-700">
+        Les crypto-actifs sont des investissements à risque élevé. Vous pouvez perdre tout ou partie des sommes investies. Remedly ne fournit pas de conseil en investissement.
+      </div>
+
+      {/* HERO */}
+      <section className="pt-20 pb-16 px-6 text-center max-w-[620px] mx-auto">
+        <div className="inline-block bg-[#EEEDFE] text-[#3C3489] text-xs font-medium px-3.5 py-1 rounded-full mb-6 tracking-wide">
+          Bientôt disponible en France
+        </div>
+        <h1 className="text-[clamp(36px,7vw,52px)] font-semibold leading-tight tracking-tight text-gray-900 mb-5">
+          La crypto,<br /><em className="not-italic text-[#534AB7]">simplement.</em>
+        </h1>
+        <p className="text-lg text-gray-600 leading-relaxed mb-10">
+          Achète Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.
+        </p>
+
+        {!heroSuccess ? (
+          <>
+            <form className="flex flex-col sm:flex-row gap-2 max-w-[400px] mx-auto mb-3" onSubmit={(e) => handleWaitlist(e, true)}>
+              <input type="email" name="email" placeholder="ton@email.com" required className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-lg text-[15px] outline-none focus:border-[#534AB7] transition-colors" />
+              <button type="submit" className="bg-[#534AB7] text-white border-none px-5 py-2.5 rounded-lg text-[15px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity">
+                Je veux accéder →
+              </button>
+            </form>
+            <p className="text-[13px] text-gray-400">Gratuit · Accès prioritaire au lancement</p>
+          </>
+        ) : (
+          <div className="bg-[#EAF3DE] text-[#3B6D11] px-4 py-2.5 rounded-lg text-sm max-w-[400px] mx-auto">
+            ✓ Tu es sur la liste ! On te prévient en premier dès le lancement.
+          </div>
+        )}
       </section>
 
-      {/* Avantages */}
-      <section className="bg-white border-b border-gray-100 py-10 px-4">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          {[
-            { icon: TrendingDown, title: "Jusqu'à -70%", desc: "par rapport au neuf" },
-            { icon: ShieldCheck, title: "Entre pros", desc: "Vendeurs et acheteurs vérifiés" },
-            { icon: Zap, title: "Et si vous préférez du neuf ?", desc: "Medlease vous propose du leasing" },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="flex flex-col items-center gap-2">
-              <Icon className="w-7 h-7 text-cyan-600" />
-              <p className="font-bold text-gray-900">{title}</p>
-              <p className="text-sm text-gray-500">{desc}</p>
-            </div>
-          ))}
+      {/* ÉTAPES */}
+      <div className="flex flex-wrap items-center justify-center gap-6 py-10 px-6 border-y border-gray-200">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-full bg-[#EEEDFE] text-[#534AB7] flex items-center justify-center text-[13px] font-semibold shrink-0">1</div>
+          <div className="text-sm text-gray-600 font-medium">Crée ton compte</div>
         </div>
-      </section>
+        <div className="hidden sm:block text-gray-200 text-xl">→</div>
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-full bg-[#EEEDFE] text-[#534AB7] flex items-center justify-center text-[13px] font-semibold shrink-0">2</div>
+          <div className="text-sm text-gray-600 font-medium">Choisis ta crypto</div>
+        </div>
+        <div className="hidden sm:block text-gray-200 text-xl">→</div>
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-full bg-[#EEEDFE] text-[#534AB7] flex items-center justify-center text-[13px] font-semibold shrink-0">3</div>
+          <div className="text-sm text-gray-600 font-medium">Paie par CB ou virement</div>
+        </div>
+        <div className="hidden sm:block text-gray-200 text-xl">→</div>
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-full bg-[#EEEDFE] text-[#534AB7] flex items-center justify-center text-[13px] font-semibold shrink-0">4</div>
+          <div className="text-sm text-gray-600 font-medium">Reçois tes crypto</div>
+        </div>
+      </div>
 
-      {/* Catégories */}
-      <section className="py-14 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">Parcourir par catégorie</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {CATEGORIES.map((c) => (
-              <Link key={c.label} href={`/annonces?categorie=${encodeURIComponent(c.label)}`}
-                className="bg-white border border-gray-100 hover:border-cyan-200 hover:bg-cyan-50 rounded-xl px-4 py-4 text-center shadow-sm transition-all">
-                <div className="text-2xl mb-1">{c.emoji}</div>
-                <p className="text-xs font-medium text-gray-700">{c.label}</p>
-              </Link>
-            ))}
+      {/* FEATURES */}
+      <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200">
+        <div className="p-8 md:border-r border-b md:border-b-0 border-gray-200">
+          <div className="w-9 h-9 bg-[#EEEDFE] rounded-lg flex items-center justify-center mb-4 text-lg">🔐</div>
+          <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Wallet automatique</h3>
+          <p className="text-sm text-gray-600 leading-relaxed">Un wallet sécurisé est créé pour toi à l'inscription. Pas de seed phrase à noter, pas de configuration.</p>
+        </div>
+        <div className="p-8 md:border-r border-b md:border-b-0 border-gray-200">
+          <div className="w-9 h-9 bg-[#EEEDFE] rounded-lg flex items-center justify-center mb-4 text-lg">💶</div>
+          <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Frais transparents</h3>
+          <p className="text-sm text-gray-600 leading-relaxed">Tu vois exactement ce que tu paies avant de confirmer. Aucune surprise cachée dans le spread.</p>
+        </div>
+        <div className="p-8">
+          <div className="w-9 h-9 bg-[#EEEDFE] rounded-lg flex items-center justify-center mb-4 text-lg">💬</div>
+          <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Support humain</h3>
+          <p className="text-sm text-gray-600 leading-relaxed">Une question ? Une vraie personne te répond en moins d'une heure. Pas un bot, pas un ticket.</p>
+        </div>
+      </div>
+
+      {/* TOKENS */}
+      <div className="py-10 px-6 text-center border-b border-gray-200 bg-[#f9f9f8]">
+        <p className="text-[13px] text-gray-400 mb-4 uppercase tracking-wider">Disponible au lancement</p>
+        <div className="flex justify-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-gray-600">
+            <div className="w-2 h-2 rounded-full bg-[#F7931A]"></div>Bitcoin
+          </div>
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-gray-600">
+            <div className="w-2 h-2 rounded-full bg-[#627EEA]"></div>Ethereum
+          </div>
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-gray-600">
+            <div className="w-2 h-2 rounded-full bg-[#9945FF]"></div>Solana
+          </div>
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-gray-600">
+            <div className="w-2 h-2 rounded-full bg-[#534AB7]"></div>Monad
+          </div>
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-gray-600">
+            <div className="w-2 h-2 rounded-full bg-gray-400"></div>+ 20 autres
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Comment ça marche */}
-      <section className="py-14 px-4 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Comment ça marche ?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {STEPS.map((s, i) => (
-              <div key={s.title} className="text-center">
-                <div className="w-12 h-12 bg-cyan-50 rounded-2xl flex items-center justify-center mx-auto mb-4 relative">
-                  <s.icon className="w-6 h-6 text-cyan-600" />
-                  <span className="absolute -top-2 -right-2 w-5 h-5 bg-blue-950 text-white text-xs rounded-full flex items-center justify-center font-bold">{i + 1}</span>
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{s.title}</h3>
-                <p className="text-sm text-gray-500">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link href="/deposer" className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors">
-              Déposer une annonce gratuitement <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* SOCIAL PROOF */}
+      <div className="py-12 px-6 text-center max-w-[560px] mx-auto">
+        <blockquote className="text-lg text-gray-600 leading-relaxed italic mb-4">
+          "J'avais peur de me lancer dans la crypto. Remedly m'a rendu ça aussi simple qu'un virement bancaire."
+        </blockquote>
+        <cite className="text-[13px] text-gray-400 not-italic">— Bêta-testeur, Lyon</cite>
+      </div>
 
-      {/* CTA Medlease */}
-      <section className="py-12 px-4 bg-blue-950 text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-blue-300 text-sm mb-2">Vous ne trouvez pas votre bonheur en occasion ?</p>
-          <h2 className="text-2xl font-bold mb-3">Optez pour du neuf avec Medlease</h2>
-          <p className="text-blue-200 mb-6">Financez votre matériel médical neuf en leasing. Loyer fixe, sans apport, sans surprise.</p>
-          <Link href="mailto:remed-contact@equipmedly.com?subject=Demande%20d'offre%20Medlease"
-            className="inline-flex items-center gap-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-6 py-3 rounded-xl transition-colors">
-            Découvrir Medlease <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
-    </div>
+      {/* CTA BAS */}
+      <div className="bg-[#534AB7] py-16 px-6 text-center">
+        <h2 className="text-[28px] font-semibold text-white tracking-tight mb-3">Prêt à te lancer ?</h2>
+        <p className="text-white/75 mb-8 text-base">Rejoins la liste d'attente et accède en premier dès le lancement.</p>
+        
+        {!bottomSuccess ? (
+          <>
+            <form className="flex flex-col sm:flex-row gap-2 max-w-[380px] mx-auto mb-3" onSubmit={(e) => handleWaitlist(e, false)}>
+              <input type="email" name="email" placeholder="ton@email.com" required className="flex-1 px-3.5 py-2.5 bg-white/15 border border-white/30 rounded-lg text-[15px] text-white outline-none placeholder:text-white/50 focus:border-white transition-colors" />
+              <button type="submit" className="bg-white text-[#534AB7] border-none px-5 py-2.5 rounded-lg text-[15px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity">
+                Je veux accéder →
+              </button>
+            </form>
+            <p className="text-[13px] text-white/50">Gratuit · Sans engagement</p>
+          </>
+        ) : (
+          <div className="bg-white/15 text-white px-4 py-2.5 rounded-lg text-sm max-w-[380px] mx-auto">
+            ✓ Tu es sur la liste !
+          </div>
+        )}
+      </div>
+
+      {/* FOOTER */}
+      <footer className="py-6 px-8 border-t border-gray-200 flex justify-between items-center flex-wrap gap-2">
+        <Link href="/" className="text-[15px] font-semibold text-gray-900 no-underline">
+          rem<span className="text-[#534AB7]">e</span>dly
+        </Link>
+        <p className="text-[13px] text-gray-400">© 2026 Remedly · remedly.fr · contact@remedly.fr</p>
+      </footer>
+    </main>
   );
 }

@@ -1,24 +1,26 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/layout/Header";
+import { Providers } from "./providers";
 
-const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "ReMed — Matériel médical d'occasion entre professionnels de santé",
-  description: "Achetez et vendez du matériel médical d'occasion entre praticiens. Imagerie, dentisterie, kinésithérapie et plus.",
+  title: "Remedly — La crypto, simplement.",
+  description: "Achète Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="fr" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-gray-50">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <footer className="bg-blue-950 text-blue-400 text-xs text-center py-4 mt-auto">
-          © {new Date().getFullYear()} ReMedly.fr — Marketplace de matériel médical d&apos;occasion entre professionnels
-        </footer>
+    <html lang="fr" className="h-full antialiased">
+      <body className={`${inter.className} min-h-full flex flex-col bg-white text-gray-900`}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

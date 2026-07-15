@@ -45,7 +45,7 @@ export function BuyWidget({ crypto = 'eth' }: BuyWidgetProps) {
       )}
 
       {/* Encart visible et élégant pour basculer de fournisseur si l'un est bloqué */}
-      <div className="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="mt-8 p-4 bg-indigo-50 rounded-xl border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-0">
         <div className="flex items-start gap-3">
           <div className="bg-indigo-100 p-2 rounded-full text-indigo-600 shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -32,7 +32,7 @@ export function MoonPayWidget({ crypto = 'eth', walletAddress }: MoonPayWidgetPr
   };
 
   return (
-    <div style={{ width: '100%', height: '600px' }}>
+    <div style={{ width: '100%', height: '600px', borderRadius: '12px', overflow: 'hidden', border: '1px solid #E5E7EB', position: 'relative', zIndex: 10 }}>
       <MoonPayProvider
         apiKey={apiKey}
         debug={!isLive}

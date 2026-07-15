@@ -1,6 +1,6 @@
 'use client';
 
-import { MoonPayBuyWidget } from '@moonpay/moonpay-react';
+import { MoonPayBuyWidget, MoonPayProvider } from '@moonpay/moonpay-react';
 import { useAuth } from '@/hooks/useAuth';
 
 interface MoonPayWidgetProps {
@@ -12,18 +12,27 @@ export function MoonPayWidget({ crypto = 'btc' }: MoonPayWidgetProps) {
 
   if (!walletAddress) return null;
 
+  const isLive = process.env.NEXT_PUBLIC_MOONPAY_KEY?.startsWith('pk_live_');
+
   const widgetProps: any = {
-    apiKey: process.env.NEXT_PUBLIC_MOONPAY_KEY || '',
-    theme: "light",
-    baseCurrencyCode: "eur",
-    baseCurrencyAmount: "100",
-    currencyCode: crypto,
+    variant: 'embedded',
+    baseCurrencyCode: 'eur',
+    baseCurrencyAmount: '100',
+    defaultCurrencyCode: crypto,
     walletAddress: walletAddress,
-    colorCode: "#534AB7",
-    language: "fr",
-    onLogin: async () => {},
+    colorCode: '#534AB7',
+    language: 'fr',
     visible: true,
   };
 
-  return <MoonPayBuyWidget {...widgetProps} />;
+  return (
+    <div style={{ width: '100%', height: '600px' }}>
+      <MoonPayProvider 
+        apiKey={process.env.NEXT_PUBLIC_MOONPAY_KEY || ''} 
+        environment={isLive ? 'production' : 'sandbox'}
+      >
+        <MoonPayBuyWidget {...widgetProps} />
+      </MoonPayProvider>
+    </div>
+  );
 }

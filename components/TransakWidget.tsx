@@ -14,9 +14,11 @@ export function TransakWidget({ crypto = 'BTC' }: TransakWidgetProps) {
   useEffect(() => {
     if (!walletAddress) return;
 
+    const isLive = process.env.NEXT_PUBLIC_TRANSAK_KEY && !process.env.NEXT_PUBLIC_TRANSAK_KEY.includes('STAGING');
     const transakConfig: any = {
       apiKey: process.env.NEXT_PUBLIC_TRANSAK_KEY || '',
-      environment: 'STAGING',
+      environment: isLive ? 'PRODUCTION' : 'STAGING',
+      containerId: 'transak-widget-container',
       defaultCryptoCurrency: crypto,
       walletAddress: walletAddress,
       fiatCurrency: 'EUR',
@@ -38,5 +40,5 @@ export function TransakWidget({ crypto = 'BTC' }: TransakWidgetProps) {
     return () => transak.close();
   }, [walletAddress, crypto]);
 
-  return <div id="transak-widget-container" />;
+  return <div id="transak-widget-container" style={{ width: '100%', height: '600px', margin: '0 auto' }} />;
 }

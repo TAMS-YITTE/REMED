@@ -20,7 +20,9 @@ describe('WalletBalance', () => {
       value: originalClipboard,
       configurable: true,
     });
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
@@ -40,7 +42,7 @@ describe('WalletBalance', () => {
     fireEvent.click(copyBtn);
     
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('0x123abc');
-    expect(copyBtn).toHaveTextContent('Copié !');
+    expect(copyBtn).toHaveTextContent('Copié');
 
     // Fast forward 2 seconds
     act(() => {

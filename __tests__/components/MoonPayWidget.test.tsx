@@ -34,6 +34,7 @@ describe('MoonPayWidget', () => {
   });
 
   it('renders the buy widget with the wallet address and requested crypto once a wallet exists', () => {
+    process.env.NEXT_PUBLIC_MOONPAY_KEY = 'pk_test_abc123';
     (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
     render(<MoonPayWidget crypto="eth" />);
 
@@ -41,6 +42,19 @@ describe('MoonPayWidget', () => {
     expect(widget).toHaveAttribute('data-wallet', '0xABC');
     expect(widget).toHaveAttribute('data-currency', 'eth');
     expect(widget).toHaveAttribute('data-base-currency', 'eur');
+  });
+
+  it.each([
+    ['missing', undefined],
+    ['an unfilled "votre_..." placeholder', 'pk_test_votre_cle_moonpay'],
+  ])('shows a configuration notice instead of the widget when the key is %s', (_label, value) => {
+    if (value !== undefined) process.env.NEXT_PUBLIC_MOONPAY_KEY = value;
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
+
+    render(<MoonPayWidget crypto="btc" />);
+
+    expect(screen.queryByTestId('moonpay-buy-widget')).not.toBeInTheDocument();
+    expect(screen.getByText(/n'est pas encore configuré/i)).toBeInTheDocument();
   });
 
   it('runs in debug mode when the key is not a live ("pk_live_") key', () => {

@@ -24,16 +24,23 @@ export function MoonPayWidget({ crypto = 'btc' }: MoonPayWidgetProps) {
 
   const isLive = apiKey.startsWith('pk_live_');
 
+  // Ne passer l'adresse que si c'est un jeton EVM (Ethereum, Polygon, etc.)
+  // car Privy génère un wallet EVM (0x...)
+  const isEVM = ['eth', 'usdc', 'usdt', 'matic', 'pol'].includes(crypto.toLowerCase());
+
   const widgetProps: any = {
     variant: 'embedded',
     baseCurrencyCode: 'eur',
     baseCurrencyAmount: '100',
     defaultCurrencyCode: crypto,
-    walletAddress: walletAddress,
     colorCode: '#534AB7',
     language: 'fr',
     visible: true,
   };
+
+  if (isEVM) {
+    widgetProps.walletAddress = walletAddress;
+  }
 
   return (
     <div style={{ width: '100%', height: '600px' }}>

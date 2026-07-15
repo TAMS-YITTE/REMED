@@ -13,10 +13,13 @@ function getIframeSrc(): URL {
 
 describe('TransakWidget', () => {
   const originalKey = process.env.NEXT_PUBLIC_TRANSAK_KEY;
+  const originalEnv = process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT;
 
   afterEach(() => {
     if (originalKey === undefined) delete process.env.NEXT_PUBLIC_TRANSAK_KEY;
     else process.env.NEXT_PUBLIC_TRANSAK_KEY = originalKey;
+    if (originalEnv === undefined) delete process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT;
+    else process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT = originalEnv;
     jest.clearAllMocks();
   });
 
@@ -38,7 +41,7 @@ describe('TransakWidget', () => {
     render(<TransakWidget crypto="BTC" />);
 
     expect(document.querySelector('iframe')).not.toBeInTheDocument();
-    expect(screen.getByText(/n'est pas encore configuré/i)).toBeInTheDocument();
+    expect(screen.getByText('Clé Transak manquante')).toBeInTheDocument();
   });
 
   it('builds the checkout iframe with the wallet address, crypto and EUR once a real key exists', () => {
@@ -54,21 +57,37 @@ describe('TransakWidget', () => {
     expect(url.searchParams.get('fiatCurrency')).toBe('EUR');
   });
 
-  it('points at the staging domain when the key contains "STAGING"', () => {
+  it('uses the staging domain/param when the key contains "STAGING"', () => {
     process.env.NEXT_PUBLIC_TRANSAK_KEY = 'STAGING-test-key';
     (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
 
     render(<TransakWidget crypto="BTC" />);
 
-    expect(getIframeSrc().origin).toBe('https://global-stg.transak.com');
+    const url = getIframeSrc();
+    expect(url.origin).toBe('https://global-stg.transak.com');
+    expect(url.searchParams.get('environment')).toBe('STAGING');
   });
 
-  it('points at the production domain for a non-staging key', () => {
+  it('uses the staging domain/param when NEXT_PUBLIC_TRANSAK_ENVIRONMENT=STAGING, even with a non-staging key', () => {
+    process.env.NEXT_PUBLIC_TRANSAK_KEY = 'test-live-key-123';
+    process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT = 'STAGING';
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
+
+    render(<TransakWidget crypto="BTC" />);
+
+    const url = getIframeSrc();
+    expect(url.origin).toBe('https://global-stg.transak.com');
+    expect(url.searchParams.get('environment')).toBe('STAGING');
+  });
+
+  it('uses the production domain/param for a non-staging key with no environment override', () => {
     process.env.NEXT_PUBLIC_TRANSAK_KEY = 'test-live-key-123';
     (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
 
     render(<TransakWidget crypto="BTC" />);
 
-    expect(getIframeSrc().origin).toBe('https://global.transak.com');
+    const url = getIframeSrc();
+    expect(url.origin).toBe('https://global.transak.com');
+    expect(url.searchParams.get('environment')).toBe('PRODUCTION');
   });
 });

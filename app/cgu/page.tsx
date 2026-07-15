@@ -23,7 +23,7 @@ export default function CGUPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Objet</h2>
             <p>
-              Les présentes Conditions Générales d'Utilisation (CGU) encadrent l'accès et l'utilisation de l'interface web Remedly. Remedly est une simple interface logicielle permettant à l'Utilisateur d'accéder plus facilement à des services de création de portefeuilles cryptographiques et de paiement tiers.
+              Les présentes Conditions Générales d'Utilisation (CGU) encadrent l'accès et l'utilisation de l'interface web Remedly (éditée par la société YITTE). Remedly est une simple interface logicielle permettant à l'Utilisateur d'accéder plus facilement à des services de création de portefeuilles cryptographiques et de paiement tiers.
             </p>
           </section>
 

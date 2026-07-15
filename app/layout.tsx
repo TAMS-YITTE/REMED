@@ -9,7 +9,21 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Remedly — La crypto, simplement.",
-  description: "Achète Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.",
+  description: "Achète Bitcoin, Ethereum, USDC et plus encore en quelques minutes. Sans jargon, sans prise de tête. La plateforme idéale pour débuter en cryptomonnaies.",
+  keywords: ["crypto", "acheter bitcoin", "ethereum", "portefeuille crypto", "débutant", "achat crypto france"],
+  openGraph: {
+    title: "Remedly — La crypto, simplement.",
+    description: "Achète Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.",
+    url: "https://remedly.fr",
+    siteName: "Remedly",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Remedly — La crypto, simplement.",
+    description: "Achète tes premières cryptos en quelques clics.",
+  },
 };
 
 export default function RootLayout({

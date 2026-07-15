@@ -23,10 +23,10 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Éditeur du site</h2>
             <p>
-              Le site <strong>remedly.fr</strong> est édité par la société <strong>[Nom de votre Société]</strong>,<br />
-              [Forme juridique, ex: SASU] au capital de [Montant] euros,<br />
-              Immatriculée au Registre du Commerce et des Sociétés de [Ville] sous le numéro <strong>[SIREN]</strong>.<br />
-              Siège social : [Adresse postale de la société].<br />
+              Le site <strong>remedly.fr</strong> est édité par la société <strong>YITTE</strong>,<br />
+              SASU au capital de 1 000 euros,<br />
+              Immatriculée au Registre du Commerce et des Sociétés de Meaux sous le numéro <strong>919 805 028</strong>.<br />
+              Siège social : 65B Rue Alexandre Bickart, 77500 Chelles.<br />
               Contact : <a href="mailto:contact@remedly.fr" className="text-[#534AB7] hover:underline">contact@remedly.fr</a>
             </p>
           </section>
@@ -34,7 +34,7 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">2. Directeur de la publication</h2>
             <p>
-              Le Directeur de la publication est <strong>[Prénom Nom]</strong>, en sa qualité de [Fonction, ex: Président].
+              Le Directeur de la publication est <strong>Tamsir Sock</strong>, en sa qualité de Président.
             </p>
           </section>
 

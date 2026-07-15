@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthButton } from '@/components/AuthButton';
+import { motion } from 'framer-motion';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 export default function Home() {
@@ -23,15 +24,21 @@ export default function Home() {
 
       {/* HERO */}
       <section className="pt-20 pb-16 px-6 text-center max-w-[620px] mx-auto">
-        <div className="inline-block bg-[#EEEDFE] text-[#3C3489] text-xs font-medium px-3.5 py-1 rounded-full mb-6 tracking-wide">
-          Disponible en France
-        </div>
-        <h1 className="text-[clamp(36px,7vw,52px)] font-semibold leading-tight tracking-tight text-gray-900 mb-5">
-          La crypto,<br /><em className="not-italic text-[#534AB7]">simplement.</em>
-        </h1>
-        <p className="text-lg text-gray-600 leading-relaxed mb-10">
-          Achète Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.
-        </p>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.5 }}
+        >
+          <div className="inline-block bg-[#EEEDFE] text-[#3C3489] text-xs font-medium px-3.5 py-1 rounded-full mb-6 tracking-wide">
+            Disponible en France
+          </div>
+          <h1 className="text-[clamp(36px,7vw,52px)] font-semibold leading-tight tracking-tight text-gray-900 mb-5">
+            La crypto,<br /><em className="not-italic text-[#534AB7]">simplement.</em>
+          </h1>
+          <p className="text-lg text-gray-600 leading-relaxed mb-10">
+            Achète Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.
+          </p>
+        </motion.div>
 
         <div className="flex flex-col sm:flex-row gap-2 max-w-[400px] mx-auto mb-3">
           <Link href="/acheter" className="flex-1 bg-[#534AB7] text-white border-none px-5 py-3 rounded-lg text-[16px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity text-center no-underline shadow-sm">
@@ -65,7 +72,13 @@ export default function Home() {
       </div>
 
       {/* FEATURES */}
-      <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200">
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }} 
+        whileInView={{ opacity: 1, y: 0 }} 
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200"
+      >
         <div className="p-8 md:border-r border-b md:border-b-0 border-gray-200">
           <div className="w-9 h-9 bg-[#EEEDFE] rounded-lg flex items-center justify-center mb-4 text-lg">🔐</div>
           <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Wallet automatique</h3>
@@ -81,7 +94,7 @@ export default function Home() {
           <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Support humain</h3>
           <p className="text-sm text-gray-600 leading-relaxed">Une question ? Une vraie personne te répond en moins d'une heure. Pas un bot, pas un ticket.</p>
         </div>
-      </div>
+      </motion.div>
 
       {/* TOKENS */}
       <div className="py-10 px-6 text-center border-b border-gray-200 bg-[#f9f9f8]">

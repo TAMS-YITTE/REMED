@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { WalletBalance } from '@/components/WalletBalance';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
 import { Footer } from '@/components/Footer';
@@ -45,7 +46,7 @@ export default function PortefeuillePage() {
       </nav>
 
       <main className="max-w-3xl mx-auto px-6 py-12">
-        <div className="mb-8">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-8">
           <h1 className="text-3xl font-semibold text-gray-900 tracking-tight mb-2">
             Votre Portefeuille
           </h1>
@@ -55,12 +56,12 @@ export default function PortefeuillePage() {
           <p className="text-[13px] text-gray-400 mt-2 bg-gray-100 p-3 rounded-lg border border-gray-200">
             🔒 <strong>100% Non-Custodial :</strong> Ce portefeuille a été généré automatiquement par <strong>Privy</strong> lors de votre connexion. Vous seul y avez accès. Remedly ne détient pas vos fonds.
           </p>
-        </div>
+        </motion.div>
 
         {walletAddress ? (
-          <div className="mb-8">
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="mb-8">
             <WalletBalance walletAddress={walletAddress} />
-          </div>
+          </motion.div>
         ) : (
           <div className="bg-yellow-50 text-yellow-800 p-4 rounded-xl text-sm mb-8">
             Génération de votre portefeuille en cours...
@@ -68,7 +69,7 @@ export default function PortefeuillePage() {
         )}
 
         {/* CTA Acheter */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
           <div className="w-12 h-12 bg-[#EEEDFE] rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-xl">🚀</span>
           </div>
@@ -82,7 +83,23 @@ export default function PortefeuillePage() {
           >
             Acheter des cryptos
           </Link>
-        </div>
+        </motion.div>
+          {/* HISTORIQUE FICTIF */}
+          <div className="mt-10">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Dernières transactions</h3>
+            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+              <div className="flex items-center justify-center py-10">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-gray-400">💸</span>
+                  </div>
+                  <p className="text-sm text-gray-500">Aucune transaction pour le moment.</p>
+                  <p className="text-[13px] text-gray-400 mt-1">Votre historique s'affichera ici après votre premier achat.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
       </main>
       <Footer />
     </div>

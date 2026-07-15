@@ -13,6 +13,8 @@
     "@moonpay/moonpay-react": "^1.10.6",
     "@privy-io/react-auth": "^3.35.0",
     "@transak/transak-sdk": "^4.0.2",
+    "framer-motion": "^12.42.2",
+    "lucide-react": "^1.24.0",
     "next": "16.2.10",
     "posthog-js": "^1.400.1",
     "react": "19.2.4",

@@ -23,7 +23,7 @@ export default function ConfidentialitePage() {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Données collectées</h2>
             <p>
-              Dans le cadre de votre utilisation de Remedly, nous pouvons être amenés à traiter votre adresse email, nécessaire pour la création et la sécurisation de votre portefeuille via notre partenaire Privy.
+              Dans le cadre de votre utilisation de Remedly (service édité par la société YITTE), nous pouvons être amenés à traiter votre adresse email, nécessaire pour la création et la sécurisation de votre portefeuille via notre partenaire Privy.
             </p>
           </section>
 

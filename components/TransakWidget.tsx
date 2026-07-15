@@ -25,8 +25,8 @@ export function TransakWidget({ crypto = 'BTC' }: TransakWidgetProps) {
     );
   }
 
-  const isLive = !apiKey.includes('STAGING');
-  const baseUrl = isLive ? 'https://global.transak.com' : 'https://global-stg.transak.com';
+  const isStaging = process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT === 'STAGING' || apiKey.includes('STAGING');
+  const baseUrl = isStaging ? 'https://global-stg.transak.com' : 'https://global.transak.com';
 
   // Construction de l'URL avec les paramètres recommandés
   const queryParams = new URLSearchParams({

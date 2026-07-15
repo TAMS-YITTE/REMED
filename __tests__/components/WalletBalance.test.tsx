@@ -33,22 +33,26 @@ describe('WalletBalance', () => {
     expect(screen.getByText('0x123abc')).toBeInTheDocument();
   });
 
-  it('copies address to clipboard and changes button text', async () => {
+  it('copies address to clipboard and updates icon state', async () => {
     render(<WalletBalance walletAddress="0x123abc" />);
     
     const copyBtn = screen.getByRole('button', { name: /copier/i });
-    expect(copyBtn).toHaveTextContent('Copier');
-
-    fireEvent.click(copyBtn);
+    
+    act(() => {
+      fireEvent.click(copyBtn);
+    });
     
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('0x123abc');
-    expect(copyBtn).toHaveTextContent('Copié');
+    
+    // Icon should change to Check (green-300 in class)
+    expect(copyBtn.innerHTML).toContain('lucide-check');
 
     // Fast forward 2 seconds
     act(() => {
       jest.advanceTimersByTime(2000);
     });
 
-    expect(copyBtn).toHaveTextContent('Copier');
+    // Should revert back to Copy icon
+    expect(copyBtn.innerHTML).not.toContain('lucide-check');
   });
 });

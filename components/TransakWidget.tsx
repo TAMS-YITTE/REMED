@@ -31,6 +31,7 @@ export function TransakWidget({ crypto = 'BTC' }: TransakWidgetProps) {
   // Construction de l'URL avec les paramètres recommandés
   const queryParams = new URLSearchParams({
     apiKey,
+    environment: isStaging ? 'STAGING' : 'PRODUCTION',
     walletAddress,
     defaultCryptoCurrency: crypto,
     fiatCurrency: 'EUR',

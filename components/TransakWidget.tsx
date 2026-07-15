@@ -1,16 +1,11 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
-
 interface TransakWidgetProps {
   crypto?: string;
+  walletAddress: string;
 }
 
-export function TransakWidget({ crypto = 'BTC' }: TransakWidgetProps) {
-  const { walletAddress } = useAuth();
-
-  if (!walletAddress) return null;
-
+export function TransakWidget({ crypto = 'BTC', walletAddress }: TransakWidgetProps) {
   const apiKey = process.env.NEXT_PUBLIC_TRANSAK_KEY || '';
 
   if (!apiKey || apiKey.includes('votre')) {

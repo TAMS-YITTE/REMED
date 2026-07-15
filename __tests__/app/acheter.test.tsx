@@ -38,12 +38,15 @@ describe('AcheterPage (/acheter)', () => {
     expect(mockLogin).toHaveBeenCalledTimes(1);
   });
 
-  it('renders the BuyWidget defaulting to btc when authenticated with no crypto param', () => {
+  it('renders the BuyWidget defaulting to eth when authenticated with no crypto param', () => {
+    // eth (not btc) because the embedded wallet Privy creates is Ethereum-
+    // only; defaulting to btc used to send an invalid 0x address to the
+    // payment provider for anyone who didn't pass ?crypto= explicitly.
     (useAuth as jest.Mock).mockReturnValue({ authenticated: true, login: jest.fn() });
 
     render(<AcheterPage />);
 
-    expect(screen.getByTestId('buy-widget')).toHaveTextContent('BuyWidget for btc');
+    expect(screen.getByTestId('buy-widget')).toHaveTextContent('BuyWidget for eth');
   });
 
   it('passes the requested crypto from the URL to the BuyWidget', () => {

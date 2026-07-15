@@ -12,6 +12,7 @@ jest.mock('posthog-js', () => ({
 
 const mockUsePrivy = jest.fn();
 const mockUseWallets = jest.fn();
+const mockUseSolanaWallets = jest.fn();
 
 jest.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children, appId }: any) => (
@@ -23,16 +24,23 @@ jest.mock('@privy-io/react-auth', () => ({
   useWallets: () => mockUseWallets(),
 }));
 
+// Mocked instead of transformed for real: it pulls in ESM-only transitive
+// deps (e.g. ofetch) that aren't worth teaching Jest to parse for a unit test.
+jest.mock('@privy-io/react-auth/solana', () => ({
+  useWallets: () => mockUseSolanaWallets(),
+}));
+
 import { Providers } from '@/app/providers';
 import { useAuth } from '@/hooks/useAuth';
 
 function Consumer() {
-  const { ready, authenticated, walletAddress, login, logout } = useAuth();
+  const { ready, authenticated, walletAddress, solanaWalletAddress, login, logout } = useAuth();
   return (
     <div>
       <span data-testid="ready">{String(ready)}</span>
       <span data-testid="authenticated">{String(authenticated)}</span>
       <span data-testid="wallet">{walletAddress ?? 'none'}</span>
+      <span data-testid="solana-wallet">{solanaWalletAddress ?? 'none'}</span>
       <button onClick={login}>login</button>
       <button onClick={logout}>logout</button>
     </div>
@@ -51,6 +59,7 @@ describe('Providers', () => {
       logout: jest.fn(),
     });
     mockUseWallets.mockReturnValue({ wallets: [] });
+    mockUseSolanaWallets.mockReturnValue({ wallets: [] });
   });
 
   afterEach(() => {
@@ -128,7 +137,7 @@ describe('Providers', () => {
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
     });
 
-    it('exposes the embedded (privy) wallet address, ignoring external wallets', () => {
+    it('exposes the embedded (privy) Ethereum wallet address, ignoring external wallets', () => {
       process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
       mockUseWallets.mockReturnValue({
         wallets: [
@@ -146,7 +155,7 @@ describe('Providers', () => {
       expect(screen.getByTestId('wallet')).toHaveTextContent('0xEMBEDDED');
     });
 
-    it('reports no wallet address when only external wallets are connected', () => {
+    it('reports no Ethereum wallet address when only external wallets are connected', () => {
       process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
       mockUseWallets.mockReturnValue({
         wallets: [{ walletClientType: 'metamask', address: '0xEXTERNAL' }],
@@ -159,6 +168,51 @@ describe('Providers', () => {
       );
 
       expect(screen.getByTestId('wallet')).toHaveTextContent('none');
+    });
+
+    it('exposes the embedded (privy) Solana wallet address, preferring the wallet named "Privy"', () => {
+      process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
+      mockUseSolanaWallets.mockReturnValue({
+        wallets: [
+          { standardWallet: { name: 'Phantom' }, address: 'ExternalSolWallet111' },
+          { standardWallet: { name: 'Privy' }, address: 'EmbeddedSolWallet222' },
+        ],
+      });
+
+      render(
+        <Providers>
+          <Consumer />
+        </Providers>
+      );
+
+      expect(screen.getByTestId('solana-wallet')).toHaveTextContent('EmbeddedSolWallet222');
+    });
+
+    it('falls back to the first Solana wallet when none is named "Privy"', () => {
+      process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
+      mockUseSolanaWallets.mockReturnValue({
+        wallets: [{ standardWallet: { name: 'SomeWallet' }, address: 'OnlySolWallet333' }],
+      });
+
+      render(
+        <Providers>
+          <Consumer />
+        </Providers>
+      );
+
+      expect(screen.getByTestId('solana-wallet')).toHaveTextContent('OnlySolWallet333');
+    });
+
+    it('reports no Solana wallet address when none are connected', () => {
+      process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
+
+      render(
+        <Providers>
+          <Consumer />
+        </Providers>
+      );
+
+      expect(screen.getByTestId('solana-wallet')).toHaveTextContent('none');
     });
   });
 });

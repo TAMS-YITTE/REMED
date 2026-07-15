@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 function AcheterContent() {
   const { authenticated, login } = useAuth();
   const searchParams = useSearchParams();
-  const crypto = searchParams.get('crypto') || 'btc';
+  const crypto = searchParams.get('crypto') || 'eth';
 
   if (!authenticated) {
     return (

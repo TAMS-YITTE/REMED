@@ -1,17 +1,13 @@
 'use client';
 
 import { MoonPayBuyWidget, MoonPayProvider } from '@moonpay/moonpay-react';
-import { useAuth } from '@/hooks/useAuth';
 
 interface MoonPayWidgetProps {
   crypto?: string;
+  walletAddress: string;
 }
 
-export function MoonPayWidget({ crypto = 'eth' }: MoonPayWidgetProps) {
-  const { walletAddress } = useAuth();
-
-  if (!walletAddress) return null;
-
+export function MoonPayWidget({ crypto = 'eth', walletAddress }: MoonPayWidgetProps) {
   const apiKey = process.env.NEXT_PUBLIC_MOONPAY_KEY;
 
   if (!apiKey || apiKey.includes('votre')) {
@@ -24,27 +20,20 @@ export function MoonPayWidget({ crypto = 'eth' }: MoonPayWidgetProps) {
 
   const isLive = apiKey.startsWith('pk_live_');
 
-  // Ne passer l'adresse que si c'est un jeton EVM (Ethereum, Polygon, etc.)
-  // car Privy génère un wallet EVM (0x...)
-  const isEVM = ['eth', 'usdc', 'usdt', 'matic', 'pol'].includes(crypto.toLowerCase());
-
   const widgetProps: any = {
     variant: 'embedded',
     baseCurrencyCode: 'eur',
     baseCurrencyAmount: '100',
     defaultCurrencyCode: crypto,
+    walletAddress,
     colorCode: '#534AB7',
     language: 'fr',
     visible: true,
   };
 
-  if (isEVM) {
-    widgetProps.walletAddress = walletAddress;
-  }
-
   return (
     <div style={{ width: '100%', height: '600px' }}>
-      <MoonPayProvider 
+      <MoonPayProvider
         apiKey={apiKey}
         debug={!isLive}
       >

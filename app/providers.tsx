@@ -1,6 +1,7 @@
 'use client';
 
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import { useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
 import { useEffect, useState, createContext } from 'react';
 import posthog from 'posthog-js';
 
@@ -29,6 +30,7 @@ function MockAuthProvider({ children }: { children: React.ReactNode }) {
     authenticated: mockAuth,
     user: mockAuth ? { id: 'mock_user_123' } : null,
     walletAddress: mockAuth ? '0xMockWalletAddress1234567890abcdef1234567' : undefined,
+    solanaWalletAddress: mockAuth ? 'MockSoLWa11etAddress1111111111111111111111' : undefined,
     login,
     logout,
     isReady: true,
@@ -40,15 +42,21 @@ function MockAuthProvider({ children }: { children: React.ReactNode }) {
 function RealAuthProvider({ children }: { children: React.ReactNode }) {
   const { ready, authenticated, user, login, logout } = usePrivy();
   const { wallets } = useWallets();
+  const { wallets: solanaWallets } = useSolanaWallets();
 
   const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
   const walletAddress = embeddedWallet?.address;
+
+  const embeddedSolanaWallet =
+    solanaWallets.find(w => w.standardWallet.name.toLowerCase().includes('privy')) ?? solanaWallets[0];
+  const solanaWalletAddress = embeddedSolanaWallet?.address;
 
   const value = {
     ready,
     authenticated,
     user,
     walletAddress,
+    solanaWalletAddress,
     login,
     logout,
     isReady: ready,
@@ -88,6 +96,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         },
         embeddedWallets: {
           ethereum: {
+            createOnLogin: 'users-without-wallets',
+          },
+          solana: {
             createOnLogin: 'users-without-wallets',
           },
           noPromptOnSignature: true,

@@ -1,9 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { TransakWidget } from '@/components/TransakWidget';
-import { useAuth } from '@/hooks/useAuth';
-
-jest.mock('@/hooks/useAuth');
 
 function getIframeSrc(): URL {
   const iframe = document.querySelector('iframe');
@@ -20,14 +17,6 @@ describe('TransakWidget', () => {
     else process.env.NEXT_PUBLIC_TRANSAK_KEY = originalKey;
     if (originalEnv === undefined) delete process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT;
     else process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT = originalEnv;
-    jest.clearAllMocks();
-  });
-
-  it('renders nothing when there is no wallet address yet', () => {
-    process.env.NEXT_PUBLIC_TRANSAK_KEY = 'test-live-key-123';
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: undefined });
-    const { container } = render(<TransakWidget crypto="BTC" />);
-    expect(container).toBeEmptyDOMElement();
   });
 
   it.each([
@@ -36,19 +25,17 @@ describe('TransakWidget', () => {
   ])('shows a configuration notice instead of an iframe when the key is %s', (_label, value) => {
     if (value === undefined) delete process.env.NEXT_PUBLIC_TRANSAK_KEY;
     else process.env.NEXT_PUBLIC_TRANSAK_KEY = value;
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
 
-    render(<TransakWidget crypto="BTC" />);
+    render(<TransakWidget crypto="BTC" walletAddress="0xABC" />);
 
     expect(document.querySelector('iframe')).not.toBeInTheDocument();
     expect(screen.getByText('Clé Transak manquante')).toBeInTheDocument();
   });
 
-  it('builds the checkout iframe with the wallet address, crypto and EUR once a real key exists', () => {
+  it('builds the checkout iframe with the given wallet address, crypto and EUR once a real key exists', () => {
     process.env.NEXT_PUBLIC_TRANSAK_KEY = 'test-live-key-123';
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
 
-    render(<TransakWidget crypto="ETH" />);
+    render(<TransakWidget crypto="ETH" walletAddress="0xABC" />);
 
     const url = getIframeSrc();
     expect(url.searchParams.get('apiKey')).toBe('test-live-key-123');
@@ -57,11 +44,18 @@ describe('TransakWidget', () => {
     expect(url.searchParams.get('fiatCurrency')).toBe('EUR');
   });
 
+  it('passes through whatever wallet address it is given (e.g. a Solana address)', () => {
+    process.env.NEXT_PUBLIC_TRANSAK_KEY = 'test-live-key-123';
+
+    render(<TransakWidget crypto="SOL" walletAddress="SolWallet11111111" />);
+
+    expect(getIframeSrc().searchParams.get('walletAddress')).toBe('SolWallet11111111');
+  });
+
   it('uses the staging domain/param when the key contains "STAGING"', () => {
     process.env.NEXT_PUBLIC_TRANSAK_KEY = 'STAGING-test-key';
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
 
-    render(<TransakWidget crypto="BTC" />);
+    render(<TransakWidget crypto="BTC" walletAddress="0xABC" />);
 
     const url = getIframeSrc();
     expect(url.origin).toBe('https://global-stg.transak.com');
@@ -71,9 +65,8 @@ describe('TransakWidget', () => {
   it('uses the staging domain/param when NEXT_PUBLIC_TRANSAK_ENVIRONMENT=STAGING, even with a non-staging key', () => {
     process.env.NEXT_PUBLIC_TRANSAK_KEY = 'test-live-key-123';
     process.env.NEXT_PUBLIC_TRANSAK_ENVIRONMENT = 'STAGING';
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
 
-    render(<TransakWidget crypto="BTC" />);
+    render(<TransakWidget crypto="BTC" walletAddress="0xABC" />);
 
     const url = getIframeSrc();
     expect(url.origin).toBe('https://global-stg.transak.com');
@@ -82,9 +75,8 @@ describe('TransakWidget', () => {
 
   it('uses the production domain/param for a non-staging key with no environment override', () => {
     process.env.NEXT_PUBLIC_TRANSAK_KEY = 'test-live-key-123';
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
 
-    render(<TransakWidget crypto="BTC" />);
+    render(<TransakWidget crypto="BTC" walletAddress="0xABC" />);
 
     const url = getIframeSrc();
     expect(url.origin).toBe('https://global.transak.com');

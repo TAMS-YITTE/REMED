@@ -6,11 +6,15 @@ import { useAuth } from '@/hooks/useAuth';
 jest.mock('@/hooks/useAuth');
 
 jest.mock('@/components/MoonPayWidget', () => ({
-  MoonPayWidget: ({ crypto }: { crypto: string }) => <div data-testid="moonpay-widget">MoonPay {crypto}</div>
+  MoonPayWidget: ({ crypto, walletAddress }: { crypto: string; walletAddress: string }) => (
+    <div data-testid="moonpay-widget">MoonPay {crypto} {walletAddress}</div>
+  ),
 }));
 
 jest.mock('@/components/TransakWidget', () => ({
-  TransakWidget: ({ crypto }: { crypto: string }) => <div data-testid="transak-widget">Transak {crypto}</div>
+  TransakWidget: ({ crypto, walletAddress }: { crypto: string; walletAddress: string }) => (
+    <div data-testid="transak-widget">Transak {crypto} {walletAddress}</div>
+  ),
 }));
 
 describe('BuyWidget', () => {
@@ -18,30 +22,59 @@ describe('BuyWidget', () => {
     jest.clearAllMocks();
   });
 
-  it('shows a "creating wallet" loading state while the wallet address is not ready yet', () => {
-    // This is the authenticated-but-no-wallet-yet window (embedded wallet
-    // creation is async after Privy login) that used to render the payment
-    // provider widgets with an undefined wallet address and crash the page.
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: undefined });
+  it('shows a "creating wallet" loading state while the Ethereum wallet is not ready yet', () => {
+    // Authenticated-but-no-wallet-yet window (embedded wallet creation is
+    // async after Privy login): rendering a payment widget here with an
+    // undefined address is what used to crash the page.
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: undefined, solanaWalletAddress: undefined });
 
-    render(<BuyWidget crypto="btc" />);
+    render(<BuyWidget crypto="eth" />);
 
     expect(screen.getByText(/Création de votre portefeuille/i)).toBeInTheDocument();
     expect(screen.queryByTestId('transak-widget')).not.toBeInTheDocument();
     expect(screen.queryByTestId('moonpay-widget')).not.toBeInTheDocument();
   });
 
-  it('renders TransakWidget by default once a wallet address exists', () => {
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
+  it('shows a "creating wallet" loading state while the Solana wallet is not ready yet, for a Solana purchase', () => {
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC', solanaWalletAddress: undefined });
+
+    render(<BuyWidget crypto="sol" />);
+
+    expect(screen.getByText(/Création de votre portefeuille/i)).toBeInTheDocument();
+    expect(screen.queryByTestId('transak-widget')).not.toBeInTheDocument();
+  });
+
+  it('shows a "Bitcoin not supported yet" message for a Bitcoin purchase, regardless of wallet state', () => {
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC', solanaWalletAddress: 'SolWallet1' });
 
     render(<BuyWidget crypto="btc" />);
-    expect(screen.getByTestId('transak-widget')).toBeInTheDocument();
-    expect(screen.getByTestId('transak-widget')).toHaveTextContent('Transak BTC');
+
+    expect(screen.getByText('Bitcoin bientôt disponible')).toBeInTheDocument();
+    expect(screen.queryByTestId('transak-widget')).not.toBeInTheDocument();
     expect(screen.queryByTestId('moonpay-widget')).not.toBeInTheDocument();
   });
 
+  it('renders TransakWidget by default with the Ethereum wallet address for an ETH purchase', () => {
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC', solanaWalletAddress: undefined });
+
+    render(<BuyWidget crypto="eth" />);
+    const widget = screen.getByTestId('transak-widget');
+    expect(widget).toHaveTextContent('Transak ETH');
+    expect(widget).toHaveTextContent('0xABC');
+    expect(screen.queryByTestId('moonpay-widget')).not.toBeInTheDocument();
+  });
+
+  it('renders TransakWidget with the Solana wallet address for a SOL purchase', () => {
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC', solanaWalletAddress: 'SolWallet1' });
+
+    render(<BuyWidget crypto="sol" />);
+    const widget = screen.getByTestId('transak-widget');
+    expect(widget).toHaveTextContent('Transak SOL');
+    expect(widget).toHaveTextContent('SolWallet1');
+  });
+
   it('switches to MoonPayWidget when clicking the alternative link', () => {
-    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC' });
+    (useAuth as jest.Mock).mockReturnValue({ walletAddress: '0xABC', solanaWalletAddress: undefined });
 
     render(<BuyWidget crypto="eth" />);
 

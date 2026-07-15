@@ -29,7 +29,7 @@ export function MoonPayWidget({ crypto = 'btc' }: MoonPayWidgetProps) {
     <div style={{ width: '100%', height: '600px' }}>
       <MoonPayProvider 
         apiKey={process.env.NEXT_PUBLIC_MOONPAY_KEY || ''} 
-        environment={isLive ? 'production' : 'sandbox'}
+        debug={!isLive}
       >
         <MoonPayBuyWidget {...widgetProps} />
       </MoonPayProvider>

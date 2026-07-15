@@ -113,6 +113,32 @@ export default function Home() {
         <cite className="text-[13px] text-gray-400 not-italic">— Bêta-testeur, Lyon</cite>
       </div>
 
+      {/* AVANTAGES */}
+      <section className="py-10 px-6 max-w-[1000px] mx-auto border-y border-gray-100 bg-gray-50/50 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div>
+            <div className="text-2xl mb-2">💶</div>
+            <h3 className="font-semibold text-gray-900 mb-1">Zéro Spread</h3>
+            <p className="text-sm text-gray-500">Aucune marge cachée sur le taux de change. Transparence totale.</p>
+          </div>
+          <div>
+            <div className="text-2xl mb-2">⚡</div>
+            <h3 className="font-semibold text-gray-900 mb-1">Virement Instantané</h3>
+            <p className="text-sm text-gray-500">Frais réduits (~1.99%) avec l'Open Banking.</p>
+          </div>
+          <div>
+            <div className="text-2xl mb-2">🔒</div>
+            <h3 className="font-semibold text-gray-900 mb-1">100% Non-Custodial</h3>
+            <p className="text-sm text-gray-500">Vos clés, vos cryptos. Nous ne détenons aucun fonds.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ÉTAPES */}
+      <section className="py-16 px-6 max-w-[1000px] mx-auto">
+        <h2 className="text-center text-2xl font-semibold mb-12 text-gray-900 tracking-tight">Comment ça marche ?</h2>
+      </section>
+
       {/* CTA BAS */}
       <div className="bg-[#534AB7] py-16 px-6 text-center">
         <h2 className="text-[28px] font-semibold text-white tracking-tight mb-3">Prêt à te lancer ?</h2>

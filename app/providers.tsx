@@ -38,6 +38,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         appearance: {
           theme: 'light',
           accentColor: '#534AB7',
+          logo: 'https://remedly.fr/logo.png',
         },
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',

@@ -2,36 +2,7 @@
 
 import { AuthButton } from '@/components/AuthButton';
 import Link from 'next/link';
-import { FormEvent, useState } from 'react';
-
 export default function Home() {
-  const [heroSuccess, setHeroSuccess] = useState(false);
-  const [bottomSuccess, setBottomSuccess] = useState(false);
-
-  const handleWaitlist = async (e: FormEvent<HTMLFormElement>, isHero: boolean) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
-    const btn = form.querySelector('button');
-
-    if (btn) {
-      btn.textContent = '...';
-      btn.disabled = true;
-    }
-
-    try {
-      // Remplacer par un vrai endpoint
-      await new Promise(r => setTimeout(r, 500));
-      if (isHero) setHeroSuccess(true);
-      else setBottomSuccess(true);
-    } catch (e) {
-      if (btn) {
-        btn.textContent = 'Réessaie →';
-        btn.disabled = false;
-      }
-    }
-  };
-
   return (
     <main className="bg-white text-gray-900">
       {/* NAVIGATION */}
@@ -52,7 +23,7 @@ export default function Home() {
       {/* HERO */}
       <section className="pt-20 pb-16 px-6 text-center max-w-[620px] mx-auto">
         <div className="inline-block bg-[#EEEDFE] text-[#3C3489] text-xs font-medium px-3.5 py-1 rounded-full mb-6 tracking-wide">
-          Bientôt disponible en France
+          Disponible en France
         </div>
         <h1 className="text-[clamp(36px,7vw,52px)] font-semibold leading-tight tracking-tight text-gray-900 mb-5">
           La crypto,<br /><em className="not-italic text-[#534AB7]">simplement.</em>
@@ -61,21 +32,12 @@ export default function Home() {
           Achète Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.
         </p>
 
-        {!heroSuccess ? (
-          <>
-            <form className="flex flex-col sm:flex-row gap-2 max-w-[400px] mx-auto mb-3" onSubmit={(e) => handleWaitlist(e, true)}>
-              <input type="email" name="email" placeholder="ton@email.com" required className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-lg text-[15px] outline-none focus:border-[#534AB7] transition-colors" />
-              <button type="submit" className="bg-[#534AB7] text-white border-none px-5 py-2.5 rounded-lg text-[15px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity">
-                Je veux accéder →
-              </button>
-            </form>
-            <p className="text-[13px] text-gray-400">Gratuit · Accès prioritaire au lancement</p>
-          </>
-        ) : (
-          <div className="bg-[#EAF3DE] text-[#3B6D11] px-4 py-2.5 rounded-lg text-sm max-w-[400px] mx-auto">
-            ✓ Tu es sur la liste ! On te prévient en premier dès le lancement.
-          </div>
-        )}
+        <div className="flex flex-col sm:flex-row gap-2 max-w-[400px] mx-auto mb-3">
+          <Link href="/acheter" className="flex-1 bg-[#534AB7] text-white border-none px-5 py-3 rounded-lg text-[16px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity text-center no-underline shadow-sm">
+            Acheter maintenant →
+          </Link>
+        </div>
+        <p className="text-[13px] text-gray-400">Accès immédiat · Zéro inscription complexe</p>
       </section>
 
       {/* ÉTAPES */}
@@ -153,23 +115,14 @@ export default function Home() {
       {/* CTA BAS */}
       <div className="bg-[#534AB7] py-16 px-6 text-center">
         <h2 className="text-[28px] font-semibold text-white tracking-tight mb-3">Prêt à te lancer ?</h2>
-        <p className="text-white/75 mb-8 text-base">Rejoins la liste d'attente et accède en premier dès le lancement.</p>
+        <p className="text-white/75 mb-8 text-base">Commence à acheter tes cryptos dès aujourd'hui.</p>
         
-        {!bottomSuccess ? (
-          <>
-            <form className="flex flex-col sm:flex-row gap-2 max-w-[380px] mx-auto mb-3" onSubmit={(e) => handleWaitlist(e, false)}>
-              <input type="email" name="email" placeholder="ton@email.com" required className="flex-1 px-3.5 py-2.5 bg-white/15 border border-white/30 rounded-lg text-[15px] text-white outline-none placeholder:text-white/50 focus:border-white transition-colors" />
-              <button type="submit" className="bg-white text-[#534AB7] border-none px-5 py-2.5 rounded-lg text-[15px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity">
-                Je veux accéder →
-              </button>
-            </form>
-            <p className="text-[13px] text-white/50">Gratuit · Sans engagement</p>
-          </>
-        ) : (
-          <div className="bg-white/15 text-white px-4 py-2.5 rounded-lg text-sm max-w-[380px] mx-auto">
-            ✓ Tu es sur la liste !
-          </div>
-        )}
+        <div className="flex flex-col sm:flex-row gap-2 max-w-[380px] mx-auto mb-3">
+          <Link href="/acheter" className="flex-1 bg-white text-[#534AB7] border-none px-5 py-3 rounded-lg text-[16px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity text-center no-underline shadow-sm">
+            Acheter maintenant →
+          </Link>
+        </div>
+        <p className="text-[13px] text-white/50">Sécurisé · Rapide · Fiable</p>
       </div>
 
       {/* FOOTER */}

@@ -45,10 +45,17 @@ function AcheterContent() {
   );
 }
 
+import { Footer } from '@/components/Footer';
+
 export default function AcheterPage() {
   return (
-    <Suspense fallback={<div>Chargement...</div>}>
-      <AcheterContent />
-    </Suspense>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1">
+        <Suspense fallback={<div>Chargement...</div>}>
+          <AcheterContent />
+        </Suspense>
+      </div>
+      <Footer />
+    </div>
   );
 }

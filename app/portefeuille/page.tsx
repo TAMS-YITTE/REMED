@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { WalletBalance } from '@/components/WalletBalance';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
+import { Footer } from '@/components/Footer';
 
 export default function PortefeuillePage() {
   const { isReady, authenticated, walletAddress } = useAuth();
@@ -83,6 +84,7 @@ export default function PortefeuillePage() {
           </Link>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

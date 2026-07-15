@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthButton } from '@/components/AuthButton';
+import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 export default function Home() {
   return (
@@ -126,12 +127,7 @@ export default function Home() {
       </div>
 
       {/* FOOTER */}
-      <footer className="py-6 px-8 border-t border-gray-200 flex justify-between items-center flex-wrap gap-2">
-        <Link href="/" className="text-[15px] font-semibold text-gray-900 no-underline">
-          rem<span className="text-[#534AB7]">e</span>dly
-        </Link>
-        <p className="text-[13px] text-gray-400">© 2026 Remedly · remedly.fr · contact@remedly.fr</p>
-      </footer>
+      <Footer />
     </main>
   );
 }

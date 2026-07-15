@@ -51,6 +51,9 @@ export default function PortefeuillePage() {
           <p className="text-gray-500">
             Gérez vos cryptomonnaies en toute sécurité.
           </p>
+          <p className="text-[13px] text-gray-400 mt-2 bg-gray-100 p-3 rounded-lg border border-gray-200">
+            🔒 <strong>100% Non-Custodial :</strong> Ce portefeuille a été généré automatiquement par <strong>Privy</strong> lors de votre connexion. Vous seul y avez accès. Remedly ne détient pas vos fonds.
+          </p>
         </div>
 
         {walletAddress ? (

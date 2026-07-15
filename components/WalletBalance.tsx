@@ -34,7 +34,14 @@ export function WalletBalance({ walletAddress }: WalletBalanceProps) {
       </div>
 
       <div className="bg-gray-50 rounded-xl p-4">
-        <div className="text-xs text-gray-500 font-medium mb-1.5 uppercase tracking-wider">Votre adresse sécurisée</div>
+        <div className="flex justify-between items-center mb-1.5">
+          <div className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+            Votre adresse sécurisée
+          </div>
+          <div className="text-[11px] text-[#534AB7] bg-[#EEEDFE] px-2 py-0.5 rounded font-medium">
+            Généré par Privy
+          </div>
+        </div>
         <div className="flex items-center justify-between gap-3">
           <code className="text-[13px] text-gray-700 bg-white px-2 py-1 rounded border border-gray-200 truncate flex-1">
             {walletAddress}

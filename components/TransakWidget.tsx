@@ -24,7 +24,8 @@ export function TransakWidget({ crypto = 'BTC' }: TransakWidgetProps) {
       fiatCurrency: 'EUR',
       language: 'fr',
       themeColor: '534AB7',
-      hideMenu: true,
+      hideMenu: false,
+      productsAvaialble: 'BUY,SELL',
       widgetHeight: '600px',
       widgetWidth: '100%',
     };

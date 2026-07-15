@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { Transak } from '@transak/transak-sdk';
 import { useAuth } from '@/hooks/useAuth';
 
 interface TransakWidgetProps {
@@ -11,34 +9,32 @@ interface TransakWidgetProps {
 export function TransakWidget({ crypto = 'BTC' }: TransakWidgetProps) {
   const { walletAddress } = useAuth();
 
-  useEffect(() => {
-    if (!walletAddress) return;
+  if (!walletAddress) return null;
 
-    const isLive = process.env.NEXT_PUBLIC_TRANSAK_KEY && !process.env.NEXT_PUBLIC_TRANSAK_KEY.includes('STAGING');
-    const transakConfig: any = {
-      apiKey: process.env.NEXT_PUBLIC_TRANSAK_KEY || '',
-      environment: isLive ? 'PRODUCTION' : 'STAGING',
-      containerId: 'transak-widget-container',
-      defaultCryptoCurrency: crypto,
-      walletAddress: walletAddress,
-      fiatCurrency: 'EUR',
-      language: 'fr',
-      themeColor: '534AB7',
-      hideMenu: true,
-      widgetHeight: '600px',
-      widgetWidth: '100%',
-    };
-    const transak = new Transak(transakConfig);
+  const isLive = process.env.NEXT_PUBLIC_TRANSAK_KEY && !process.env.NEXT_PUBLIC_TRANSAK_KEY.includes('STAGING');
+  const baseUrl = isLive ? 'https://global.transak.com' : 'https://global-stg.transak.com';
+  const apiKey = process.env.NEXT_PUBLIC_TRANSAK_KEY || '';
+  
+  // Construction de l'URL avec les paramètres recommandés
+  const queryParams = new URLSearchParams({
+    apiKey,
+    walletAddress,
+    defaultCryptoCurrency: crypto,
+    fiatCurrency: 'EUR',
+    themeColor: '534AB7',
+    hideMenu: 'true',
+    language: 'fr'
+  });
 
-    transak.init();
+  const src = `${baseUrl}?${queryParams.toString()}`;
 
-    Transak.on(Transak.EVENTS.TRANSAK_ORDER_SUCCESSFUL, (data: unknown) => {
-      console.log('Achat réussi :', data);
-      transak.close();
-    });
-
-    return () => transak.close();
-  }, [walletAddress, crypto]);
-
-  return <div id="transak-widget-container" style={{ width: '100%', height: '600px', margin: '0 auto' }} />;
+  return (
+    <div style={{ width: '100%', height: '600px', margin: '0 auto', borderRadius: '12px', overflow: 'hidden', border: '1px solid #E5E7EB' }}>
+      <iframe
+        src={src}
+        allow="camera;microphone;payment"
+        style={{ width: '100%', height: '100%', border: 'none' }}
+      />
+    </div>
+  );
 }

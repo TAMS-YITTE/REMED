@@ -87,7 +87,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           logo: 'https://remedly.fr/logo.png',
         },
         embeddedWallets: {
-          createOnLogin: 'users-without-wallets',
+          ethereum: {
+            createOnLogin: 'users-without-wallets',
+          },
           noPromptOnSignature: true,
         } as any,
       }}

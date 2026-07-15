@@ -50,13 +50,32 @@ export function BuyWidget({ crypto = 'eth' }: BuyWidgetProps) {
         <TransakWidget crypto={crypto.toUpperCase()} walletAddress={activeWalletAddress} />
       )}
 
-      {/* Lien discret pour basculer si problème */}
-      <p
-        style={{ fontSize: 12, color: '#999', textAlign: 'center', marginTop: 12, cursor: 'pointer' }}
-        onClick={() => setProvider(p => p === 'moonpay' ? 'transak' : 'moonpay')}
-      >
-        Problème avec le paiement ? Essaie une autre méthode
-      </p>
+      {/* Encart visible et élégant pour basculer de fournisseur si l'un est bloqué */}
+      <div className="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="bg-indigo-100 p-2 rounded-full text-indigo-600 shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-indigo-900">
+              Écran blanc ou erreur d'affichage ?
+            </h4>
+            <p className="text-xs text-indigo-700 mt-1">
+              Il arrive que {provider === 'moonpay' ? 'MoonPay' : 'Transak'} soit bloqué par certaines sécurités de navigateur.
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => setProvider(p => p === 'moonpay' ? 'transak' : 'moonpay')}
+          className="w-full sm:w-auto whitespace-nowrap px-4 py-2 bg-white border border-indigo-200 hover:bg-indigo-50 text-indigo-700 text-sm font-medium rounded-lg transition-colors shadow-sm"
+        >
+          Utiliser {provider === 'moonpay' ? 'Transak' : 'MoonPay'}
+        </button>
+      </div>
     </div>
   );
 }

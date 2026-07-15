@@ -78,7 +78,7 @@ describe('BuyWidget', () => {
 
     render(<BuyWidget crypto="eth" />);
 
-    const switchBtn = screen.getByText(/Problème avec le paiement \?/i);
+    const switchBtn = screen.getByRole('button', { name: /Utiliser MoonPay/i });
     fireEvent.click(switchBtn);
 
     expect(screen.queryByTestId('transak-widget')).not.toBeInTheDocument();

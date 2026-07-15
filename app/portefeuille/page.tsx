@@ -38,9 +38,6 @@ export default function PortefeuillePage() {
           rem<span className="text-[#534AB7]">e</span>dly
         </Link>
         <div className="flex items-center gap-4">
-          <Link href="/portefeuille" className="text-sm font-medium text-[#534AB7]">
-            Mon Portefeuille
-          </Link>
           <AuthButton />
         </div>
       </nav>

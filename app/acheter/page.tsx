@@ -46,12 +46,23 @@ function AcheterContent() {
 }
 
 import { Footer } from '@/components/Footer';
+import Link from 'next/link';
+import { AuthButton } from '@/components/AuthButton';
 
 export default function AcheterPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white text-gray-900">
+      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-200/50 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <Link href="/" className="text-lg font-semibold tracking-tight text-gray-900 no-underline">
+          rem<span className="text-[#534AB7]">e</span>dly
+        </Link>
+        <div className="flex items-center gap-4">
+          <AuthButton />
+        </div>
+      </nav>
+
       <div className="flex-1">
-        <Suspense fallback={<div>Chargement...</div>}>
+        <Suspense fallback={<div className="text-center mt-20 text-gray-500">Chargement...</div>}>
           <AcheterContent />
         </Suspense>
       </div>

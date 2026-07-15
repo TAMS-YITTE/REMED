@@ -147,9 +147,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ÉTAPES */}
+      {/* ÉTAPES DETAILS */}
       <section className="py-16 px-6 max-w-[1000px] mx-auto">
-        <h2 className="text-center text-2xl font-semibold mb-12 text-gray-900 tracking-tight">Comment ça marche ?</h2>
+        <h2 className="text-center text-3xl font-bold mb-12 text-gray-900 tracking-tight">Comment ça marche ?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+          <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative z-10">
+            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-6">1</div>
+            <h3 className="text-xl font-semibold mb-3">Crée ton compte</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">Connecte-toi simplement avec ton email ou Google. Un portefeuille crypto 100% sécurisé est généré automatiquement pour toi en arrière-plan.</p>
+          </div>
+          <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative z-10">
+            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-6">2</div>
+            <h3 className="text-xl font-semibold mb-3">Choisis ta crypto</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">Sélectionne Bitcoin, Ethereum, Solana ou d'autres tokens. Définis le montant en euros que tu souhaites investir.</p>
+          </div>
+          <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow relative z-10">
+            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-xl mb-6">3</div>
+            <h3 className="text-xl font-semibold mb-3">Paie et reçois</h3>
+            <p className="text-gray-600 text-sm leading-relaxed">Règle par carte bancaire, virement ou Apple Pay de manière sécurisée. Les cryptos arrivent directement sur ton portefeuille.</p>
+          </div>
+        </div>
       </section>
 
       {/* CTA BAS */}

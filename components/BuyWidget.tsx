@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MoonPayWidget } from './MoonPayWidget';
 import { TransakWidget } from './TransakWidget';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,23 +12,17 @@ interface BuyWidgetProps {
 
 export function BuyWidget({ crypto = 'eth' }: BuyWidgetProps) {
   const [provider, setProvider] = useState<'moonpay' | 'transak'>('transak');
-  const { walletAddress, solanaWalletAddress } = useAuth();
+  const { walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet } = useAuth();
 
   const chain = getChainFamily(crypto);
 
-  if (chain === 'bitcoin') {
-    return (
-      <div className="flex flex-col items-center justify-center w-full h-[600px] bg-gray-50 border border-gray-200 rounded-xl text-center p-6">
-        <div className="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mb-4 text-xl">₿</div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Bitcoin bientôt disponible</h3>
-        <p className="text-gray-500 text-sm max-w-sm">
-          L'achat de Bitcoin n'est pas encore pris en charge par ton portefeuille Remedly. Essaie Ethereum ou Solana en attendant.
-        </p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (chain === 'bitcoin' && !bitcoinWalletAddress) {
+      createBitcoinWallet().catch(console.error);
+    }
+  }, [chain, bitcoinWalletAddress, createBitcoinWallet]);
 
-  const activeWalletAddress = chain === 'solana' ? solanaWalletAddress : walletAddress;
+  const activeWalletAddress = chain === 'solana' ? solanaWalletAddress : chain === 'bitcoin' ? bitcoinWalletAddress : walletAddress;
 
   if (!activeWalletAddress) {
     return (

@@ -13,6 +13,7 @@ jest.mock('posthog-js', () => ({
 const mockUsePrivy = jest.fn();
 const mockUseWallets = jest.fn();
 const mockUseSolanaWallets = jest.fn();
+const mockUseCreateWallet = jest.fn();
 
 jest.mock('@privy-io/react-auth', () => ({
   PrivyProvider: ({ children, appId }: any) => (
@@ -30,17 +31,23 @@ jest.mock('@privy-io/react-auth/solana', () => ({
   useWallets: () => mockUseSolanaWallets(),
 }));
 
+jest.mock('@privy-io/react-auth/extended-chains', () => ({
+  useCreateWallet: () => mockUseCreateWallet(),
+}));
+
 import { Providers } from '@/app/providers';
 import { useAuth } from '@/hooks/useAuth';
 
 function Consumer() {
-  const { ready, authenticated, walletAddress, solanaWalletAddress, login, logout } = useAuth();
+  const { ready, authenticated, walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet, login, logout } = useAuth();
   return (
     <div>
       <span data-testid="ready">{String(ready)}</span>
       <span data-testid="authenticated">{String(authenticated)}</span>
       <span data-testid="wallet">{walletAddress ?? 'none'}</span>
       <span data-testid="solana-wallet">{solanaWalletAddress ?? 'none'}</span>
+      <span data-testid="bitcoin-wallet">{bitcoinWalletAddress ?? 'none'}</span>
+      <button onClick={createBitcoinWallet}>createBitcoin</button>
       <button onClick={login}>login</button>
       <button onClick={logout}>logout</button>
     </div>
@@ -54,12 +61,13 @@ describe('Providers', () => {
     mockUsePrivy.mockReturnValue({
       ready: true,
       authenticated: true,
-      user: { id: 'u1' },
+      user: { id: 'u1', linkedAccounts: [] },
       login: jest.fn(),
       logout: jest.fn(),
     });
     mockUseWallets.mockReturnValue({ wallets: [] });
     mockUseSolanaWallets.mockReturnValue({ wallets: [] });
+    mockUseCreateWallet.mockReturnValue({ createWallet: jest.fn() });
   });
 
   afterEach(() => {
@@ -213,6 +221,46 @@ describe('Providers', () => {
       );
 
       expect(screen.getByTestId('solana-wallet')).toHaveTextContent('none');
+    });
+
+    it('exposes the bitcoin taproot wallet address from user linkedAccounts', () => {
+      process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
+      mockUsePrivy.mockReturnValue({
+        ready: true,
+        authenticated: true,
+        user: { 
+          id: 'u1',
+          linkedAccounts: [
+            { type: 'wallet', chainType: 'ethereum', address: '0xIgnore' },
+            { type: 'wallet', chainType: 'bitcoin-taproot', address: 'bc1qtest123' },
+          ]
+        },
+        login: jest.fn(),
+        logout: jest.fn(),
+      });
+
+      render(
+        <Providers>
+          <Consumer />
+        </Providers>
+      );
+
+      expect(screen.getByTestId('bitcoin-wallet')).toHaveTextContent('bc1qtest123');
+    });
+
+    it('calls createWallet with bitcoin-taproot when createBitcoinWallet is invoked', () => {
+      process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
+      const mockCreate = jest.fn();
+      mockUseCreateWallet.mockReturnValue({ createWallet: mockCreate });
+
+      render(
+        <Providers>
+          <Consumer />
+        </Providers>
+      );
+
+      fireEvent.click(screen.getByText('createBitcoin'));
+      expect(mockCreate).toHaveBeenCalledWith({ chainType: 'bitcoin-taproot' });
     });
   });
 });

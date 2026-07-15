@@ -2,6 +2,7 @@
 
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
+import { useCreateWallet } from '@privy-io/react-auth/extended-chains';
 import { useEffect, useState, createContext } from 'react';
 import posthog from 'posthog-js';
 
@@ -31,6 +32,8 @@ function MockAuthProvider({ children }: { children: React.ReactNode }) {
     user: mockAuth ? { id: 'mock_user_123' } : null,
     walletAddress: mockAuth ? '0xMockWalletAddress1234567890abcdef1234567' : undefined,
     solanaWalletAddress: mockAuth ? 'MockSoLWa11etAddress1111111111111111111111' : undefined,
+    bitcoinWalletAddress: mockAuth ? 'bc1qmockwalletaddress1234567890abcdef123' : undefined,
+    createBitcoinWallet: async () => { console.log('Mock createBitcoinWallet called'); },
     login,
     logout,
     isReady: true,
@@ -43,6 +46,7 @@ function RealAuthProvider({ children }: { children: React.ReactNode }) {
   const { ready, authenticated, user, login, logout } = usePrivy();
   const { wallets } = useWallets();
   const { wallets: solanaWallets } = useSolanaWallets();
+  const { createWallet } = useCreateWallet();
 
   const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
   const walletAddress = embeddedWallet?.address;
@@ -51,12 +55,25 @@ function RealAuthProvider({ children }: { children: React.ReactNode }) {
     solanaWallets.find(w => w.standardWallet.name.toLowerCase().includes('privy')) ?? solanaWallets[0];
   const solanaWalletAddress = embeddedSolanaWallet?.address;
 
+  const bitcoinAccount = user?.linkedAccounts?.find(
+    (account: any) => account.type === 'wallet' && account.chainType === 'bitcoin-taproot'
+  ) as any;
+  const bitcoinWalletAddress = bitcoinAccount?.address;
+
+  const createBitcoinWallet = async () => {
+    if (!bitcoinWalletAddress) {
+      await createWallet({ chainType: 'bitcoin-taproot' });
+    }
+  };
+
   const value = {
     ready,
     authenticated,
     user,
     walletAddress,
     solanaWalletAddress,
+    bitcoinWalletAddress,
+    createBitcoinWallet,
     login,
     logout,
     isReady: ready,

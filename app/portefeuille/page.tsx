@@ -108,12 +108,12 @@ export default function PortefeuillePage() {
                   {walletData.transactions.map((tx) => (
                     <div key={tx.hash} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.to.toLowerCase() === walletAddress.toLowerCase() ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-600'}`}>
-                          {tx.to.toLowerCase() === walletAddress.toLowerCase() ? '↓' : '↑'}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.to.toLowerCase() === walletAddress?.toLowerCase() ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-600'}`}>
+                          {tx.to.toLowerCase() === walletAddress?.toLowerCase() ? '↓' : '↑'}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">
-                            {tx.to.toLowerCase() === walletAddress.toLowerCase() ? 'Reçu' : 'Envoyé'}
+                            {tx.to.toLowerCase() === walletAddress?.toLowerCase() ? 'Reçu' : 'Envoyé'}
                           </p>
                           <p className="text-xs text-gray-500">
                             {new Date(parseInt(tx.timeStamp) * 1000).toLocaleString('fr-FR')}
@@ -121,8 +121,8 @@ export default function PortefeuillePage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`text-sm font-medium ${tx.to.toLowerCase() === walletAddress.toLowerCase() ? 'text-green-600' : 'text-gray-900'}`}>
-                          {tx.to.toLowerCase() === walletAddress.toLowerCase() ? '+' : '-'}
+                        <p className={`text-sm font-medium ${tx.to.toLowerCase() === walletAddress?.toLowerCase() ? 'text-green-600' : 'text-gray-900'}`}>
+                          {tx.to.toLowerCase() === walletAddress?.toLowerCase() ? '+' : '-'}
                           {(Number(tx.value) / 10**18).toFixed(4)} ETH
                         </p>
                         <a href={`https://sepolia.etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline">

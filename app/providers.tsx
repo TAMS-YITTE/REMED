@@ -1,10 +1,61 @@
 'use client';
 
-import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
 import { useEffect, useState, createContext } from 'react';
 import posthog from 'posthog-js';
 
-export const MockAuthContext = createContext<any>(null);
+export const AuthContext = createContext<any>(null);
+
+function MockAuthProvider({ children }: { children: React.ReactNode }) {
+  const [mockAuth, setMockAuth] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('mockAuth');
+    if (saved === 'true') setMockAuth(true);
+  }, []);
+
+  const login = () => {
+    setMockAuth(true);
+    localStorage.setItem('mockAuth', 'true');
+  };
+
+  const logout = () => {
+    setMockAuth(false);
+    localStorage.removeItem('mockAuth');
+  };
+
+  const value = {
+    ready: true,
+    authenticated: mockAuth,
+    user: mockAuth ? { id: 'mock_user_123' } : null,
+    walletAddress: mockAuth ? '0xMockWalletAddress1234567890abcdef1234567' : undefined,
+    login,
+    logout,
+    isReady: true,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+function RealAuthProvider({ children }: { children: React.ReactNode }) {
+  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { wallets } = useWallets();
+
+  const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
+  const walletAddress = embeddedWallet?.address;
+
+  const value = {
+    ready,
+    authenticated,
+    user,
+    walletAddress,
+    login,
+    logout,
+    isReady: ready,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -22,12 +73,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const isMock = !appId || appId === 'cldummyappid0000000000000' || appId.includes('votre');
 
   if (isMock) {
-    // Mode mock local quand les clés ne sont pas configurées
-    return (
-      <MockAuthContext.Provider value={{ isMock: true }}>
-        {children}
-      </MockAuthContext.Provider>
-    );
+    return <MockAuthProvider>{children}</MockAuthProvider>;
   }
 
   return (
@@ -46,9 +92,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         } as any,
       }}
     >
-      <MockAuthContext.Provider value={{ isMock: false }}>
-        {children}
-      </MockAuthContext.Provider>
+      <RealAuthProvider>{children}</RealAuthProvider>
     </PrivyProvider>
   );
 }

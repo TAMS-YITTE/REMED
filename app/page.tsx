@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main className="bg-white text-gray-900">
       {/* NAVIGATION */}
-      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-200 sticky top-0 bg-white z-10">
+      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-200/50 sticky top-0 bg-white/80 backdrop-blur-md z-50">
         <Link href="/" className="text-lg font-semibold tracking-tight text-gray-900 no-underline">
           rem<span className="text-[#534AB7]">e</span>dly
         </Link>
@@ -41,7 +41,7 @@ export default function Home() {
         </motion.div>
 
         <div className="flex flex-col sm:flex-row gap-2 max-w-[400px] mx-auto mb-3">
-          <Link href="/acheter" className="flex-1 bg-[#534AB7] text-white border-none px-5 py-3 rounded-lg text-[16px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity text-center no-underline shadow-sm">
+          <Link href="/acheter" className="flex-1 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white border-none px-5 py-3.5 rounded-xl text-[16px] font-medium cursor-pointer whitespace-nowrap hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-500/30 transition-all duration-200 text-center no-underline shadow-md">
             Acheter maintenant →
           </Link>
         </div>
@@ -79,19 +79,19 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-200"
       >
-        <div className="p-8 md:border-r border-b md:border-b-0 border-gray-200">
-          <div className="w-9 h-9 bg-[#EEEDFE] rounded-lg flex items-center justify-center mb-4 text-lg">🔐</div>
-          <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Wallet automatique</h3>
+        <div className="p-8 md:border-r border-b md:border-b-0 border-gray-200/50 hover:bg-gray-50/50 transition-colors duration-300">
+          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-5 text-xl shadow-sm border border-indigo-100/50">🔐</div>
+          <h3 className="text-[16px] font-semibold text-gray-900 mb-2">Wallet automatique</h3>
           <p className="text-sm text-gray-600 leading-relaxed">Un wallet sécurisé est créé pour toi à l'inscription. Pas de seed phrase à noter, pas de configuration.</p>
         </div>
-        <div className="p-8 md:border-r border-b md:border-b-0 border-gray-200">
-          <div className="w-9 h-9 bg-[#EEEDFE] rounded-lg flex items-center justify-center mb-4 text-lg">💶</div>
-          <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Frais transparents</h3>
+        <div className="p-8 md:border-r border-b md:border-b-0 border-gray-200/50 hover:bg-gray-50/50 transition-colors duration-300">
+          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-5 text-xl shadow-sm border border-indigo-100/50">💶</div>
+          <h3 className="text-[16px] font-semibold text-gray-900 mb-2">Frais transparents</h3>
           <p className="text-sm text-gray-600 leading-relaxed">Tu vois exactement ce que tu paies avant de confirmer. Aucune surprise cachée dans le spread.</p>
         </div>
-        <div className="p-8">
-          <div className="w-9 h-9 bg-[#EEEDFE] rounded-lg flex items-center justify-center mb-4 text-lg">💬</div>
-          <h3 className="text-[15px] font-semibold text-gray-900 mb-1.5">Support humain</h3>
+        <div className="p-8 hover:bg-gray-50/50 transition-colors duration-300">
+          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center mb-5 text-xl shadow-sm border border-indigo-100/50">💬</div>
+          <h3 className="text-[16px] font-semibold text-gray-900 mb-2">Support humain</h3>
           <p className="text-sm text-gray-600 leading-relaxed">Une question ? Une vraie personne te répond en moins d'une heure. Pas un bot, pas un ticket.</p>
         </div>
       </motion.div>
@@ -158,7 +158,7 @@ export default function Home() {
         <p className="text-white/75 mb-8 text-base">Commence à acheter tes cryptos dès aujourd'hui.</p>
         
         <div className="flex flex-col sm:flex-row gap-2 max-w-[380px] mx-auto mb-3">
-          <Link href="/acheter" className="flex-1 bg-white text-[#534AB7] border-none px-5 py-3 rounded-lg text-[16px] font-medium cursor-pointer whitespace-nowrap hover:opacity-90 transition-opacity text-center no-underline shadow-sm">
+          <Link href="/acheter" className="flex-1 bg-white text-indigo-700 border-none px-5 py-3.5 rounded-xl text-[16px] font-medium cursor-pointer whitespace-nowrap hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200 text-center no-underline shadow-md">
             Acheter maintenant →
           </Link>
         </div>

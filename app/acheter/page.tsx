@@ -12,22 +12,22 @@ function AcheterContent() {
 
   if (!authenticated) {
     return (
-      <div style={{ textAlign: 'center', padding: '4rem 1.5rem' }}>
-        <h2>Connecte-toi pour acheter</h2>
-        <p style={{ color: '#555', margin: '1rem 0 2rem' }}>
-          Un wallet sécurisé sera créé automatiquement pour toi.
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
+        <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-4">
+          Connecte-toi pour acheter
+        </h2>
+        <p className="text-lg text-gray-600 mb-8 max-w-md leading-relaxed">
+          Un wallet sécurisé sera créé automatiquement pour toi. Tu pourras ensuite procéder à l'achat en toute simplicité.
         </p>
         <button
           onClick={login}
-          style={{
-            background: '#534AB7',
-            color: '#fff',
-            border: 'none',
-            padding: '12px 28px',
-            borderRadius: 8,
-            fontSize: 16,
-            cursor: 'pointer',
-          }}
+          className="bg-indigo-600 text-white font-medium px-8 py-3.5 rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-indigo-300 hover:-translate-y-0.5 transition-all duration-200"
         >
           Créer mon compte gratuitement
         </button>
@@ -36,8 +36,8 @@ function AcheterContent() {
   }
 
   return (
-    <div style={{ maxWidth: 480, margin: '2rem auto', padding: '0 1rem' }}>
-      <h1 style={{ fontSize: 24, fontWeight: 600, marginBottom: '1.5rem' }}>
+    <div className="w-full max-w-md mx-auto py-10 px-4 sm:px-0">
+      <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-6">
         Acheter de la crypto
       </h1>
       <BuyWidget crypto={crypto} />

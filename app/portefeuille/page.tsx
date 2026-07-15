@@ -10,7 +10,7 @@ import { AuthButton } from '@/components/AuthButton';
 import { Footer } from '@/components/Footer';
 
 export default function PortefeuillePage() {
-  const { isReady, authenticated, walletAddress, solanaWalletAddress, bitcoinWalletAddress } = useAuth();
+  const { isReady, authenticated, walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet } = useAuth();
   const [walletData, setWalletData] = useState<WalletData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
 
@@ -71,7 +71,7 @@ export default function PortefeuillePage() {
 
         {walletAddress ? (
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="mb-8">
-            <WalletBalance walletAddress={walletAddress} solanaWalletAddress={solanaWalletAddress} bitcoinWalletAddress={bitcoinWalletAddress} balance={walletData?.balanceEth} isLoading={isLoadingData} />
+            <WalletBalance walletAddress={walletAddress} solanaWalletAddress={solanaWalletAddress} bitcoinWalletAddress={bitcoinWalletAddress} onCreateBitcoinWallet={createBitcoinWallet} balance={walletData?.balanceEth} isLoading={isLoadingData} />
           </motion.div>
         ) : (
           <div className="bg-yellow-50 text-yellow-800 p-4 rounded-xl text-sm mb-8">

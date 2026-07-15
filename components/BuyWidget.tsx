@@ -9,7 +9,7 @@ interface BuyWidgetProps {
 }
 
 export function BuyWidget({ crypto = 'btc' }: BuyWidgetProps) {
-  const [provider, setProvider] = useState<'moonpay' | 'transak'>('moonpay');
+  const [provider, setProvider] = useState<'moonpay' | 'transak'>('transak');
 
   return (
     <div>

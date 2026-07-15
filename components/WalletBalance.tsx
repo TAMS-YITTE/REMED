@@ -5,9 +5,11 @@ import { Copy, Check, Wallet } from 'lucide-react';
 
 interface WalletBalanceProps {
   walletAddress: string;
+  balance?: string;
+  isLoading?: boolean;
 }
 
-export function WalletBalance({ walletAddress }: WalletBalanceProps) {
+export function WalletBalance({ walletAddress, balance, isLoading }: WalletBalanceProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -23,9 +25,13 @@ export function WalletBalance({ walletAddress }: WalletBalanceProps) {
       
       <div className="relative flex justify-between items-start mb-8 z-10">
         <div>
-          <h2 className="text-[13px] font-medium text-white/70 mb-1.5 uppercase tracking-wider">Solde Total (Est.)</h2>
-          <div className="text-4xl font-semibold tracking-tight">
-            0,00 €
+          <h2 className="text-[13px] font-medium text-white/70 mb-1.5 uppercase tracking-wider">Solde Total (ETH Testnet)</h2>
+          <div className="text-4xl font-semibold tracking-tight flex items-center gap-3">
+            {isLoading ? (
+              <div className="h-10 w-32 bg-white/20 animate-pulse rounded-lg"></div>
+            ) : (
+              <>{balance || "0.00"} <span className="text-xl text-white/80">ETH</span></>
+            )}
           </div>
         </div>
         <div className="bg-white/10 p-3 rounded-xl backdrop-blur-sm border border-white/20">

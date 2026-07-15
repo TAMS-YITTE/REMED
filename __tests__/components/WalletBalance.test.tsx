@@ -27,9 +27,9 @@ describe('WalletBalance', () => {
   });
 
   it('renders correctly with given wallet address', () => {
-    render(<WalletBalance walletAddress="0x123abc" />);
-    expect(screen.getByText('Solde Total (Est.)')).toBeInTheDocument();
-    expect(screen.getByText('0,00 €')).toBeInTheDocument();
+    render(<WalletBalance walletAddress="0x123abc" balance="0.00" />);
+    expect(screen.getByText('Solde Total (ETH Testnet)')).toBeInTheDocument();
+    expect(screen.getByText('0.00')).toBeInTheDocument();
     expect(screen.getByText('0x123abc')).toBeInTheDocument();
   });
 

@@ -5,6 +5,10 @@ import { useAuth } from '@/hooks/useAuth';
 
 jest.mock('@/hooks/useAuth');
 
+jest.mock('@/app/actions/wallet', () => ({
+  getWalletData: jest.fn().mockResolvedValue({ balanceEth: '0.00', transactions: [] })
+}));
+
 jest.mock('@/components/WalletBalance', () => ({
   WalletBalance: ({ walletAddress }: { walletAddress: string }) => (
     <div data-testid="wallet-balance">Balance for {walletAddress}</div>

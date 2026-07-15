@@ -7,7 +7,7 @@ interface MoonPayWidgetProps {
   crypto?: string;
 }
 
-export function MoonPayWidget({ crypto = 'btc' }: MoonPayWidgetProps) {
+export function MoonPayWidget({ crypto = 'eth' }: MoonPayWidgetProps) {
   const { walletAddress } = useAuth();
 
   if (!walletAddress) return null;

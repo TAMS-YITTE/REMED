@@ -9,7 +9,7 @@ interface BuyWidgetProps {
   crypto?: string;
 }
 
-export function BuyWidget({ crypto = 'btc' }: BuyWidgetProps) {
+export function BuyWidget({ crypto = 'eth' }: BuyWidgetProps) {
   const [provider, setProvider] = useState<'moonpay' | 'transak'>('transak');
 
   const { walletAddress } = useAuth();

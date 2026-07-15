@@ -9,9 +9,10 @@ interface WalletBalanceProps {
   bitcoinWalletAddress?: string;
   balance?: string;
   isLoading?: boolean;
+  onCreateBitcoinWallet?: () => void;
 }
 
-export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalletAddress, balance, isLoading }: WalletBalanceProps) {
+export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalletAddress, balance, isLoading, onCreateBitcoinWallet }: WalletBalanceProps) {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
   const handleCopy = (address: string) => {
@@ -20,8 +21,26 @@ export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalle
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
-  const AddressRow = ({ label, address }: { label: string, address?: string }) => {
-    if (!address) return null;
+  const AddressRow = ({ label, address, onGenerate }: { label: string, address?: string, onGenerate?: () => void }) => {
+    if (!address) {
+      if (onGenerate) {
+        return (
+          <div className="flex items-center justify-between gap-3 bg-white/5 p-3 rounded-lg border border-white/10 border-dashed">
+            <div className="flex flex-col flex-1 overflow-hidden">
+              <span className="text-[11px] text-indigo-200 font-medium uppercase tracking-wider mb-0.5">{label}</span>
+              <span className="text-[12px] text-white/50 italic">Non générée</span>
+            </div>
+            <button 
+              onClick={onGenerate}
+              className="shrink-0 text-[11px] font-medium text-white bg-indigo-500/30 border border-indigo-400/30 px-3 py-1.5 rounded-md hover:bg-indigo-500/50 transition-colors"
+            >
+              Générer
+            </button>
+          </div>
+        );
+      }
+      return null;
+    }
     return (
       <div className="flex items-center justify-between gap-3 bg-white/10 p-3 rounded-lg border border-white/10 hover:bg-white/15 transition-colors">
         <div className="flex flex-col flex-1 overflow-hidden">
@@ -74,7 +93,7 @@ export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalle
         <div className="flex flex-col gap-2">
           <AddressRow label="Ethereum / EVM" address={walletAddress} />
           <AddressRow label="Solana" address={solanaWalletAddress} />
-          <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} />
+          <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} onGenerate={onCreateBitcoinWallet} />
         </div>
       </div>
     </div>

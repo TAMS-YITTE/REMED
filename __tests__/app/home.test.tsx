@@ -13,7 +13,7 @@ describe('Home page (/)', () => {
   it('shows the risk disclaimer above the fold', () => {
     render(<Home />);
     expect(
-      screen.getByText(/crypto-actifs sont très volatils/i)
+      screen.getByText(/investissement en crypto-actifs est risqué/i)
     ).toBeInTheDocument();
   });
 

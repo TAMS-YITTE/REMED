@@ -213,5 +213,132 @@ Heureusement, il existe aujourd'hui des entreprises françaises spécialisées (
 
 *Avertissement : Les règles fiscales peuvent évoluer. Ce guide est à but éducatif et ne remplace pas les conseils d'un professionnel de la fiscalité ou d'un expert-comptable.* 
     `
+  },
+  {
+    slug: 'comment-acheter-bitcoin-france',
+    title: "Comment acheter du Bitcoin en France en 2026 : Le Guide",
+    excerpt: "Découvrez comment investir dans le Bitcoin en toute sécurité, les étapes à suivre, et la différence entre carte bancaire et virement.",
+    category: 'Débutant',
+    date: '19 Juillet 2026',
+    readTime: '5 min',
+    content: `
+## Pourquoi acheter en France en 2026 ?
+
+Acheter du Bitcoin en France n'a jamais été aussi simple et sécurisé qu'aujourd'hui. Fini l'époque des plateformes obscures situées dans des paradis fiscaux. Le cadre légal européen (avec la réglementation MiCA) et français (PSAN) apporte aujourd'hui de vraies garanties de sécurité aux investisseurs.
+
+Investir via une plateforme régulée et transparente est le premier pas indispensable pour protéger son capital.
+
+### Les 4 étapes pour acheter (le parcours Remedly)
+
+L'achat est devenu aussi facile qu'un achat sur une boutique en ligne classique. Voici comment se déroule le parcours :
+
+1. **Choisir sa crypto et le montant :** Vous sélectionnez le Bitcoin (ou Solana, Ethereum) et indiquez le montant en euros (à partir de 30€ seulement).
+2. **S'identifier :** Vous renseignez votre e-mail. C'est tout. Un portefeuille (wallet) hautement sécurisé est créé automatiquement pour vous, sans mot de passe complexe à retenir.
+3. **Payer :** Vous choisissez votre méthode de paiement (Virement SEPA ou Carte Bancaire/Apple Pay).
+4. **Recevoir :** Vos cryptos arrivent directement dans votre portefeuille privé. Vous en êtes le seul et unique propriétaire.
+
+### Carte Bancaire vs Virement SEPA : Que choisir ?
+
+Lorsque vous achetez de la cryptomonnaie, les frais dépendent grandement du moyen de paiement choisi :
+
+* **La Carte Bancaire (ou Apple Pay) :** C'est la méthode la plus rapide. L'achat est *instantané*. C'est idéal si le marché s'effondre et que vous souhaitez acheter immédiatement à un bon prix. En contrepartie, les frais liés au réseau bancaire (Visa/Mastercard) sont plus élevés.
+* **Le Virement SEPA :** C'est la méthode recommandée pour les achats réguliers ou les gros montants. Les frais sont très transparents et considérablement réduits. Le seul inconvénient est le délai bancaire : cela peut prendre de 1 à 3 jours ouvrés selon votre banque.
+
+### Le mot de la fin
+
+Il n'y a pas besoin d'être un expert en informatique pour commencer à investir. Sur Remedly, vous bénéficiez du parcours le plus fluide du marché, avec des frais transparents et une création de wallet invisible.
+
+[Démarrez votre premier achat de Bitcoin dès maintenant !](/acheter)
+    `
+  },
+  {
+    slug: 'perte-acces-compte-wallet',
+    title: "Perdre l'accès à son compte crypto : comment ça marche ?",
+    excerpt: "C'est la plus grande peur des débutants : que se passe-t-il si je perds mon mot de passe ou mon téléphone ? Faisons le point.",
+    category: 'Sécurité',
+    date: '20 Juillet 2026',
+    readTime: '4 min',
+    content: `
+## La peur de tout perdre
+
+C'est une histoire que l'on entend souvent : "Un homme cherche un vieux disque dur dans une décharge contenant des millions d'euros en Bitcoin". 
+
+La plus grande angoisse des débutants n'est souvent pas la volatilité du marché, mais la peur de perdre l'accès à son compte ou de faire une erreur de manipulation fatale.
+
+### Le problème des wallets classiques
+
+Historiquement, lorsque vous créez un vrai portefeuille crypto décentralisé (Metamask, Ledger), le logiciel vous fournit une **Seed Phrase** : une suite de 12 à 24 mots anglais. 
+
+Cette phrase est votre unique clé d'accès. Si vous perdez votre ordinateur, vous pouvez restaurer vos fonds grâce à ces 24 mots. 
+**Mais si vous perdez ce bout de papier contenant les 24 mots, vos fonds sont perdus à tout jamais.** Il n'y a pas de service client à appeler. C'est le prix de la décentralisation totale.
+
+### L'approche innovante de Remedly
+
+Chez Remedly, nous pensons que la sécurité ne doit pas se faire au détriment de la simplicité. C'est pourquoi nous utilisons la technologie des *Embedded Wallets*.
+
+**Comment récupérer mon compte si je change de téléphone ?**
+Votre compte est lié à votre adresse e-mail ou compte Google. Il n'y a aucune 'phrase de récupération' (seed phrase) complexe à mémoriser. Il vous suffit de vous reconnecter avec le même e-mail.
+
+Vous gardez le contrôle total de vos fonds (non-custodial), mais l'accès est sécurisé de manière transparente.
+
+### Les limites à connaître (Soyons honnêtes)
+
+Cette simplicité repose sur un pilier : la sécurité de votre boîte mail. 
+
+Si vous perdez l'accès à votre adresse e-mail principale (et que vous ne pouvez pas la récupérer via les procédures normales de Gmail, Outlook, etc.), vous risquez de perdre l'accès à votre compte crypto associé. 
+C'est pourquoi nous recommandons toujours d'activer la double authentification (2FA) sur votre boîte mail principale.
+
+Sur Remedly, nous avons éliminé le stress des 24 mots pour que vous puissiez investir sereinement.
+    `
+  },
+  {
+    slug: 'lexique-crypto-20-termes',
+    title: "Le lexique crypto pour débutant : 20 termes à connaître",
+    excerpt: "Bull run, Halving, Seed Phrase... Décryptez le jargon souvent opaque de l'écosystème crypto avec ce dictionnaire simplifié.",
+    category: 'Débutant',
+    date: '21 Juillet 2026',
+    readTime: '6 min',
+    content: `
+## Décoder le jargon crypto
+
+L'écosystème Web3 possède son propre langage, souvent composé d'acronymes anglais. Voici 20 termes expliqués simplement pour ne plus vous sentir perdu.
+
+### A à E
+
+* **Adresse publique :** C'est l'équivalent de votre RIB (IBAN). Vous pouvez la partager publiquement pour que l'on vous envoie des cryptos.
+* **Altcoin (Alternative Coin) :** Désigne toutes les cryptomonnaies autres que le Bitcoin (Ethereum, Solana, Ripple...).
+* **Blockchain :** Un registre numérique public, sécurisé et décentralisé, qui enregistre toutes les transactions (le grand livre de comptes).
+* **CEX (Centralized Exchange) :** Une plateforme d'échange gérée par une entreprise (ex: Binance, Coinbase).
+* **Cold Wallet :** Un portefeuille "froid" physique (comme une clé USB) non connecté à internet pour stocker ses cryptos de manière très sécurisée.
+* **DEX (Decentralized Exchange) :** Une bourse d'échange décentralisée, fonctionnant sans entreprise derrière, gérée uniquement par du code (Smart Contracts).
+* **DeFi (Decentralized Finance) :** La finance décentralisée, permettant d'emprunter, prêter ou échanger des actifs sans banque.
+
+### F à M
+
+* **FOMO (Fear Of Missing Out) :** La peur de rater une opportunité. C'est l'émotion qui pousse souvent les débutants à acheter quand les prix sont déjà très hauts.
+* **Frais de réseau (Gas Fee) :** Les frais payés aux validateurs/mineurs pour inscrire votre transaction sur la blockchain.
+* **Halving :** Un événement automatique (tous les 4 ans sur Bitcoin) qui divise par deux la création de nouvelles pièces, augmentant ainsi sa rareté.
+* **HODL :** Une faute de frappe historique du mot "Hold" (Garder) devenue un mème. Signifie "conserver ses cryptos à long terme, peu importe les baisses".
+* **Hot Wallet :** Un portefeuille logiciel connecté à internet (ex: une extension de navigateur ou une application mobile).
+* **Layer 1 / Layer 2 :** Un Layer 1 (Couche 1) est une blockchain principale (Bitcoin, Ethereum). Un Layer 2 est un réseau secondaire construit par-dessus pour la rendre plus rapide et moins chère.
+* **Market Cap (Capitalisation boursière) :** La valeur totale de toutes les pièces en circulation d'une cryptomonnaie (Prix d'une pièce multiplié par le nombre de pièces).
+
+### N à S
+
+* **NFT (Non-Fungible Token) :** Un jeton numérique unique représentant la propriété d'un actif (art, musique, objet dans un jeu).
+* **Seed Phrase (Phrase de récupération) :** Une suite de 12 à 24 mots générée lors de la création d'un portefeuille crypto classique. C'est le mot de passe ultime.
+* **Stablecoin :** Une cryptomonnaie conçue pour conserver une valeur stable, souvent indexée au dollar. (Pour aller plus loin, lisez notre article : [Comprendre les stablecoins](/apprendre/comprendre-les-stablecoins)).
+* **Staking :** Le fait de bloquer ses cryptomonnaies pour aider à sécuriser le réseau en échange de récompenses (des intérêts).
+
+### T à W
+
+* **Token (Jeton) :** Un actif numérique émis sur une blockchain existante (contrairement à un "Coin" qui a sa propre blockchain, comme le Bitcoin).
+* **Volatilité :** L'ampleur des variations de prix d'un actif. Les cryptomonnaies sont très volatiles (leurs prix montent et baissent rapidement).
+* **Wallet (Portefeuille) :** Un logiciel ou appareil matériel permettant de stocker vos clés privées et d'interagir avec la blockchain.
+* **Wallet non-custodial :** Un portefeuille où vous êtes le seul à détenir les clés privées. Vous seul avez accès à vos fonds (comme sur Remedly).
+* **Whale (Baleine) :** Une personne ou entité qui possède une quantité massive d'une cryptomonnaie, capable d'influencer le prix du marché.
+
+Sur Remedly, nous simplifions tout ce jargon en créant votre portefeuille non-custodial automatiquement, sans Seed Phrase !
+    `
   }
 ];

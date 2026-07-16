@@ -1,6 +1,7 @@
 'use server';
 
-import { Transaction, WalletData, safeFetch } from './utils';
+import { safeFetch } from './utils';
+import type { Transaction, WalletData } from './utils';
 
 // Re-export pour la compatibilité avec l'existant
 export type { Transaction, WalletData };

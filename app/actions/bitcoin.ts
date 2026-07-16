@@ -1,6 +1,7 @@
 'use server';
 
-import { Transaction, WalletData, safeFetch } from './utils';
+import { safeFetch } from './utils';
+import type { Transaction, WalletData } from './utils';
 
 export async function getBitcoinWalletData(address: string): Promise<WalletData> {
   const MEMPOOL_API = 'https://mempool.space/testnet/api';

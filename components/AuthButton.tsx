@@ -14,13 +14,13 @@ export function AuthButton() {
     return (
       <div className="flex items-center gap-4">
         {pathname !== '/portefeuille' && (
-          <Link href="/portefeuille" className="text-[14px] font-medium text-[#534AB7] hover:underline">
+          <Link href="/portefeuille" className="text-[14px] font-medium text-indigo-400 hover:underline">
             Mon Portefeuille
           </Link>
         )}
         <button 
           onClick={logout}
-          className="text-[14px] font-medium text-gray-500 hover:text-gray-900 transition-colors"
+          className="text-[14px] font-medium text-gray-300 hover:text-white transition-colors"
         >
           Déconnexion
         </button>

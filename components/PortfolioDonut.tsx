@@ -15,7 +15,7 @@ export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutP
     eth: '#6366f1', // indigo-500
     sol: '#10b981', // emerald-500
     btc: '#f59e0b', // amber-500
-    empty: '#f3f4f6' // gray-100
+    empty: '#374151' // gray-700
   };
 
   const size = 160;
@@ -37,7 +37,7 @@ export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutP
   const btcOffset = solOffset - (solPercent * circumference);
 
   return (
-    <div className="flex items-center gap-8 bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+    <div className="flex items-center gap-8 bg-[#25274A] border border-white/10 rounded-2xl p-6 shadow-lg">
       <div className="relative w-40 h-40 shrink-0">
         <svg width={size} height={size} className="-rotate-90 transform">
           {isEmpty ? (
@@ -93,7 +93,7 @@ export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutP
       </div>
       
       <div className="flex-1">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4 uppercase tracking-wider">Répartition</h3>
+        <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Répartition</h3>
         <div className="flex flex-col gap-3">
           <LegendRow label="Ethereum (ETH)" value={ethValue} total={total} color="bg-indigo-500" />
           <LegendRow label="Solana (SOL)" value={solValue} total={total} color="bg-emerald-500" />
@@ -111,10 +111,10 @@ function LegendRow({ label, value, total, color }: { label: string, value: numbe
     <div className="flex items-center justify-between text-sm">
       <div className="flex items-center gap-2">
         <div className={`w-3 h-3 rounded-full ${color}`}></div>
-        <span className="text-gray-600">{label}</span>
+        <span className="text-gray-300">{label}</span>
       </div>
       <div className="flex items-center gap-3">
-        <span className="font-medium text-gray-900">{value.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+        <span className="font-medium text-white">{value.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
         <span className="text-gray-400 w-8 text-right">{percent}%</span>
       </div>
     </div>

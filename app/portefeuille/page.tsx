@@ -79,17 +79,17 @@ export default function PortefeuillePage() {
 
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#534AB7]"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#1B1C3E]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
       </div>
     );
   }
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6 text-center">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Accès restreint</h1>
-        <p className="text-gray-500 mb-6 max-w-md">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#1B1C3E] px-6 text-center">
+        <h1 className="text-2xl font-semibold text-white mb-2">Accès restreint</h1>
+        <p className="text-gray-400 mb-6 max-w-md">
           Vous devez être connecté pour accéder à votre portefeuille.
         </p>
         <AuthButton />
@@ -98,17 +98,17 @@ export default function PortefeuillePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#1B1C3E] text-white">
       {/* NAVIGATION */}
-      <nav className="flex items-center justify-between px-6 py-4 md:px-8 md:py-5 border-b border-gray-200/50 sticky top-0 bg-white/80 backdrop-blur-xl z-50">
+      <nav className="flex items-center justify-between px-6 py-4 md:px-8 md:py-5 border-b border-white/10 sticky top-0 bg-[#1B1C3E]/80 backdrop-blur-xl z-50">
         <div className="flex items-center gap-8">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-gray-900 no-underline">
-            rem<span className="text-indigo-600">e</span>dly
+          <Link href="/" className="text-xl font-bold tracking-tighter text-white no-underline">
+            rem<span className="text-indigo-400">e</span>dly
           </Link>
           <div className="hidden md:flex gap-6">
-            <Link href="/" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Accueil</Link>
-            <Link href="/apprendre" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Apprendre</Link>
-            <Link href="/acheter" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Acheter</Link>
+            <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Accueil</Link>
+            <Link href="/apprendre" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Apprendre</Link>
+            <Link href="/acheter" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Acheter</Link>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -118,13 +118,13 @@ export default function PortefeuillePage() {
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-8">
-          <h1 className="text-3xl font-semibold text-gray-900 tracking-tight mb-2">
+          <h1 className="text-3xl font-semibold text-white tracking-tight mb-2">
             Votre Portefeuille
           </h1>
-          <p className="text-gray-500">
+          <p className="text-gray-400">
             Gérez vos cryptomonnaies en toute sécurité.
           </p>
-          <p className="text-[13px] text-gray-400 mt-2 bg-gray-100 p-3 rounded-lg border border-gray-200">
+          <p className="text-[13px] text-gray-300 mt-2 bg-[#25274A] p-3 rounded-lg border border-white/10">
             🔒 <strong>100% Non-Custodial :</strong> Ce portefeuille a été généré automatiquement par <strong>Privy</strong> lors de votre connexion. Vous seul y avez accès. Remedly ne détient pas vos fonds.
           </p>
         </motion.div>
@@ -146,7 +146,7 @@ export default function PortefeuillePage() {
             />
           </motion.div>
         ) : (
-          <div className="bg-yellow-50 text-yellow-800 p-4 rounded-xl text-sm mb-8">
+          <div className="bg-yellow-900/30 text-yellow-400 p-4 rounded-xl text-sm mb-8">
             Génération de votre portefeuille en cours...
           </div>
         )}
@@ -157,23 +157,23 @@ export default function PortefeuillePage() {
 
         {/* CTAs */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 bg-[#EEEDFE] rounded-full flex items-center justify-center mx-auto mb-4 text-xl">🚀</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Acheter</h3>
-            <p className="text-gray-500 text-sm mb-4">Investissez par carte bancaire ou virement.</p>
-            <Link href="/acheter" className="inline-block bg-[#534AB7] text-white px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90 w-full transition-opacity">Acheter des cryptos</Link>
+          <div className="bg-[#25274A] border border-white/10 rounded-2xl p-6 text-center">
+            <div className="w-12 h-12 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">🚀</div>
+            <h3 className="text-lg font-semibold text-white mb-2">Acheter</h3>
+            <p className="text-gray-400 text-sm mb-4">Investissez par carte bancaire ou virement.</p>
+            <Link href="/acheter" className="inline-block bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90 w-full transition-opacity">Acheter des cryptos</Link>
           </div>
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center">
-            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">💸</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Envoyer</h3>
-            <p className="text-gray-500 text-sm mb-4">Envoyez des cryptos vers une autre adresse.</p>
-            <button onClick={() => setIsSendModalOpen(true)} className="inline-block bg-white text-gray-700 border border-gray-200 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 w-full transition-colors">Envoyer des cryptos</button>
+          <div className="bg-[#25274A] border border-white/10 rounded-2xl p-6 text-center">
+            <div className="w-12 h-12 bg-[#1B1C3E] rounded-full flex items-center justify-center mx-auto mb-4 text-xl">💸</div>
+            <h3 className="text-lg font-semibold text-white mb-2">Envoyer</h3>
+            <p className="text-gray-400 text-sm mb-4">Envoyez des cryptos vers une autre adresse.</p>
+            <button onClick={() => setIsSendModalOpen(true)} className="inline-block bg-[#1B1C3E] text-white border border-white/10 px-6 py-2 rounded-lg text-sm font-medium hover:bg-[#353866] w-full transition-colors">Envoyer des cryptos</button>
           </div>
         </motion.div>
           {/* HISTORIQUE */}
           <div className="mt-10">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Dernières transactions</h3>
-            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <h3 className="text-lg font-semibold text-white mb-4">Dernières transactions</h3>
+            <div className="bg-[#25274A] border border-white/10 rounded-2xl overflow-hidden">
               <TransactionHistory 
                 transactions={allTransactions} 
                 isLoading={isLoadingHistory} 

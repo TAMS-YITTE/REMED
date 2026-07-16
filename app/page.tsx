@@ -101,7 +101,7 @@ export default function Home() {
   };
 
   return (
-    <main className="bg-[#fafafa] text-gray-900 min-h-screen flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900 pb-20 md:pb-0">
+    <main className="bg-[#1B1C3E] text-white min-h-screen flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200 pb-20 md:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -110,11 +110,11 @@ export default function Home() {
 
       {/* Bandeau MiCA Premium (Pill) */}
       <div className="flex justify-center pt-8 pb-2 px-4 relative z-20">
-        <div className="inline-flex items-center gap-2.5 bg-white/80 backdrop-blur-md border border-gray-200/80 shadow-sm px-4 py-2 rounded-full">
-          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-gray-100/80 text-gray-500">
+        <div className="inline-flex items-center gap-2.5 bg-[#25274A]/80 backdrop-blur-md border border-white/10 shadow-sm px-4 py-2 rounded-full">
+          <div className="flex items-center justify-center w-5 h-5 rounded-full bg-white/10 text-gray-300">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
-          <span className="text-[11px] md:text-[12px] text-gray-500 font-medium tracking-wide">
+          <span className="text-[11px] md:text-[12px] text-gray-300 font-medium tracking-wide">
             L'investissement en crypto-actifs est risqué. Vous pouvez perdre votre capital.
           </span>
         </div>
@@ -134,7 +134,7 @@ export default function Home() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="text-left"
           >
-            <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
+            <div className="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
@@ -142,14 +142,14 @@ export default function Home() {
               Disponible en France
             </div>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-gray-900 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
               La crypto,<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
                 simplement.
               </span>
             </h1>
             
-            <p className="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8 max-w-lg">
+            <p className="text-lg lg:text-xl text-gray-300 leading-relaxed mb-8 max-w-lg">
               Achetez Bitcoin, Ethereum et plus encore en 3 clics. Sans phrase de récupération complexe, avec une sécurité bancaire.
             </p>
 
@@ -158,18 +158,18 @@ export default function Home() {
                 Acheter maintenant
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </Link>
-              <Link href="/plateforme" className="flex items-center justify-center bg-white text-gray-700 border border-gray-200 px-6 py-4 rounded-xl text-base font-semibold hover:bg-gray-50 hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
+              <Link href="/plateforme" className="flex items-center justify-center bg-[#25274A] text-white border border-white/10 px-6 py-4 rounded-xl text-base font-semibold hover:bg-[#353866] hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
                 Découvrir la plateforme
               </Link>
             </div>
             
-            <div className="flex items-center gap-3 text-sm text-gray-500 font-medium">
+            <div className="flex items-center gap-3 text-sm text-gray-400 font-medium">
               <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full border-2 border-white bg-indigo-100 flex items-center justify-center text-xs">🚀</div>
-                <div className="w-8 h-8 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-xs">🔒</div>
-                <div className="w-8 h-8 rounded-full border-2 border-white bg-purple-100 flex items-center justify-center text-xs">⚡</div>
+                <div className="w-8 h-8 rounded-full border-2 border-[#1B1C3E] bg-[#25274A] flex items-center justify-center text-xs">🚀</div>
+                <div className="w-8 h-8 rounded-full border-2 border-[#1B1C3E] bg-[#25274A] flex items-center justify-center text-xs">🔒</div>
+                <div className="w-8 h-8 rounded-full border-2 border-[#1B1C3E] bg-[#25274A] flex items-center justify-center text-xs">⚡</div>
               </div>
-              <p>Rejoignez-nous en <strong className="text-gray-900">accès anticipé</strong></p>
+              <p>Rejoignez-nous en <strong className="text-white">accès anticipé</strong></p>
             </div>
           </motion.div>
 
@@ -182,43 +182,43 @@ export default function Home() {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-20 transform rotate-3"></div>
             
-            <div className="bg-white/90 backdrop-blur-xl border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-10">
+            <div className="bg-[#25274A]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative z-10">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-gray-900">Simulateur Rapide</h3>
+                <h3 className="font-bold text-white">Simulateur Rapide</h3>
                 <span className="flex items-center gap-1 text-xs font-semibold bg-green-50 text-green-700 px-2 py-1 rounded-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {prices ? 'Live' : 'Chargement...'}
                 </span>
               </div>
               
               <div className="space-y-4">
-                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-200/50 hover:border-indigo-300 transition-colors">
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Vous payez</label>
+                <div className="bg-[#1B1C3E] rounded-2xl p-4 border border-white/10 hover:border-indigo-500/50 transition-colors">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Vous payez</label>
                   <div className="flex items-center justify-between">
                     <input 
                       type="number" 
                       value={eurAmount}
                       onChange={(e) => setEurAmount(e.target.value)}
-                      className="bg-transparent text-3xl font-bold text-gray-900 w-full outline-none"
+                      className="bg-transparent text-3xl font-bold text-white w-full outline-none"
                       placeholder="0"
                     />
-                    <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-sm font-semibold text-gray-900">
+                    <div className="flex items-center gap-2 bg-[#25274A] px-3 py-1.5 rounded-xl border border-white/10 shadow-sm font-semibold text-white">
                       🇪🇺 EUR
                     </div>
                   </div>
                 </div>
 
                 <div className="flex justify-center -my-3 relative z-10 pointer-events-none">
-                  <div className="bg-white p-1 rounded-full border border-gray-100 shadow-sm">
-                    <div className="bg-gray-50 text-gray-400 p-2 rounded-full">
+                  <div className="bg-[#25274A] p-1 rounded-full border border-white/10 shadow-sm">
+                    <div className="bg-[#1B1C3E] text-gray-400 p-2 rounded-full">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100/50 relative">
-                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Vous recevez</label>
+                <div className="bg-indigo-500/10 rounded-2xl p-4 border border-indigo-500/20 relative">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Vous recevez</label>
                   <div className="flex items-center justify-between">
-                    <div className="text-3xl font-bold text-indigo-900 truncate pr-4">
+                    <div className="text-3xl font-bold text-indigo-300 truncate pr-4">
                       {cryptoAmount}
                     </div>
                     
@@ -226,7 +226,7 @@ export default function Home() {
                     <div className="relative" ref={selectRef}>
                       <button 
                         onClick={() => setIsSelectOpen(!isSelectOpen)}
-                        className="flex items-center gap-2 bg-white pl-3 pr-2 py-2 rounded-xl border border-gray-200 shadow-sm font-semibold text-gray-900 cursor-pointer hover:bg-gray-50 transition-colors outline-none w-[110px]"
+                        className="flex items-center gap-2 bg-[#25274A] pl-3 pr-2 py-2 rounded-xl border border-white/10 shadow-sm font-semibold text-white cursor-pointer hover:bg-[#353866] transition-colors outline-none w-[110px]"
                       >
                         <img src={selectedCrypto.icon} alt={selectedCrypto.name} className="w-5 h-5 rounded-full" />
                         <span className="truncate">{selectedCrypto.symbol}</span>
@@ -240,13 +240,13 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.15 }}
-                            className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 overflow-hidden"
+                            className="absolute right-0 top-full mt-2 w-64 bg-[#25274A] border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden"
                           >
-                            <div className="p-2 border-b border-gray-100">
+                            <div className="p-2 border-b border-white/10">
                               <input 
                                 type="text" 
                                 placeholder="Rechercher (ex: SOL, Ethereum)..." 
-                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                className="w-full bg-[#1B1C3E] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onClick={(e) => e.stopPropagation()}
@@ -266,7 +266,7 @@ export default function Home() {
                                       setIsSelectOpen(false);
                                       setSearchQuery('');
                                     }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${selectedCryptoId === c.id ? 'bg-indigo-50 text-indigo-700' : 'hover:bg-gray-50 text-gray-700'}`}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${selectedCryptoId === c.id ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-[#353866] text-gray-300'}`}
                                   >
                                     <img src={c.icon} alt={c.name} className="w-6 h-6 rounded-full" />
                                     <div className="flex flex-col">
@@ -291,29 +291,29 @@ export default function Home() {
               </div>
 
               {/* Encadrement des frais mis en avant */}
-              <div className="mt-6 bg-gray-50 rounded-xl p-4 text-sm border border-gray-100">
-                <div className="flex justify-between text-gray-600 mb-2">
+              <div className="mt-6 bg-[#1B1C3E] rounded-xl p-4 text-sm border border-white/10">
+                <div className="flex justify-between text-gray-400 mb-2">
                   <span>Taux estimé</span>
                   <span className="font-medium">1 {selectedCrypto.name} = {currentPrice ? currentPrice.toFixed(2) : '...'} €</span>
                 </div>
-                <div className="flex justify-between text-gray-900 font-semibold bg-white p-2 rounded-lg border border-gray-200/50 shadow-sm">
+                <div className="flex justify-between text-white font-semibold bg-[#25274A] p-2 rounded-lg border border-white/10 shadow-sm">
                   <span>Frais transparents (~1.99%)</span>
                   <span>{feeAmount > 0 ? feeAmount.toFixed(2) : '0.00'} €</span>
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-100">
+              <div className="mt-6 pt-4 border-t border-white/10">
                 <p className="text-center text-xs text-gray-400 mb-3 font-medium">Moyens de paiement acceptés</p>
                 <div className="flex justify-center items-center gap-4 opacity-80">
                   <span className="text-sm font-bold font-sans">Apple Pay</span>
                   <span className="text-sm font-bold font-sans italic">VISA</span>
-                  <span className="text-sm font-bold font-sans text-indigo-600 border-b-2 border-indigo-200">Virement (Recommandé)</span>
+                  <span className="text-sm font-bold font-sans text-indigo-400 border-b-2 border-indigo-500/30">Virement (Recommandé)</span>
                 </div>
               </div>
 
               <Link 
                 href={`/acheter?crypto=${selectedCryptoId}`}
-                className="w-full mt-6 bg-gray-900 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors shadow-lg hidden md:flex"
+                className="w-full mt-6 bg-indigo-600 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors shadow-lg hidden md:flex"
               >
                 Continuer l'achat
               </Link>
@@ -323,15 +323,15 @@ export default function Home() {
       </section>
 
       {/* PARTNERS / SOCIAL PROOF */}
-      <section className="py-10 border-y border-gray-200 bg-white">
+      <section className="py-10 border-y border-white/10 bg-[#1B1C3E]">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-center text-sm font-semibold text-gray-400 uppercase tracking-widest mb-6">
             L'infrastructure sécurisée par
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-            <span className="text-xl font-black text-gray-800">Transak</span>
-            <span className="text-xl font-black text-gray-800 tracking-tighter">MoonPay</span>
-            <span className="text-xl font-bold text-gray-800">Privy</span>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 text-white">
+            <span className="text-xl font-black">Transak</span>
+            <span className="text-xl font-black tracking-tighter">MoonPay</span>
+            <span className="text-xl font-bold">Privy</span>
           </div>
         </div>
       </section>
@@ -382,31 +382,31 @@ export default function Home() {
       {/* FEATURES PREMIUM */}
       <section className="py-16 px-6 max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-4">Acheter sans compromis</h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">Une expérience pensée pour être accessible à tous, tout en respectant les standards bancaires les plus stricts.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4">Acheter sans compromis</h2>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">Une expérience pensée pour être accessible à tous, tout en respectant les standards bancaires les plus stricts.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-shadow">
-            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-100">🛡️</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Sécurité Bancaire</h3>
-            <p className="text-gray-600 leading-relaxed text-sm">
+          <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
+            <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">🛡️</div>
+            <h3 className="text-xl font-bold text-white mb-3">Sécurité Bancaire</h3>
+            <p className="text-gray-300 leading-relaxed text-sm">
               Votre portefeuille non-custodial est créé automatiquement. Vous êtes le seul maître de vos fonds.
             </p>
           </div>
           
-          <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-shadow">
-            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-100">⚡</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Instantané</h3>
-            <p className="text-gray-600 leading-relaxed text-sm">
+          <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
+            <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">⚡</div>
+            <h3 className="text-xl font-bold text-white mb-3">Instantané</h3>
+            <p className="text-gray-300 leading-relaxed text-sm">
               Achetez par carte bancaire ou Apple Pay en moins de 2 minutes. Vos cryptos arrivent directement sur votre compte.
             </p>
           </div>
 
-          <div className="bg-white p-8 rounded-[20px] border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-lg transition-shadow">
-            <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-100">💶</div>
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Frais Transparents</h3>
-            <p className="text-gray-600 leading-relaxed text-sm">
+          <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
+            <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">💶</div>
+            <h3 className="text-xl font-bold text-white mb-3">Frais Transparents</h3>
+            <p className="text-gray-300 leading-relaxed text-sm">
               Privilégiez le virement SEPA pour réduire considérablement vos frais par rapport à la carte bancaire. Pas de spread caché.
             </p>
           </div>
@@ -414,25 +414,25 @@ export default function Home() {
       </section>
 
       {/* FAQ SECTION */}
-      <section className="py-20 px-6 bg-white border-t border-gray-100">
+      <section className="py-20 px-6 border-t border-white/10">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Questions fréquentes</h2>
-            <p className="text-gray-500">Tout ce que vous devez savoir avant de vous lancer.</p>
+            <h2 className="text-3xl font-bold text-white mb-4">Questions fréquentes</h2>
+            <p className="text-gray-400">Tout ce que vous devez savoir avant de vous lancer.</p>
           </div>
 
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <div 
                 key={index} 
-                className="border border-gray-200 rounded-2xl overflow-hidden bg-white"
+                className="border border-white/10 rounded-2xl overflow-hidden bg-[#25274A]"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
                   className="w-full flex items-center justify-between p-6 text-left focus:outline-none"
                 >
-                  <span className="font-semibold text-gray-900">{faq.q}</span>
-                  <span className={`text-indigo-600 transition-transform duration-200 ${openFaq === index ? 'rotate-180' : ''}`}>
+                  <span className="font-semibold text-white">{faq.q}</span>
+                  <span className={`text-indigo-400 transition-transform duration-200 ${openFaq === index ? 'rotate-180' : ''}`}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                   </span>
                 </button>
@@ -444,7 +444,7 @@ export default function Home() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="px-6 pb-6 text-gray-600 leading-relaxed text-sm">
+                      <div className="px-6 pb-6 text-gray-300 leading-relaxed text-sm">
                         {faq.a}
                       </div>
                     </motion.div>
@@ -455,8 +455,8 @@ export default function Home() {
           </div>
 
           <div className="mt-10 text-center">
-            <p className="text-gray-500 text-sm">
-              Vous avez d'autres questions ? <br/> Consultez notre <Link href="/apprendre" className="text-indigo-600 font-semibold hover:underline">Blog</Link> ou contactez notre support.
+            <p className="text-gray-400 text-sm">
+              Vous avez d'autres questions ? <br/> Consultez notre <Link href="/apprendre" className="text-indigo-400 font-semibold hover:underline">Blog</Link> ou contactez notre support.
             </p>
           </div>
         </div>

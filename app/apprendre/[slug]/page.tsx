@@ -32,7 +32,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   };
 
   return (
-    <main className="bg-white min-h-screen text-gray-900 flex flex-col">
+    <main className="bg-[#1B1C3E] min-h-screen text-white flex flex-col">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -40,34 +40,34 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <Navbar />
 
       <article className="flex-1 max-w-3xl mx-auto w-full px-6 py-16">
-        <Link href="/apprendre" className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-[#534AB7] mb-8 transition-colors">
+        <Link href="/apprendre" className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-indigo-400 mb-8 transition-colors">
           ← Retour à l'académie
         </Link>
         
-        <header className="mb-12 border-b border-gray-100 pb-8">
+        <header className="mb-12 border-b border-white/10 pb-8">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md">
+            <span className="text-xs font-semibold px-2.5 py-1 bg-[#25274A] text-indigo-400 rounded-md">
               {article.category}
             </span>
             <span className="text-xs text-gray-400 font-medium">
               {article.date} • {article.readTime} de lecture
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
             {article.title}
           </h1>
-          <p className="text-xl text-gray-500 leading-relaxed">
+          <p className="text-xl text-gray-400 leading-relaxed">
             {article.excerpt}
           </p>
         </header>
 
-        <div className="prose prose-lg prose-indigo max-w-none text-gray-600">
+        <div className="prose prose-lg prose-indigo prose-invert max-w-none text-gray-300">
           <ReactMarkdown
             components={{
-              h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4" {...props} />,
-              h3: ({node, ...props}) => <h3 className="text-xl font-bold text-gray-900 mt-8 mb-3" {...props} />,
+              h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-white mt-10 mb-4" {...props} />,
+              h3: ({node, ...props}) => <h3 className="text-xl font-bold text-white mt-8 mb-3" {...props} />,
               p: ({node, ...props}) => <p className="mb-6 leading-relaxed" {...props} />,
-              strong: ({node, ...props}) => <strong className="font-semibold text-gray-900" {...props} />,
+              strong: ({node, ...props}) => <strong className="font-semibold text-white" {...props} />,
               ol: ({node, ...props}) => <ol className="list-decimal pl-6 mb-6 space-y-2" {...props} />,
               ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-6 space-y-2" {...props} />,
               li: ({node, ...props}) => <li className="" {...props} />,
@@ -77,10 +77,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </ReactMarkdown>
         </div>
 
-        <div className="mt-16 bg-gray-50 rounded-2xl p-8 text-center border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 mb-3">Prêt à mettre en pratique ?</h3>
-          <p className="text-gray-500 mb-6">Créez votre portefeuille sécurisé en quelques secondes et achetez vos premières cryptos.</p>
-          <Link href="/acheter" className="inline-block bg-[#534AB7] text-white font-medium px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200">
+        <div className="mt-16 bg-[#25274A] rounded-2xl p-8 text-center border border-white/10">
+          <h3 className="text-xl font-bold text-white mb-3">Prêt à mettre en pratique ?</h3>
+          <p className="text-gray-400 mb-6">Créez votre portefeuille sécurisé en quelques secondes et achetez vos premières cryptos.</p>
+          <Link href="/acheter" className="inline-block bg-indigo-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-500/30">
             Commencer maintenant
           </Link>
         </div>

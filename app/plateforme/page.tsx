@@ -6,45 +6,45 @@ import Link from 'next/link';
 
 export default function PlateformePage() {
   return (
-    <main className="bg-[#fafafa] text-gray-900 min-h-screen flex flex-col font-sans selection:bg-indigo-100 selection:text-indigo-900">
+    <main className="bg-[#1B1C3E] text-white min-h-screen flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
       <Navbar />
 
       <section className="pt-16 pb-12 px-6 text-center max-w-3xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-          Comment fonctionne <span className="text-[#534AB7]">Remedly</span> ?
+          Comment fonctionne <span className="text-indigo-400">Remedly</span> ?
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-gray-300">
           Nous avons repensé l'achat de cryptomonnaies pour le rendre aussi simple qu'un achat en ligne classique, sans compromis sur votre sécurité.
         </p>
       </section>
 
       {/* 1. Parcours d'achat en 4 étapes */}
-      <section className="py-16 px-6 bg-white border-y border-gray-100">
+      <section className="py-16 px-6 bg-[#25274A] border-y border-white/10">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Le parcours le plus rapide du marché</h2>
           <div className="grid md:grid-cols-4 gap-8 relative">
             {/* Ligne connectrice visible sur desktop */}
-            <div className="hidden md:block absolute top-8 left-1/8 right-1/8 h-0.5 bg-indigo-100 z-0"></div>
+            <div className="hidden md:block absolute top-8 left-1/8 right-1/8 h-0.5 bg-indigo-500/30 z-0"></div>
 
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-indigo-50 border-2 border-white text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">1</div>
+              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">1</div>
               <h3 className="font-bold text-lg mb-2">Choisir</h3>
-              <p className="text-sm text-gray-600">Sélectionnez la cryptomonnaie (BTC, ETH, SOL) et le montant en euros.</p>
+              <p className="text-sm text-gray-300">Sélectionnez la cryptomonnaie (BTC, ETH, SOL) et le montant en euros.</p>
             </div>
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-indigo-50 border-2 border-white text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">2</div>
+              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">2</div>
               <h3 className="font-bold text-lg mb-2">S'identifier</h3>
-              <p className="text-sm text-gray-600">Entrez votre e-mail. Un portefeuille sécurisé est créé instantanément, sans mot de passe à retenir.</p>
+              <p className="text-sm text-gray-300">Entrez votre e-mail. Un portefeuille sécurisé est créé instantanément, sans mot de passe à retenir.</p>
             </div>
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-indigo-50 border-2 border-white text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">3</div>
+              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">3</div>
               <h3 className="font-bold text-lg mb-2">Payer</h3>
-              <p className="text-sm text-gray-600">Optez pour le <strong>virement bancaire</strong> (recommandé pour réduire vos frais) ou payez instantanément par Carte Bancaire/Apple Pay.</p>
+              <p className="text-sm text-gray-300">Optez pour le <strong>virement bancaire</strong> (recommandé pour réduire vos frais) ou payez instantanément par Carte Bancaire/Apple Pay.</p>
             </div>
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-indigo-50 border-2 border-white text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">4</div>
+              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">4</div>
               <h3 className="font-bold text-lg mb-2">Recevoir</h3>
-              <p className="text-sm text-gray-600">Vos cryptos arrivent en quelques minutes directement dans votre portefeuille privé.</p>
+              <p className="text-sm text-gray-300">Vos cryptos arrivent en quelques minutes directement dans votre portefeuille privé.</p>
             </div>
           </div>
         </div>
@@ -88,26 +88,26 @@ export default function PlateformePage() {
       </section>
 
       {/* 3. Cryptos disponibles */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">Les leaders du marché, rien de superflu</h2>
-          <p className="text-gray-600 mb-12">Nous avons volontairement limité notre offre aux trois cryptomonnaies les plus solides et liquides de l'écosystème pour vous protéger des projets spéculatifs.</p>
+          <p className="text-gray-400 mb-12">Nous avons volontairement limité notre offre aux trois cryptomonnaies les plus solides et liquides de l'écosystème pour vous protéger des projets spéculatifs.</p>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-6 border border-gray-100 rounded-2xl bg-gray-50 flex flex-col items-center">
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#25274A] flex flex-col items-center">
               <img src="/btc.svg" alt="Bitcoin" className="w-16 h-16 mb-4" />
               <h3 className="font-bold text-lg">Bitcoin (BTC)</h3>
-              <p className="text-sm text-gray-500 mt-2">L'or numérique. Idéal pour conserver de la valeur sur le long terme.</p>
+              <p className="text-sm text-gray-400 mt-2">L'or numérique. Idéal pour conserver de la valeur sur le long terme.</p>
             </div>
-            <div className="p-6 border border-gray-100 rounded-2xl bg-gray-50 flex flex-col items-center">
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#25274A] flex flex-col items-center">
               <img src="/eth.svg" alt="Ethereum" className="w-16 h-16 mb-4" />
               <h3 className="font-bold text-lg">Ethereum (ETH)</h3>
-              <p className="text-sm text-gray-500 mt-2">L'ordinateur mondial. L'infrastructure principale du Web3 et de la DeFi.</p>
+              <p className="text-sm text-gray-400 mt-2">L'ordinateur mondial. L'infrastructure principale du Web3 et de la DeFi.</p>
             </div>
-            <div className="p-6 border border-gray-100 rounded-2xl bg-gray-50 flex flex-col items-center">
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#25274A] flex flex-col items-center">
               <img src="/sol.svg" alt="Solana" className="w-16 h-16 mb-4" />
               <h3 className="font-bold text-lg">Solana (SOL)</h3>
-              <p className="text-sm text-gray-500 mt-2">La vitesse pure. Des transactions instantanées pour des frais minimes.</p>
+              <p className="text-sm text-gray-400 mt-2">La vitesse pure. Des transactions instantanées pour des frais minimes.</p>
             </div>
           </div>
         </div>
@@ -119,31 +119,31 @@ export default function PlateformePage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="p-4 text-gray-500 font-semibold w-1/3"></th>
-                <th className="p-4 font-bold text-gray-900 w-1/3">Remedly</th>
-                <th className="p-4 text-gray-400 font-semibold w-1/3">Exchange Classique</th>
+              <tr className="border-b border-white/10">
+                <th className="p-4 text-gray-400 font-semibold w-1/3"></th>
+                <th className="p-4 font-bold text-white w-1/3">Remedly</th>
+                <th className="p-4 text-gray-500 font-semibold w-1/3">Exchange Classique</th>
               </tr>
             </thead>
             <tbody className="text-sm">
-              <tr className="border-b border-gray-100">
-                <td className="p-4 font-medium text-gray-700">Propriété des fonds</td>
-                <td className="p-4 text-green-600 font-semibold flex items-center gap-2">✓ Vous seul (Non-custodial)</td>
+              <tr className="border-b border-white/10">
+                <td className="p-4 font-medium text-gray-300">Propriété des fonds</td>
+                <td className="p-4 text-green-400 font-semibold flex items-center gap-2">✓ Vous seul (Non-custodial)</td>
                 <td className="p-4 text-gray-500">✗ La plateforme (Custodial)</td>
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="p-4 font-medium text-gray-700">Création du wallet</td>
-                <td className="p-4 text-green-600 font-semibold flex items-center gap-2">✓ Automatique (E-mail)</td>
+              <tr className="border-b border-white/10">
+                <td className="p-4 font-medium text-gray-300">Création du wallet</td>
+                <td className="p-4 text-green-400 font-semibold flex items-center gap-2">✓ Automatique (E-mail)</td>
                 <td className="p-4 text-gray-500">✗ Complexe ou Inexistant</td>
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="p-4 font-medium text-gray-700">Complexité d'achat</td>
-                <td className="p-4 text-green-600 font-semibold flex items-center gap-2">✓ 3 clics, interface épurée</td>
+              <tr className="border-b border-white/10">
+                <td className="p-4 font-medium text-gray-300">Complexité d'achat</td>
+                <td className="p-4 text-green-400 font-semibold flex items-center gap-2">✓ 3 clics, interface épurée</td>
                 <td className="p-4 text-gray-500">✗ Interface de trading complexe</td>
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="p-4 font-medium text-gray-700">Frais d'achat par carte</td>
-                <td className="p-4 text-gray-900 font-semibold">~1.99% (Transparents)</td>
+              <tr className="border-b border-white/10">
+                <td className="p-4 font-medium text-gray-300">Frais d'achat par carte</td>
+                <td className="p-4 text-white font-semibold">~1.99% (Transparents)</td>
                 <td className="p-4 text-gray-500">De 1.5% à 4% (Frais cachés fréquents)</td>
               </tr>
             </tbody>
@@ -152,9 +152,9 @@ export default function PlateformePage() {
       </section>
 
       {/* 5. Statut réglementaire */}
-      <section className="py-12 px-6 bg-gray-50 border-t border-gray-200 text-sm text-gray-600">
+      <section className="py-12 px-6 bg-[#25274A] border-t border-white/10 text-sm text-gray-300">
         <div className="max-w-4xl mx-auto">
-          <h3 className="font-bold text-gray-900 mb-3 text-center">Un cadre légal strict et transparent</h3>
+          <h3 className="font-bold text-white mb-3 text-center">Un cadre légal strict et transparent</h3>
           <p className="mb-4 text-justify">
             <strong>Statut Réglementaire :</strong> Remedly édite exclusivement une interface logicielle et agit en qualité d'apporteur d'affaires. Remedly n'est ni un Prestataire de Services sur Actifs Numériques (PSAN) au sens de l'AMF, ni un prestataire CASP au sens de MiCA. Remedly ne fournit aucun conseil en investissement, n'exécute pas d'ordres sur actifs numériques et ne conserve à aucun moment les fonds ou les clés privées de ses utilisateurs.
           </p>
@@ -167,7 +167,7 @@ export default function PlateformePage() {
       {/* 6. CTA final */}
       <section className="py-20 px-6 text-center">
         <h2 className="text-3xl font-bold mb-6">Prêt à investir simplement ?</h2>
-        <Link href="/acheter" className="inline-block bg-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200">
+        <Link href="/acheter" className="inline-block bg-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-[0_8px_20px_rgb(79,70,229,0.5)] hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200">
           Acheter mes premières cryptos
         </Link>
       </section>

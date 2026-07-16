@@ -10,7 +10,7 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-10">
-        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#534AB7]"></div>
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-500"></div>
       </div>
     );
   }
@@ -19,11 +19,11 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
     return (
       <div className="flex items-center justify-center py-10">
         <div className="text-center">
-          <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 bg-[#1B1C3E] rounded-full flex items-center justify-center mx-auto mb-3">
             <span className="text-gray-400">💸</span>
           </div>
-          <p className="text-sm text-gray-500">Aucune transaction pour le moment.</p>
-          <p className="text-[13px] text-gray-400 mt-1">Votre historique s'affichera ici après votre premier achat.</p>
+          <p className="text-sm text-gray-400">Aucune transaction pour le moment.</p>
+          <p className="text-[13px] text-gray-500 mt-1">Votre historique s'affichera ici après votre premier achat.</p>
         </div>
       </div>
     );
@@ -48,7 +48,7 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
   };
 
   return (
-    <div className="divide-y divide-gray-100">
+    <div className="divide-y divide-white/10">
       {transactions.map((tx) => {
         // For ETH we know if it's incoming by comparing tx.to with walletAddress
         // For BTC/SOL, our mock sets "Reçu" or "Envoyé" directly in `tx.from` or `tx.to` sometimes,
@@ -66,8 +66,8 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
         }
 
         const sign = isIncoming ? '+' : '-';
-        const color = isIncoming ? 'text-green-600' : 'text-gray-900';
-        const bgColor = isIncoming ? 'bg-green-50' : 'bg-gray-50';
+        const color = isIncoming ? 'text-green-400' : 'text-gray-300';
+        const bgColor = isIncoming ? 'bg-green-500/20' : 'bg-white/10';
         const icon = isIncoming ? '↓' : '↑';
         
         let valueDisplay = '';
@@ -80,21 +80,21 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
         }
 
         return (
-          <div key={tx.hash} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+          <div key={tx.hash} className="p-4 flex items-center justify-between hover:bg-white/5 transition-colors">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${bgColor} ${color}`}>
                 {icon}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-white">
                     {isIncoming ? 'Reçu' : 'Envoyé'}
                   </p>
-                  <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded uppercase font-medium">
+                  <span className="text-[10px] bg-white/10 text-gray-300 px-1.5 py-0.5 rounded uppercase font-medium">
                     {getChainIcon(tx.chain)} {tx.chain}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-400 mt-0.5">
                   {new Date(parseInt(tx.timeStamp) * 1000).toLocaleString('fr-FR')}
                 </p>
               </div>
@@ -103,7 +103,7 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
               <p className={`text-sm font-medium ${color}`}>
                 {sign}{valueDisplay}
               </p>
-              <a href={getExplorerUrl(tx)} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline">
+              <a href={getExplorerUrl(tx)} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-400 hover:underline">
                 Voir
               </a>
             </div>

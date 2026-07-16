@@ -340,5 +340,44 @@ L'écosystème Web3 possède son propre langage, souvent composé d'acronymes an
 
 Sur Remedly, nous simplifions tout ce jargon en créant votre portefeuille non-custodial automatiquement, sans Seed Phrase !
     `
+  },
+  {
+    slug: 'qu-est-ce-qu-un-wallet-non-custodial',
+    title: "Qu'est-ce qu'un wallet non-custodial ?",
+    excerpt: "Comprendre la différence entre détenir réellement ses cryptos (non-custodial) et faire confiance à un tiers (custodial).",
+    category: 'Sécurité',
+    date: '22 Juillet 2026',
+    readTime: '4 min',
+    content: `
+## Custodial vs Non-Custodial : La grande différence
+
+Dans le monde de la cryptomonnaie, la façon dont vous stockez vos actifs est aussi importante que les actifs eux-mêmes. Il existe deux grandes familles de portefeuilles (wallets) : les **custodial** et les **non-custodial**.
+
+### 1. Le Wallet Custodial (Hébergé)
+
+C'est le modèle le plus courant pour les débutants qui s'inscrivent sur de grandes plateformes d'échange centralisées (Binance, Coinbase, Kraken).
+Dans ce modèle, **la plateforme agit comme une banque**. Elle détient vos clés privées et garde vos fonds en votre nom. 
+
+* **Avantage :** C'est très simple. Si vous perdez votre mot de passe, un clic sur "Mot de passe oublié" suffit.
+* **Inconvénient (et danger) :** Vous ne possédez pas vraiment vos cryptos. Si la plateforme fait faillite (comme FTX), se fait pirater, ou décide de geler votre compte, vous perdez tout accès à votre argent.
+
+### 2. Le Wallet Non-Custodial (Non-Hébergé)
+
+C'est l'essence même de la cryptomonnaie : être son propre banquier. 
+Avec un wallet non-custodial (comme Metamask, Ledger, ou le wallet intégré de Remedly), **vous êtes le seul détenteur de vos clés privées**.
+
+* **Avantage :** Personne ne peut geler vos fonds ou vous empêcher d'y accéder. La sécurité est totale tant que vous protégez vos accès.
+* **Inconvénient traditionnel :** La gestion de la "Seed Phrase" (les 12 ou 24 mots). Si vous la perdez, vos fonds sont perdus à jamais. 
+
+### La solution Remedly : Le meilleur des deux mondes
+
+Historiquement, le non-custodial était réservé aux utilisateurs techniques, car la gestion de la Seed Phrase était source de stress et de pertes (voir notre article [Perdre l'accès à son compte crypto](/apprendre/perte-acces-compte-wallet)).
+
+Chez **Remedly**, nous utilisons la technologie des *Embedded Wallets* fournis par Privy. 
+* Votre portefeuille est **strictement non-custodial** : Remedly n'a aucun accès à vos fonds.
+* **Aucune Seed Phrase** à stocker : la clé cryptographique est fractionnée et liée de manière sécurisée à votre adresse e-mail. 
+
+Vous bénéficiez ainsi de la sécurité absolue du "non-custodial", avec la simplicité d'utilisation d'une application classique.
+    `
   }
 ];

@@ -37,6 +37,13 @@ function AcheterContent() {
 
   return (
     <div className="w-full max-w-md mx-auto py-10 px-4 sm:px-0">
+      <Link href="/portefeuille" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 mb-6 transition-colors">
+        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Retour au portefeuille
+      </Link>
+
       <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-6">
         Acheter de la crypto
       </h1>

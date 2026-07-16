@@ -20,10 +20,10 @@ function AcheterContent() {
           </svg>
         </div>
         <h2 className="text-3xl font-bold tracking-tight text-white mb-4">
-          Connecte-toi pour acheter
+          Connectez-vous pour acheter
         </h2>
         <p className="text-lg text-gray-300 mb-8 max-w-md leading-relaxed">
-          Un wallet sécurisé sera créé automatiquement pour toi. Tu pourras ensuite procéder à l'achat en toute simplicité.
+          Un wallet sécurisé sera créé automatiquement pour vous. Vous pourrez ensuite procéder à l'achat en toute simplicité.
         </p>
         <button
           onClick={login}

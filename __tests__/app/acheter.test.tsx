@@ -34,7 +34,7 @@ describe('AcheterPage (/acheter)', () => {
 
     render(<AcheterPage />);
 
-    expect(screen.getByText('Connecte-toi pour acheter')).toBeInTheDocument();
+    expect(screen.getByText('Connectez-vous pour acheter')).toBeInTheDocument();
     expect(screen.queryByTestId('buy-widget')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /créer mon compte gratuitement/i }));

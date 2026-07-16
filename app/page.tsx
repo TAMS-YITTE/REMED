@@ -163,13 +163,14 @@ export default function Home() {
               </Link>
             </div>
             
-            <div className="flex items-center gap-3 text-sm text-gray-400 font-medium">
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full border-2 border-[#1B1C3E] bg-[#25274A] flex items-center justify-center text-xs">🚀</div>
-                <div className="w-8 h-8 rounded-full border-2 border-[#1B1C3E] bg-[#25274A] flex items-center justify-center text-xs">🔒</div>
-                <div className="w-8 h-8 rounded-full border-2 border-[#1B1C3E] bg-[#25274A] flex items-center justify-center text-xs">⚡</div>
-              </div>
-              <p>Rejoignez-nous en <strong className="text-white">accès anticipé</strong></p>
+            <div className="flex flex-col gap-2 mt-6 p-4 bg-[#25274A]/50 border border-white/10 rounded-xl text-sm text-gray-400 font-medium max-w-lg">
+              <p>🚀 Rejoignez-nous en <strong className="text-white">accès anticipé</strong> en attente de la mise en production.</p>
+              <p>
+                Donnez-nous votre avis anticipé en écrivant à :{' '}
+                <a href="mailto:contact@remedly.fr" className="text-indigo-400 hover:text-white transition-colors underline">
+                  contact@remedly.fr
+                </a>
+              </p>
             </div>
           </motion.div>
 
@@ -390,9 +391,12 @@ export default function Home() {
           <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
             <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">🛡️</div>
             <h3 className="text-xl font-bold text-white mb-3">Sécurité Bancaire</h3>
-            <p className="text-gray-300 leading-relaxed text-sm">
+            <p className="text-gray-300 leading-relaxed text-sm mb-4">
               Votre portefeuille non-custodial est créé automatiquement. Vous êtes le seul maître de vos fonds.
             </p>
+            <Link href="/apprendre/qu-est-ce-qu-un-wallet-non-custodial" className="inline-flex items-center text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+              En savoir plus <span aria-hidden="true" className="ml-1">&rarr;</span>
+            </Link>
           </div>
           
           <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">

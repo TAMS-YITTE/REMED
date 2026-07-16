@@ -9,6 +9,14 @@ jest.mock('@/app/actions/wallet', () => ({
   getWalletData: jest.fn().mockResolvedValue({ balanceEth: '0.00', transactions: [] })
 }));
 
+jest.mock('@/app/actions/solana', () => ({
+  getSolanaWalletData: jest.fn().mockResolvedValue({ balanceSol: '0.00', transactions: [] })
+}));
+
+jest.mock('@/app/actions/bitcoin', () => ({
+  getBitcoinWalletData: jest.fn().mockResolvedValue({ balanceBtc: '0.00', transactions: [] })
+}));
+
 jest.mock('@/components/WalletBalance', () => ({
   WalletBalance: ({ walletAddress }: { walletAddress: string }) => (
     <div data-testid="wallet-balance">Balance for {walletAddress}</div>

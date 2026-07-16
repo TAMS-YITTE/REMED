@@ -8,6 +8,9 @@ jest.mock('@/hooks/useAuth');
 let mockSearchParams = new URLSearchParams();
 jest.mock('next/navigation', () => ({
   useSearchParams: () => mockSearchParams,
+  // AcheterPage now renders a real <AuthButton>, which reads the current
+  // route to decide whether to show the "Mon Portefeuille" link.
+  usePathname: () => '/acheter',
 }));
 
 jest.mock('@/components/BuyWidget', () => ({
@@ -27,7 +30,7 @@ describe('AcheterPage (/acheter)', () => {
 
   it('prompts the visitor to sign up when not authenticated, and login is wired to the CTA', () => {
     const mockLogin = jest.fn();
-    (useAuth as jest.Mock).mockReturnValue({ authenticated: false, login: mockLogin });
+    (useAuth as jest.Mock).mockReturnValue({ ready: true, authenticated: false, login: mockLogin });
 
     render(<AcheterPage />);
 
@@ -42,7 +45,7 @@ describe('AcheterPage (/acheter)', () => {
     // eth (not btc) because the embedded wallet Privy creates is Ethereum-
     // only; defaulting to btc used to send an invalid 0x address to the
     // payment provider for anyone who didn't pass ?crypto= explicitly.
-    (useAuth as jest.Mock).mockReturnValue({ authenticated: true, login: jest.fn() });
+    (useAuth as jest.Mock).mockReturnValue({ ready: true, authenticated: true, login: jest.fn(), logout: jest.fn() });
 
     render(<AcheterPage />);
 
@@ -51,7 +54,7 @@ describe('AcheterPage (/acheter)', () => {
 
   it('passes the requested crypto from the URL to the BuyWidget', () => {
     mockSearchParams = new URLSearchParams('crypto=eth');
-    (useAuth as jest.Mock).mockReturnValue({ authenticated: true, login: jest.fn() });
+    (useAuth as jest.Mock).mockReturnValue({ ready: true, authenticated: true, login: jest.fn(), logout: jest.fn() });
 
     render(<AcheterPage />);
 
@@ -59,7 +62,7 @@ describe('AcheterPage (/acheter)', () => {
   });
 
   it('always renders the legal footer', () => {
-    (useAuth as jest.Mock).mockReturnValue({ authenticated: false, login: jest.fn() });
+    (useAuth as jest.Mock).mockReturnValue({ ready: true, authenticated: false, login: jest.fn() });
     render(<AcheterPage />);
     expect(screen.getByRole('link', { name: 'Mentions Légales' })).toBeInTheDocument();
   });

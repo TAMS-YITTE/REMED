@@ -8,56 +8,103 @@ interface WalletBalanceProps {
   solanaWalletAddress?: string;
   bitcoinWalletAddress?: string;
   balance?: string;
+  solanaBalance?: string;
+  bitcoinBalance?: string;
   isLoading?: boolean;
+  isLoadingSolana?: boolean;
+  isLoadingBitcoin?: boolean;
   onCreateBitcoinWallet?: () => void;
 }
 
-export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalletAddress, balance, isLoading, onCreateBitcoinWallet }: WalletBalanceProps) {
+// Defined at module scope (not inside WalletBalance) so React treats it as
+// the same component across renders and updates it in place instead of
+// unmounting/remounting it every time copiedAddress changes.
+function AddressRow({
+  label,
+  address,
+  copied,
+  onCopy,
+  onGenerate,
+  balance,
+  isLoadingBalance,
+  symbol,
+}: {
+  label: string;
+  address?: string;
+  copied?: boolean;
+  onCopy?: (address: string) => void;
+  onGenerate?: () => void;
+  balance?: string;
+  isLoadingBalance?: boolean;
+  symbol?: string;
+}) {
+  if (!address) {
+    if (onGenerate) {
+      return (
+        <div className="flex items-center justify-between gap-3 bg-white/5 p-3 rounded-lg border border-white/10 border-dashed">
+          <div className="flex flex-col flex-1 overflow-hidden">
+            <span className="text-[11px] text-indigo-100 font-medium uppercase tracking-wider mb-0.5">{label}</span>
+            <span className="text-[12px] text-white/50 italic">Non générée</span>
+          </div>
+          <button
+            onClick={onGenerate}
+            className="shrink-0 text-[11px] font-medium text-white bg-indigo-500/30 border border-indigo-400/30 px-3 py-1.5 rounded-md hover:bg-indigo-500/50 transition-colors"
+          >
+            Générer
+          </button>
+        </div>
+      );
+    }
+    return null;
+  }
+  return (
+    <div className="flex items-center justify-between gap-3 bg-white/10 p-3 rounded-lg border border-white/10 hover:bg-white/15 transition-colors">
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex items-center justify-between mb-0.5">
+          <span className="text-[11px] text-indigo-100 font-medium uppercase tracking-wider">{label}</span>
+          {symbol && (
+            <div className="text-[12px] font-medium text-white">
+              {isLoadingBalance ? (
+                <div className="h-4 w-12 bg-white/20 animate-pulse rounded"></div>
+              ) : (
+                <>{balance || "0.00"} <span className="text-white/60 text-[10px]">{symbol}</span></>
+              )}
+            </div>
+          )}
+        </div>
+        <code className="text-[13px] text-white/80 truncate tracking-wide">
+          {address}
+        </code>
+      </div>
+      <button
+        onClick={() => onCopy?.(address)}
+        className="shrink-0 flex items-center justify-center w-8 h-8 text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/20 transition-colors"
+        title="Copier l'adresse"
+      >
+        {copied ? <Check size={14} className="text-green-300"/> : <Copy size={14}/>}
+      </button>
+    </div>
+  );
+}
+
+export function WalletBalance({ 
+  walletAddress, 
+  solanaWalletAddress, 
+  bitcoinWalletAddress, 
+  balance, 
+  solanaBalance,
+  bitcoinBalance,
+  isLoading, 
+  isLoadingSolana,
+  isLoadingBitcoin,
+  onCreateBitcoinWallet 
+}: WalletBalanceProps) {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
 
   const handleCopy = (address: string) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(null), 2000);
-  };
-
-  const AddressRow = ({ label, address, onGenerate }: { label: string, address?: string, onGenerate?: () => void }) => {
-    if (!address) {
-      if (onGenerate) {
-        return (
-          <div className="flex items-center justify-between gap-3 bg-white/5 p-3 rounded-lg border border-white/10 border-dashed">
-            <div className="flex flex-col flex-1 overflow-hidden">
-              <span className="text-[11px] text-indigo-100 font-medium uppercase tracking-wider mb-0.5">{label}</span>
-              <span className="text-[12px] text-white/50 italic">Non générée</span>
-            </div>
-            <button 
-              onClick={onGenerate}
-              className="shrink-0 text-[11px] font-medium text-white bg-indigo-500/30 border border-indigo-400/30 px-3 py-1.5 rounded-md hover:bg-indigo-500/50 transition-colors"
-            >
-              Générer
-            </button>
-          </div>
-        );
-      }
-      return null;
-    }
-    return (
-      <div className="flex items-center justify-between gap-3 bg-white/10 p-3 rounded-lg border border-white/10 hover:bg-white/15 transition-colors">
-        <div className="flex flex-col flex-1 overflow-hidden">
-          <span className="text-[11px] text-indigo-100 font-medium uppercase tracking-wider mb-0.5">{label}</span>
-          <code className="text-[13px] text-white truncate tracking-wide">
-            {address}
-          </code>
-        </div>
-        <button 
-          onClick={() => handleCopy(address)}
-          className="shrink-0 flex items-center justify-center w-8 h-8 text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/20 transition-colors"
-          title="Copier l'adresse"
-        >
-          {copiedAddress === address ? <Check size={14} className="text-green-300"/> : <Copy size={14}/>}
-        </button>
-      </div>
-    );
   };
 
   return (
@@ -91,9 +138,9 @@ export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalle
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <AddressRow label="Ethereum / EVM" address={walletAddress} />
-          <AddressRow label="Solana" address={solanaWalletAddress} />
-          <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} onGenerate={onCreateBitcoinWallet} />
+          <AddressRow label="Ethereum / EVM" address={walletAddress} copied={copiedAddress === walletAddress} onCopy={handleCopy} balance={balance} isLoadingBalance={isLoading} symbol="ETH" />
+          <AddressRow label="Solana" address={solanaWalletAddress} copied={copiedAddress === solanaWalletAddress} onCopy={handleCopy} balance={solanaBalance} isLoadingBalance={isLoadingSolana} symbol="SOL" />
+          <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} copied={copiedAddress === bitcoinWalletAddress} onCopy={handleCopy} onGenerate={onCreateBitcoinWallet} balance={bitcoinBalance} isLoadingBalance={isLoadingBitcoin} symbol="BTC" />
         </div>
       </div>
     </div>

@@ -67,7 +67,9 @@ describe('Providers', () => {
     });
     mockUseWallets.mockReturnValue({ wallets: [] });
     mockUseSolanaWallets.mockReturnValue({ wallets: [] });
-    mockUseCreateWallet.mockReturnValue({ createWallet: jest.fn() });
+    // Providers.tsx now auto-creates a Bitcoin wallet on login (mirroring
+    // ETH/SOL), so createWallet must resolve like the real Privy hook does.
+    mockUseCreateWallet.mockReturnValue({ createWallet: jest.fn().mockResolvedValue({}) });
   });
 
   afterEach(() => {
@@ -250,7 +252,7 @@ describe('Providers', () => {
 
     it('calls createWallet with bitcoin-taproot when createBitcoinWallet is invoked', () => {
       process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'clreallooking1234567890';
-      const mockCreate = jest.fn();
+      const mockCreate = jest.fn().mockResolvedValue({});
       mockUseCreateWallet.mockReturnValue({ createWallet: mockCreate });
 
       render(

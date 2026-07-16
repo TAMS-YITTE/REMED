@@ -26,11 +26,24 @@ describe('WalletBalance', () => {
     jest.useRealTimers();
   });
 
-  it('renders correctly with given wallet address', () => {
-    render(<WalletBalance walletAddress="0x123abc" balance="0.00" />);
+  it('renders correctly with given wallet address and balances', () => {
+    render(
+      <WalletBalance 
+        walletAddress="0x123abc" 
+        solanaWalletAddress="Sol123" 
+        bitcoinWalletAddress="bc1q123" 
+        balance="1.23" 
+        solanaBalance="4.56" 
+        bitcoinBalance="0.78" 
+      />
+    );
     expect(screen.getByText('Solde Total (ETH Testnet)')).toBeInTheDocument();
-    expect(screen.getByText('0.00')).toBeInTheDocument();
+    expect(screen.getAllByText('1.23')[0]).toBeInTheDocument();
     expect(screen.getByText('0x123abc')).toBeInTheDocument();
+    expect(screen.getByText('4.56')).toBeInTheDocument();
+    expect(screen.getByText('Sol123')).toBeInTheDocument();
+    expect(screen.getByText('0.78')).toBeInTheDocument();
+    expect(screen.getByText('bc1q123')).toBeInTheDocument();
   });
 
   it('copies address to clipboard and updates icon state', async () => {

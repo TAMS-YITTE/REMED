@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { getWalletData, WalletData } from '@/app/actions/wallet';
+import { getSolanaWalletData } from '@/app/actions/solana';
+import { getBitcoinWalletData } from '@/app/actions/bitcoin';
 import { WalletBalance } from '@/components/WalletBalance';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -11,18 +13,44 @@ import { Footer } from '@/components/Footer';
 
 export default function PortefeuillePage() {
   const { isReady, authenticated, walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet } = useAuth();
-  const [walletData, setWalletData] = useState<WalletData | null>(null);
-  const [isLoadingData, setIsLoadingData] = useState(false);
+  
+  const [ethData, setEthData] = useState<WalletData | null>(null);
+  const [solData, setSolData] = useState<WalletData | null>(null);
+  const [btcData, setBtcData] = useState<WalletData | null>(null);
+  
+  const [isLoadingEth, setIsLoadingEth] = useState(false);
+  const [isLoadingSol, setIsLoadingSol] = useState(false);
+  const [isLoadingBtc, setIsLoadingBtc] = useState(false);
 
   useEffect(() => {
     if (walletAddress) {
-      setIsLoadingData(true);
+      setIsLoadingEth(true);
       getWalletData(walletAddress).then(data => {
-        setWalletData(data);
-        setIsLoadingData(false);
+        setEthData(data);
+        setIsLoadingEth(false);
       });
     }
   }, [walletAddress]);
+
+  useEffect(() => {
+    if (solanaWalletAddress) {
+      setIsLoadingSol(true);
+      getSolanaWalletData(solanaWalletAddress).then(data => {
+        setSolData(data);
+        setIsLoadingSol(false);
+      });
+    }
+  }, [solanaWalletAddress]);
+
+  useEffect(() => {
+    if (bitcoinWalletAddress) {
+      setIsLoadingBtc(true);
+      getBitcoinWalletData(bitcoinWalletAddress).then(data => {
+        setBtcData(data);
+        setIsLoadingBtc(false);
+      });
+    }
+  }, [bitcoinWalletAddress]);
 
   if (!isReady) {
     return (
@@ -71,7 +99,18 @@ export default function PortefeuillePage() {
 
         {walletAddress ? (
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="mb-8">
-            <WalletBalance walletAddress={walletAddress} solanaWalletAddress={solanaWalletAddress} bitcoinWalletAddress={bitcoinWalletAddress} onCreateBitcoinWallet={createBitcoinWallet} balance={walletData?.balanceEth} isLoading={isLoadingData} />
+            <WalletBalance 
+              walletAddress={walletAddress} 
+              solanaWalletAddress={solanaWalletAddress} 
+              bitcoinWalletAddress={bitcoinWalletAddress} 
+              onCreateBitcoinWallet={createBitcoinWallet} 
+              balance={ethData?.balanceEth} 
+              solanaBalance={solData?.balanceSol}
+              bitcoinBalance={btcData?.balanceBtc}
+              isLoading={isLoadingEth} 
+              isLoadingSolana={isLoadingSol}
+              isLoadingBitcoin={isLoadingBtc}
+            />
           </motion.div>
         ) : (
           <div className="bg-yellow-50 text-yellow-800 p-4 rounded-xl text-sm mb-8">
@@ -99,13 +138,13 @@ export default function PortefeuillePage() {
           <div className="mt-10">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Dernières transactions (Sepolia)</h3>
             <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-              {isLoadingData ? (
+              {isLoadingEth ? (
                 <div className="flex items-center justify-center py-10">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#534AB7]"></div>
                 </div>
-              ) : walletData && walletData.transactions.length > 0 ? (
+              ) : ethData && ethData.transactions.length > 0 ? (
                 <div className="divide-y divide-gray-100">
-                  {walletData.transactions.map((tx) => (
+                  {ethData.transactions.map((tx) => (
                     <div key={tx.hash} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.to.toLowerCase() === walletAddress?.toLowerCase() ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-600'}`}>

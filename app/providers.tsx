@@ -36,6 +36,10 @@ function MockAuthProvider({ children }: { children: React.ReactNode }) {
     createBitcoinWallet: async () => { console.log('Mock createBitcoinWallet called'); },
     login,
     logout,
+    sendTransaction: async (tx: any) => {
+      console.log('Mock sendTransaction called with:', tx);
+      return { transactionHash: '0xmocktransactionhash1234567890' };
+    },
     isReady: true,
   };
 
@@ -43,7 +47,7 @@ function MockAuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 function RealAuthProvider({ children }: { children: React.ReactNode }) {
-  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { ready, authenticated, user, login, logout, sendTransaction } = usePrivy();
   const { wallets } = useWallets();
   const { wallets: solanaWallets } = useSolanaWallets();
   const { createWallet } = useCreateWallet();
@@ -82,6 +86,7 @@ function RealAuthProvider({ children }: { children: React.ReactNode }) {
     createBitcoinWallet,
     login,
     logout,
+    sendTransaction,
     isReady: ready,
   };
 

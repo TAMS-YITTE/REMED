@@ -13,6 +13,7 @@ export interface AuthContextType {
   createBitcoinWallet: () => Promise<void>;
   login: () => void;
   logout: () => void;
+  sendTransaction: (tx: any) => Promise<any>;
   isReady: boolean;
 }
 

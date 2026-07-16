@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useAuth } from '@/hooks/useAuth';
 // Si on veut utiliser solana spécifiquement on peut faire l'import
 // Mais comme le plan l'indiquait, la feature doit être killable et on va juste
 // utiliser le mode ethereum standard d'abord, ou désactiver solana si non dispo
@@ -15,8 +15,7 @@ interface SendModalProps {
 }
 
 export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
-  const { sendTransaction } = usePrivy();
-  const { wallets } = useWallets();
+  const { sendTransaction } = useAuth();
 
   const [step, setStep] = useState<1 | 2>(1);
   const [chain, setChain] = useState<'ethereum' | 'solana'>('ethereum');
@@ -88,6 +87,7 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
         const txConfig = {
           to: address,
           value: hexAmount,
+          chainId: 11155111, // Sepolia Testnet
         };
         
         const txReceipt = await sendTransaction(txConfig);

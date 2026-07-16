@@ -37,7 +37,7 @@ describe('WalletBalance', () => {
         bitcoinBalance="0.78" 
       />
     );
-    expect(screen.getByText('Solde Total (ETH Testnet)')).toBeInTheDocument();
+    expect(screen.getByText('Solde Total')).toBeInTheDocument();
     expect(screen.getAllByText('1.23')[0]).toBeInTheDocument();
     expect(screen.getByText('0x123abc')).toBeInTheDocument();
     expect(screen.getByText('4.56')).toBeInTheDocument();

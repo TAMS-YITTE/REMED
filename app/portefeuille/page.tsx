@@ -2,10 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { getWalletData, WalletData } from '@/app/actions/wallet';
+import { getWalletData } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
+import { getCryptoPrices } from '@/app/actions/prices';
+import type { CryptoPrices } from '@/app/actions/prices';
+import type { WalletData, Transaction } from '@/app/actions/utils';
 import { WalletBalance } from '@/components/WalletBalance';
+import { TransactionHistory } from '@/components/TransactionHistory';
+import { PortfolioDonut } from '@/components/PortfolioDonut';
+import { SendModal } from '@/components/SendModal';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
@@ -21,6 +27,13 @@ export default function PortefeuillePage() {
   const [isLoadingEth, setIsLoadingEth] = useState(false);
   const [isLoadingSol, setIsLoadingSol] = useState(false);
   const [isLoadingBtc, setIsLoadingBtc] = useState(false);
+
+  const [prices, setPrices] = useState<CryptoPrices | null | undefined>(undefined);
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false);
+
+  useEffect(() => {
+    getCryptoPrices().then(p => setPrices(p));
+  }, []);
 
   useEffect(() => {
     if (walletAddress) {
@@ -51,6 +64,18 @@ export default function PortefeuillePage() {
       });
     }
   }, [bitcoinWalletAddress]);
+
+  const ethValue = (prices && ethData?.balanceEth) ? parseFloat(ethData.balanceEth) * prices.eth : 0;
+  const solValue = (prices && solData?.balanceSol) ? parseFloat(solData.balanceSol) * prices.sol : 0;
+  const btcValue = (prices && btcData?.balanceBtc) ? parseFloat(btcData.balanceBtc) * prices.btc : 0;
+
+  const allTransactions: Transaction[] = [
+    ...(ethData?.transactions || []),
+    ...(solData?.transactions || []),
+    ...(btcData?.transactions || [])
+  ].sort((a, b) => Number(b.timeStamp) - Number(a.timeStamp));
+
+  const isLoadingHistory = isLoadingEth || isLoadingSol || isLoadingBtc;
 
   if (!isReady) {
     return (
@@ -107,6 +132,7 @@ export default function PortefeuillePage() {
               balance={ethData?.balanceEth} 
               solanaBalance={solData?.balanceSol}
               bitcoinBalance={btcData?.balanceBtc}
+              prices={prices}
               isLoading={isLoadingEth} 
               isLoadingSolana={isLoadingSol}
               isLoadingBitcoin={isLoadingBtc}
@@ -118,73 +144,42 @@ export default function PortefeuillePage() {
           </div>
         )}
 
-        {/* CTA Acheter */}
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
-          <div className="w-12 h-12 bg-[#EEEDFE] rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-xl">🚀</span>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }} className="mb-10">
+          <PortfolioDonut ethValue={ethValue} solValue={solValue} btcValue={btcValue} />
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center">
+            <div className="w-12 h-12 bg-[#EEEDFE] rounded-full flex items-center justify-center mx-auto mb-4 text-xl">🚀</div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Acheter</h3>
+            <p className="text-gray-500 text-sm mb-4">Investissez par carte bancaire ou virement.</p>
+            <Link href="/acheter" className="inline-block bg-[#534AB7] text-white px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90 w-full transition-opacity">Acheter des cryptos</Link>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Prêt à investir ?</h3>
-          <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
-            Achetez des cryptomonnaies par carte bancaire en quelques secondes et recevez-les directement sur ce portefeuille.
-          </p>
-          <Link 
-            href="/acheter" 
-            className="inline-block bg-[#534AB7] text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
-          >
-            Acheter des cryptos
-          </Link>
+          <div className="bg-white border border-gray-200 rounded-2xl p-6 text-center">
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-xl">💸</div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Envoyer</h3>
+            <p className="text-gray-500 text-sm mb-4">Envoyez des cryptos vers une autre adresse.</p>
+            <button onClick={() => setIsSendModalOpen(true)} className="inline-block bg-white text-gray-700 border border-gray-200 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 w-full transition-colors">Envoyer des cryptos</button>
+          </div>
         </motion.div>
           {/* HISTORIQUE */}
           <div className="mt-10">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Dernières transactions (Sepolia)</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Dernières transactions</h3>
             <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-              {isLoadingEth ? (
-                <div className="flex items-center justify-center py-10">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#534AB7]"></div>
-                </div>
-              ) : ethData && ethData.transactions.length > 0 ? (
-                <div className="divide-y divide-gray-100">
-                  {ethData.transactions.map((tx) => (
-                    <div key={tx.hash} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${tx.to.toLowerCase() === walletAddress?.toLowerCase() ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-600'}`}>
-                          {tx.to.toLowerCase() === walletAddress?.toLowerCase() ? '↓' : '↑'}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {tx.to.toLowerCase() === walletAddress?.toLowerCase() ? 'Reçu' : 'Envoyé'}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {new Date(parseInt(tx.timeStamp) * 1000).toLocaleString('fr-FR')}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-medium ${tx.to.toLowerCase() === walletAddress?.toLowerCase() ? 'text-green-600' : 'text-gray-900'}`}>
-                          {tx.to.toLowerCase() === walletAddress?.toLowerCase() ? '+' : '-'}
-                          {(Number(tx.value) / 10**18).toFixed(4)} ETH
-                        </p>
-                        <a href={`https://sepolia.etherscan.io/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline">
-                          Voir
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex items-center justify-center py-10">
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <span className="text-gray-400">💸</span>
-                    </div>
-                    <p className="text-sm text-gray-500">Aucune transaction pour le moment.</p>
-                    <p className="text-[13px] text-gray-400 mt-1">Votre historique s'affichera ici après votre premier achat.</p>
-                  </div>
-                </div>
-              )}
+              <TransactionHistory 
+                transactions={allTransactions} 
+                isLoading={isLoadingHistory} 
+                walletAddress={walletAddress} 
+              />
             </div>
           </div>
 
+        <SendModal 
+          isOpen={isSendModalOpen} 
+          onClose={() => setIsSendModalOpen(false)} 
+          balances={{ eth: ethData?.balanceEth || '0', sol: solData?.balanceSol || '0' }} 
+        />
       </main>
       <Footer />
     </div>

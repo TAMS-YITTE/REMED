@@ -10,6 +10,7 @@ interface WalletBalanceProps {
   balance?: string;
   solanaBalance?: string;
   bitcoinBalance?: string;
+  prices?: { eth: number; sol: number; btc: number } | null;
   isLoading?: boolean;
   isLoadingSolana?: boolean;
   isLoadingBitcoin?: boolean;
@@ -28,6 +29,7 @@ function AddressRow({
   balance,
   isLoadingBalance,
   symbol,
+  priceEur,
 }: {
   label: string;
   address?: string;
@@ -37,6 +39,7 @@ function AddressRow({
   balance?: string;
   isLoadingBalance?: boolean;
   symbol?: string;
+  priceEur?: number;
 }) {
   if (!address) {
     if (onGenerate) {
@@ -67,7 +70,12 @@ function AddressRow({
               {isLoadingBalance ? (
                 <div className="h-4 w-12 bg-white/20 animate-pulse rounded"></div>
               ) : (
-                <>{balance || "0.00"} <span className="text-white/60 text-[10px]">{symbol}</span></>
+                <>
+                  {balance || "0.00"} <span className="text-white/60 text-[10px]">{symbol}</span>
+                  {priceEur !== undefined && balance && (
+                    <span className="text-white/40 text-[10px] ml-1 font-normal">(~{(parseFloat(balance) * priceEur).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })})</span>
+                  )}
+                </>
               )}
             </div>
           )}
@@ -94,6 +102,7 @@ export function WalletBalance({
   balance, 
   solanaBalance,
   bitcoinBalance,
+  prices,
   isLoading, 
   isLoadingSolana,
   isLoadingBitcoin,
@@ -107,6 +116,12 @@ export function WalletBalance({
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
+  const totalEur = prices ? (
+    (parseFloat(balance || "0") * prices.eth) +
+    (parseFloat(solanaBalance || "0") * prices.sol) +
+    (parseFloat(bitcoinBalance || "0") * prices.btc)
+  ) : null;
+
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-[#41389D] to-[#2B2466] text-white border border-[#534AB7] rounded-2xl p-6 shadow-xl">
       <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-5 rounded-full blur-2xl"></div>
@@ -114,12 +129,24 @@ export function WalletBalance({
       
       <div className="relative flex justify-between items-start mb-8 z-10">
         <div>
-          <h2 className="text-[13px] font-medium text-indigo-100 mb-1.5 uppercase tracking-wider">Solde Total (ETH Testnet)</h2>
-          <div className="text-4xl font-semibold tracking-tight flex items-center gap-3">
-            {isLoading ? (
+          <h2 className="text-[13px] font-medium text-indigo-100 mb-1.5 uppercase tracking-wider">Solde Total</h2>
+          <div className="text-4xl font-semibold tracking-tight flex flex-col gap-1">
+            {isLoading || (prices === undefined) ? (
               <div className="h-10 w-32 bg-white/10 animate-pulse rounded-lg"></div>
+            ) : totalEur !== null ? (
+              <div className="flex items-baseline gap-2">
+                {totalEur.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+              </div>
             ) : (
-              <>{balance || "0.00"} <span className="text-xl text-indigo-100">ETH</span></>
+              <div className="flex items-baseline gap-2">
+                {balance || "0.00"} <span className="text-xl text-indigo-100">ETH</span>
+              </div>
+            )}
+            
+            {totalEur !== null && (
+              <div className="text-sm font-normal text-indigo-200 mt-1">
+                ≈ {balance || "0.00"} ETH (Testnet)
+              </div>
             )}
           </div>
         </div>
@@ -138,9 +165,9 @@ export function WalletBalance({
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <AddressRow label="Ethereum / EVM" address={walletAddress} copied={copiedAddress === walletAddress} onCopy={handleCopy} balance={balance} isLoadingBalance={isLoading} symbol="ETH" />
-          <AddressRow label="Solana" address={solanaWalletAddress} copied={copiedAddress === solanaWalletAddress} onCopy={handleCopy} balance={solanaBalance} isLoadingBalance={isLoadingSolana} symbol="SOL" />
-          <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} copied={copiedAddress === bitcoinWalletAddress} onCopy={handleCopy} onGenerate={onCreateBitcoinWallet} balance={bitcoinBalance} isLoadingBalance={isLoadingBitcoin} symbol="BTC" />
+          <AddressRow label="Ethereum / EVM" address={walletAddress} copied={copiedAddress === walletAddress} onCopy={handleCopy} balance={balance} isLoadingBalance={isLoading} symbol="ETH" priceEur={prices?.eth} />
+          <AddressRow label="Solana" address={solanaWalletAddress} copied={copiedAddress === solanaWalletAddress} onCopy={handleCopy} balance={solanaBalance} isLoadingBalance={isLoadingSolana} symbol="SOL" priceEur={prices?.sol} />
+          <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} copied={copiedAddress === bitcoinWalletAddress} onCopy={handleCopy} onGenerate={onCreateBitcoinWallet} balance={bitcoinBalance} isLoadingBalance={isLoadingBitcoin} symbol="BTC" priceEur={prices?.btc} />
         </div>
       </div>
     </div>

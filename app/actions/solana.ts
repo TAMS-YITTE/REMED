@@ -46,10 +46,11 @@ export async function getSolanaWalletData(address: string): Promise<WalletData> 
     if (Array.isArray(txRes?.result)) {
       transactions = txRes.result.map((tx: any) => ({
         hash: tx.signature,
-        from: 'Solana Network', // Avoid rate-limit on individual tx fetch
+        from: tx.err ? 'Erreur' : 'Solana Network',
         to: address,
         value: '0',
-        timeStamp: tx.blockTime ? tx.blockTime.toString() : '0'
+        timeStamp: tx.blockTime ? tx.blockTime.toString() : '0',
+        chain: 'solana'
       }));
     }
 

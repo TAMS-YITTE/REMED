@@ -17,6 +17,10 @@ jest.mock('@/app/actions/bitcoin', () => ({
   getBitcoinWalletData: jest.fn().mockResolvedValue({ balanceBtc: '0.00', transactions: [] })
 }));
 
+jest.mock('@/app/actions/prices', () => ({
+  getCryptoPrices: jest.fn().mockResolvedValue({ eth: 3000, sol: 100, btc: 60000 })
+}));
+
 jest.mock('@/components/WalletBalance', () => ({
   WalletBalance: ({ walletAddress }: { walletAddress: string }) => (
     <div data-testid="wallet-balance">Balance for {walletAddress}</div>
@@ -25,6 +29,18 @@ jest.mock('@/components/WalletBalance', () => ({
 
 jest.mock('@/components/AuthButton', () => ({
   AuthButton: () => <button>Créer mon compte</button>,
+}));
+
+jest.mock('@/components/TransactionHistory', () => ({
+  TransactionHistory: () => <div data-testid="transaction-history">Transaction History</div>,
+}));
+
+jest.mock('@/components/PortfolioDonut', () => ({
+  PortfolioDonut: () => <div data-testid="portfolio-donut">Portfolio Donut</div>,
+}));
+
+jest.mock('@/components/SendModal', () => ({
+  SendModal: () => <div data-testid="send-modal">Send Modal</div>,
 }));
 
 describe('PortefeuillePage (/portefeuille)', () => {

@@ -3,9 +3,6 @@
 import { safeFetch } from './utils';
 import type { Transaction, WalletData } from './utils';
 
-// Re-export pour la compatibilité avec l'existant
-export type { Transaction, WalletData };
-
 export async function getWalletData(address: string): Promise<WalletData> {
   const ETHERSCAN_API = 'https://api-sepolia.etherscan.io/api';
   
@@ -36,7 +33,8 @@ export async function getWalletData(address: string): Promise<WalletData> {
         from: tx.from,
         to: tx.to,
         value: tx.value,
-        timeStamp: tx.timeStamp
+        timeStamp: tx.timeStamp,
+        chain: 'ethereum'
       }));
     }
 

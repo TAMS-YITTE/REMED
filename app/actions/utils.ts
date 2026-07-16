@@ -4,6 +4,7 @@ export interface Transaction {
   to: string;
   value: string;
   timeStamp: string;
+  chain: 'ethereum' | 'solana' | 'bitcoin';
 }
 
 export interface WalletData {

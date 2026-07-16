@@ -58,7 +58,8 @@ export async function getBitcoinWalletData(address: string): Promise<WalletData>
           from: valueDiff > 0 ? 'Bitcoin Network' : address,
           to: valueDiff < 0 ? 'Bitcoin Network' : address,
           value: Math.abs(valueDiff).toString(),
-          timeStamp: tx.status?.block_time ? tx.status.block_time.toString() : '0'
+          timeStamp: tx.status?.block_time ? tx.status.block_time.toString() : '0',
+          chain: 'bitcoin'
         };
       });
     }

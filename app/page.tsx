@@ -1,36 +1,72 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
-import { getCryptoPrices } from '@/app/actions/prices';
+import { getCryptoPrices, CryptoPrices } from '@/app/actions/prices';
+
+const cryptoList = [
+  { id: 'btc', name: 'Bitcoin', symbol: 'BTC', icon: '/btc.svg' },
+  { id: 'eth', name: 'Ethereum', symbol: 'ETH', icon: '/eth.svg' },
+  { id: 'sol', name: 'Solana', symbol: 'SOL', icon: '/sol.svg' },
+  { id: 'usdc', name: 'USDC', symbol: 'USDC', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg?v=025' },
+  { id: 'xrp', name: 'Ripple', symbol: 'XRP', icon: 'https://cryptologos.cc/logos/xrp-xrp-logo.svg?v=025' },
+  { id: 'ada', name: 'Cardano', symbol: 'ADA', icon: 'https://cryptologos.cc/logos/cardano-ada-logo.svg?v=025' },
+  { id: 'avax', name: 'Avalanche', symbol: 'AVAX', icon: 'https://cryptologos.cc/logos/avalanche-avax-logo.svg?v=025' },
+  { id: 'dot', name: 'Polkadot', symbol: 'DOT', icon: 'https://cryptologos.cc/logos/polkadot-new-dot-logo.svg?v=025' },
+  { id: 'link', name: 'Chainlink', symbol: 'LINK', icon: 'https://cryptologos.cc/logos/chainlink-link-logo.svg?v=025' },
+  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', icon: 'https://cryptologos.cc/logos/dogecoin-doge-logo.svg?v=025' },
+  { id: 'matic', name: 'Polygon', symbol: 'MATIC', icon: 'https://cryptologos.cc/logos/polygon-matic-logo.svg?v=025' },
+  { id: 'shib', name: 'Shiba Inu', symbol: 'SHIB', icon: 'https://cryptologos.cc/logos/shiba-inu-shib-logo.svg?v=025' },
+  { id: 'ltc', name: 'Litecoin', symbol: 'LTC', icon: 'https://cryptologos.cc/logos/litecoin-ltc-logo.svg?v=025' },
+  { id: 'uni', name: 'Uniswap', symbol: 'UNI', icon: 'https://cryptologos.cc/logos/uniswap-uni-logo.svg?v=025' },
+  { id: 'atom', name: 'Cosmos', symbol: 'ATOM', icon: 'https://cryptologos.cc/logos/cosmos-atom-logo.svg?v=025' }
+];
 
 export default function Home() {
   const [eurAmount, setEurAmount] = useState<string>('100');
-  const [prices, setPrices] = useState<{eth: number, sol: number, btc: number} | null>(null);
-  const [selectedCrypto, setSelectedCrypto] = useState<'eth' | 'sol' | 'btc'>('eth');
+  const [prices, setPrices] = useState<CryptoPrices | null>(null);
+  const [selectedCryptoId, setSelectedCryptoId] = useState<string>('eth');
   
+  // Custom Select State
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const selectRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     getCryptoPrices().then(p => {
       if (p) setPrices(p);
     });
+
+    // Close select on click outside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+        setIsSelectOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const currentPrice = prices ? prices[selectedCrypto] : (selectedCrypto === 'eth' ? 3100 : selectedCrypto === 'sol' ? 140 : 60000); // Live price or Fallback
+  const selectedCrypto = cryptoList.find(c => c.id === selectedCryptoId) || cryptoList[1];
+  const currentPrice = prices ? prices[selectedCryptoId] : 3100; // Fallback
   const feeRate = 0.0199; // 1.99%
   const feeAmount = Number(eurAmount) * feeRate;
   const netAmount = Number(eurAmount) - feeAmount;
-  const cryptoAmount = netAmount > 0 ? (netAmount / currentPrice).toFixed(selectedCrypto === 'btc' ? 5 : 4) : '0.0000';
-
-  const cryptoOptions = {
-    eth: { name: 'ETH', icon: '/eth.svg' },
-    sol: { name: 'SOL', icon: '/sol.svg' },
-    btc: { name: 'BTC', icon: '/btc.svg' }
-  };
+  const cryptoAmount = netAmount > 0 && currentPrice ? (netAmount / currentPrice).toFixed(selectedCryptoId === 'btc' ? 5 : 4) : '0.0000';
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const filteredCryptos = cryptoList.filter(c => 
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    c.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Top 5 cryptos to show when search is empty
+  const defaultList = cryptoList.slice(0, 5);
+  const listToDisplay = searchQuery ? filteredCryptos : defaultList;
 
   const faqs = [
     {
@@ -111,7 +147,7 @@ export default function Home() {
             </p>
 
             <div className="hidden md:flex flex-col sm:flex-row gap-4 mb-8">
-              <Link href="/acheter" className="flex items-center justify-center gap-2 bg-indigo-600 text-white border-none px-6 py-4 rounded-xl text-base font-semibold shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200">
+              <Link href={`/acheter?crypto=${selectedCryptoId}`} className="flex items-center justify-center gap-2 bg-indigo-600 text-white border-none px-6 py-4 rounded-xl text-base font-semibold shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200">
                 Acheter maintenant
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </Link>
@@ -172,26 +208,76 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100/50">
+                <div className="bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100/50 relative">
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 block">Vous recevez</label>
                   <div className="flex items-center justify-between">
                     <div className="text-3xl font-bold text-indigo-900 truncate pr-4">
                       {cryptoAmount}
                     </div>
-                    <div className="relative">
-                      <select 
-                        value={selectedCrypto}
-                        onChange={(e) => setSelectedCrypto(e.target.value as 'eth' | 'sol' | 'btc')}
-                        className="appearance-none flex items-center gap-2 bg-white pl-9 pr-8 py-2 rounded-xl border border-gray-200 shadow-sm font-semibold text-gray-900 shrink-0 cursor-pointer hover:bg-gray-50 transition-colors outline-none"
+                    
+                    {/* CUSTOM CRYPTO SELECTOR */}
+                    <div className="relative" ref={selectRef}>
+                      <button 
+                        onClick={() => setIsSelectOpen(!isSelectOpen)}
+                        className="flex items-center gap-2 bg-white pl-3 pr-2 py-2 rounded-xl border border-gray-200 shadow-sm font-semibold text-gray-900 cursor-pointer hover:bg-gray-50 transition-colors outline-none w-[110px]"
                       >
-                        <option value="eth">ETH</option>
-                        <option value="btc">BTC</option>
-                        <option value="sol">SOL</option>
-                      </select>
-                      <img src={cryptoOptions[selectedCrypto].icon} alt={cryptoOptions[selectedCrypto].name} className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                      </div>
+                        <img src={selectedCrypto.icon} alt={selectedCrypto.name} className="w-5 h-5 rounded-full" />
+                        <span className="truncate">{selectedCrypto.symbol}</span>
+                        <svg className="fill-current h-4 w-4 ml-auto text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                      </button>
+
+                      <AnimatePresence>
+                        {isSelectOpen && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 overflow-hidden"
+                          >
+                            <div className="p-2 border-b border-gray-100">
+                              <input 
+                                type="text" 
+                                placeholder="Rechercher (ex: SOL, Ethereum)..." 
+                                className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                autoFocus
+                              />
+                            </div>
+                            <div className="max-h-60 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-200">
+                              {!searchQuery && (
+                                <div className="px-3 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Top Cryptos</div>
+                              )}
+                              {listToDisplay.length > 0 ? (
+                                listToDisplay.map(c => (
+                                  <button
+                                    key={c.id}
+                                    onClick={() => {
+                                      setSelectedCryptoId(c.id);
+                                      setIsSelectOpen(false);
+                                      setSearchQuery('');
+                                    }}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${selectedCryptoId === c.id ? 'bg-indigo-50 text-indigo-700' : 'hover:bg-gray-50 text-gray-700'}`}
+                                  >
+                                    <img src={c.icon} alt={c.name} className="w-6 h-6 rounded-full" />
+                                    <div className="flex flex-col">
+                                      <span className="font-bold text-sm leading-tight">{c.symbol}</span>
+                                      <span className="text-xs opacity-70 leading-tight">{c.name}</span>
+                                    </div>
+                                    {prices && prices[c.id] && (
+                                      <span className="ml-auto text-xs font-medium opacity-60">€{prices[c.id]}</span>
+                                    )}
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="text-center py-6 text-sm text-gray-500">Aucune crypto trouvée</div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
                 </div>
@@ -201,7 +287,7 @@ export default function Home() {
               <div className="mt-6 bg-gray-50 rounded-xl p-4 text-sm border border-gray-100">
                 <div className="flex justify-between text-gray-600 mb-2">
                   <span>Taux estimé</span>
-                  <span className="font-medium">1 {cryptoOptions[selectedCrypto].name} = {currentPrice} €</span>
+                  <span className="font-medium">1 {selectedCrypto.name} = {currentPrice ? currentPrice.toFixed(2) : '...'} €</span>
                 </div>
                 <div className="flex justify-between text-gray-900 font-semibold bg-white p-2 rounded-lg border border-gray-200/50 shadow-sm">
                   <span>Frais transparents (~1.99%)</span>
@@ -211,15 +297,15 @@ export default function Home() {
 
               <div className="mt-6 pt-4 border-t border-gray-100">
                 <p className="text-center text-xs text-gray-400 mb-3 font-medium">Moyens de paiement acceptés</p>
-                <div className="flex justify-center items-center gap-4 opacity-70">
-                  <span className="text-sm font-bold font-sans">Pay</span>
+                <div className="flex justify-center items-center gap-4 opacity-80">
+                  <span className="text-sm font-bold font-sans">Apple Pay</span>
                   <span className="text-sm font-bold font-sans italic">VISA</span>
-                  <span className="text-sm font-bold font-sans">SEPA</span>
+                  <span className="text-sm font-bold font-sans text-indigo-600 border-b-2 border-indigo-200">Virement (Recommandé)</span>
                 </div>
               </div>
 
               <Link 
-                href={`/acheter?crypto=${selectedCrypto}`}
+                href={`/acheter?crypto=${selectedCryptoId}`}
                 className="w-full mt-6 bg-gray-900 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors shadow-lg hidden md:flex"
               >
                 Continuer l'achat
@@ -314,7 +400,7 @@ export default function Home() {
             <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-100">💶</div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">Frais Transparents</h3>
             <p className="text-gray-600 leading-relaxed text-sm">
-              Pas de spread caché ni de mauvaises surprises. Nos partenaires réglementés appliquent des frais transparents d'environ 1.99%.
+              Privilégiez le virement SEPA pour réduire considérablement vos frais par rapport à la carte bancaire. Pas de spread caché.
             </p>
           </div>
         </div>
@@ -374,7 +460,7 @@ export default function Home() {
 
       {/* MOBILE STICKY CTA */}
       <div className="md:hidden fixed bottom-4 left-4 right-4 z-50">
-        <Link href={`/acheter?crypto=${selectedCrypto}`} className="block w-full bg-indigo-600 text-white text-center py-4 rounded-2xl font-bold shadow-[0_8px_30px_rgb(79,70,229,0.4)] active:scale-95 transition-transform">
+        <Link href={`/acheter?crypto=${selectedCryptoId}`} className="block w-full bg-indigo-600 text-white text-center py-4 rounded-2xl font-bold shadow-[0_8px_30px_rgb(79,70,229,0.4)] active:scale-95 transition-transform">
           Acheter des cryptos maintenant
         </Link>
       </div>

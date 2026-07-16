@@ -10,7 +10,7 @@ interface WalletBalanceProps {
   balance?: string;
   solanaBalance?: string;
   bitcoinBalance?: string;
-  prices?: { eth: number; sol: number; btc: number } | null;
+  prices?: Record<string, number> | null;
   isLoading?: boolean;
   isLoadingSolana?: boolean;
   isLoadingBitcoin?: boolean;

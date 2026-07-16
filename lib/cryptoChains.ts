@@ -12,6 +12,11 @@ const CHAIN_BY_CRYPTO: Record<string, ChainFamily> = {
   usdc: 'ethereum',
   usdt: 'ethereum',
   monad: 'ethereum',
+  avax: 'ethereum',
+  matic: 'ethereum',
+  link: 'ethereum',
+  uni: 'ethereum',
+  shib: 'ethereum',
 };
 
 export function getChainFamily(crypto: string): ChainFamily {

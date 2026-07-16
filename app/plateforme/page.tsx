@@ -39,7 +39,7 @@ export default function PlateformePage() {
             <div className="relative z-10 text-center">
               <div className="w-16 h-16 mx-auto bg-indigo-50 border-2 border-white text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">3</div>
               <h3 className="font-bold text-lg mb-2">Payer</h3>
-              <p className="text-sm text-gray-600">Payez en toute sécurité via Apple Pay ou Carte Bancaire avec nos partenaires agréés.</p>
+              <p className="text-sm text-gray-600">Optez pour le <strong>virement bancaire</strong> (recommandé pour réduire vos frais) ou payez instantanément par Carte Bancaire/Apple Pay.</p>
             </div>
             <div className="relative z-10 text-center">
               <div className="w-16 h-16 mx-auto bg-indigo-50 border-2 border-white text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">4</div>

@@ -129,5 +129,89 @@ Pour un investisseur débutant, ces 3 cryptomonnaies constituent souvent la base
 
 *Rappel : Sur Remedly, vous pouvez acheter ces trois actifs directement avec votre carte bancaire.* 
     `
+  },
+  {
+    slug: 'comprendre-les-stablecoins',
+    title: "Comprendre les stablecoins (USDC/USDT) : le refuge en temps de crise",
+    excerpt: "Comment se protéger de la volatilité du marché crypto sans avoir à revendre en euros ? Découvrez la puissance des stablecoins.",
+    category: 'Débutant',
+    date: '17 Juillet 2026',
+    readTime: '4 min',
+    content: `
+## La volatilité : l'ennemi numéro 1 du débutant
+
+Le marché des cryptomonnaies est connu pour sa très forte volatilité. Le Bitcoin peut gagner 10% un jour et en perdre 15% le lendemain. Cette montagne russe émotionnelle peut être très difficile à gérer pour un investisseur débutant.
+
+Historiquement, la seule façon de sécuriser ses gains était de tout revendre contre de l'euro ou du dollar, de retirer l'argent sur son compte bancaire, puis de refaire un virement pour racheter plus tard. Un processus lent et coûteux.
+
+### La révolution des Stablecoins
+
+C'est là qu'interviennent les **Stablecoins** (littéralement : pièces stables). 
+
+Un stablecoin est une cryptomonnaie dont la valeur est arrimée (indexée) à celle d'une monnaie fiduciaire, le plus souvent le **Dollar Américain (USD)**.
+
+> 1 USDC = Toujours 1 Dollar.
+
+C'est l'équivalent numérique d'un billet de banque traditionnel, mais qui circule sur la blockchain à la vitesse de la lumière.
+
+### Les deux leaders du marché : USDT et USDC
+
+1. **USDT (Tether) :** C'est le plus ancien et le plus utilisé dans le monde. Il est très liquide et disponible sur absolument toutes les plateformes.
+2. **USDC (Circle) :** C'est le stablecoin réputé comme étant le plus transparent et le plus régulé. Il est audité mensuellement par de grands cabinets comptables pour prouver que pour chaque USDC créé numériquement, il y a bien un vrai dollar stocké en banque.
+
+### À quoi ça sert concrètement ?
+
+* **Se protéger des baisses :** Si vous sentez que le Bitcoin va baisser, vous l'échangez contre de l'USDC. Votre portefeuille ne bougera plus, peu importe la chute du Bitcoin.
+* **Garder du pouvoir d'achat sous la main :** Avoir une réserve d'USDC permet de pouvoir racheter instantanément de la crypto lors d'une chute brutale du marché, sans attendre le délai d'un virement bancaire.
+* **Faire des paiements internationaux :** Envoyer 1000 USDC à l'autre bout du monde prend 5 secondes et coûte une fraction de centime (notamment via le réseau Solana).
+
+Sur **Remedly**, nous intégrons nativement l'USDC pour vous permettre de sécuriser facilement votre capital !
+    `
+  },
+  {
+    slug: 'comment-declarer-ses-cryptos-impots',
+    title: "Comment déclarer ses cryptos aux impôts en France (Guide simplifié)",
+    excerpt: "Plus-values, flat tax, formulaires... Tout ce qu'il faut savoir pour être en règle avec le fisc français sans s'arracher les cheveux.",
+    category: 'Crypto',
+    date: '18 Juillet 2026',
+    readTime: '6 min',
+    content: `
+## L'impôt sur les cryptos : la règle d'or
+
+La fiscalité des cryptomonnaies en France peut faire peur, mais elle repose en réalité sur un principe très simple :
+
+> **Vous n'êtes imposé QUE lorsque vous convertissez vos cryptos en monnaie traditionnelle (Euros, Dollars...).**
+
+Tant que votre argent reste dans l'écosystème crypto, vous ne payez pas d'impôts sur les plus-values. 
+
+Par exemple, si vous échangez du Bitcoin contre de l'Ethereum, ou du Solana contre un Stablecoin (USDC), ce n'est **pas** un événement imposable. C'est l'un des plus grands avantages de la crypto !
+
+### La fameuse Flat Tax de 30%
+
+Lorsque vous décidez de revendre vos cryptomonnaies contre des euros et que vous réalisez un bénéfice global, cette plus-value est soumise au Prélèvement Forfaitaire Unique (PFU), plus connu sous le nom de **Flat Tax**.
+
+Le taux est de **30%**, réparti ainsi :
+* 12,8 % d'impôt sur le revenu
+* 17,2 % de prélèvements sociaux
+
+*Attention : l'impôt ne s'applique que sur la partie "bénéfice" de votre retrait, pas sur le capital initial.* 
+
+*Bon à savoir : Les ventes totales inférieures à 305€ sur une année civile sont exonérées d'impôts !*
+
+### Les déclarations obligatoires
+
+En France, vous avez deux obligations principales lors de votre déclaration de revenus annuelle (au printemps) :
+
+1. **Déclarer vos comptes ouverts à l'étranger (Formulaire 3916-bis) :** Si vous utilisez des plateformes d'échange dont le siège est situé hors de France (Binance, Kraken, Coinbase...), vous devez le signaler. Sur Remedly, la conservation étant en France/Europe et non-custodial via Privy, l'impact déclaratif est grandement simplifié.
+2. **Déclarer vos plus-values ou moins-values (Formulaire 2086) :** Si vous avez converti des cryptos en euros dans l'année, vous devez remplir ce formulaire annexe pour détailler les calculs. Le montant net reporté sera ensuite inscrit sur le formulaire classique (2042 C).
+
+### Les outils pour se simplifier la vie
+
+Calculer soi-même la plus-value globale selon la formule fiscale complexe de l'État français est un véritable casse-tête si vous avez fait beaucoup de transactions.
+
+Heureusement, il existe aujourd'hui des entreprises françaises spécialisées (comme *Waltio* ou *Koinly*) qui se connectent à vos portefeuilles et génèrent automatiquement votre liasse fiscale pré-remplie en quelques minutes.
+
+*Avertissement : Les règles fiscales peuvent évoluer. Ce guide est à but éducatif et ne remplace pas les conseils d'un professionnel de la fiscalité ou d'un expert-comptable.* 
+    `
   }
 ];

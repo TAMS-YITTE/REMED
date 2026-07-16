@@ -101,7 +101,7 @@ export default function Home() {
   };
 
   return (
-    <main className="bg-[#1B1C3E] text-white min-h-screen flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200 pb-20 md:pb-0">
+    <main className="bg-[#252844] text-white min-h-screen flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200 pb-20 md:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -110,7 +110,7 @@ export default function Home() {
 
       {/* Bandeau MiCA Premium (Pill) */}
       <div className="flex justify-center pt-8 pb-2 px-4 relative z-20">
-        <div className="inline-flex items-center gap-2.5 bg-[#25274A]/80 backdrop-blur-md border border-white/10 shadow-sm px-4 py-2 rounded-full">
+        <div className="inline-flex items-center gap-2.5 bg-[#2E3152]/80 backdrop-blur-md border border-white/10 shadow-sm px-4 py-2 rounded-full">
           <div className="flex items-center justify-center w-5 h-5 rounded-full bg-white/10 text-gray-300">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
@@ -158,12 +158,12 @@ export default function Home() {
                 Acheter maintenant
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </Link>
-              <Link href="/plateforme" className="flex items-center justify-center bg-[#25274A] text-white border border-white/10 px-6 py-4 rounded-xl text-base font-semibold hover:bg-[#353866] hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
+              <Link href="/plateforme" className="flex items-center justify-center bg-[#2E3152] text-white border border-white/10 px-6 py-4 rounded-xl text-base font-semibold hover:bg-[#353866] hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
                 Découvrir la plateforme
               </Link>
             </div>
             
-            <div className="flex flex-col gap-2 mt-6 p-4 bg-[#25274A]/50 border border-white/10 rounded-xl text-sm text-gray-400 font-medium max-w-lg">
+            <div className="flex flex-col gap-2 mt-6 p-4 bg-[#2E3152]/50 border border-white/10 rounded-xl text-sm text-gray-400 font-medium max-w-lg">
               <p>🚀 Rejoignez-nous en <strong className="text-white">accès anticipé</strong> en attente de la mise en production.</p>
               <p>
                 Donnez-nous votre avis anticipé en écrivant à :{' '}
@@ -183,7 +183,7 @@ export default function Home() {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-20 transform rotate-3"></div>
             
-            <div className="bg-[#25274A]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative z-10">
+            <div className="bg-[#2E3152]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-white">Simulateur Rapide</h3>
                 <span className="flex items-center gap-1 text-xs font-semibold bg-green-50 text-green-700 px-2 py-1 rounded-md">
@@ -192,7 +192,7 @@ export default function Home() {
               </div>
               
               <div className="space-y-4">
-                <div className="bg-[#1B1C3E] rounded-2xl p-4 border border-white/10 hover:border-indigo-500/50 transition-colors">
+                <div className="bg-[#252844] rounded-2xl p-4 border border-white/10 hover:border-indigo-500/50 transition-colors">
                   <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Vous payez</label>
                   <div className="flex items-center justify-between">
                     <input 
@@ -202,15 +202,15 @@ export default function Home() {
                       className="bg-transparent text-3xl font-bold text-white w-full outline-none"
                       placeholder="0"
                     />
-                    <div className="flex items-center gap-2 bg-[#25274A] px-3 py-1.5 rounded-xl border border-white/10 shadow-sm font-semibold text-white">
+                    <div className="flex items-center gap-2 bg-[#2E3152] px-3 py-1.5 rounded-xl border border-white/10 shadow-sm font-semibold text-white">
                       🇪🇺 EUR
                     </div>
                   </div>
                 </div>
 
                 <div className="flex justify-center -my-3 relative z-10 pointer-events-none">
-                  <div className="bg-[#25274A] p-1 rounded-full border border-white/10 shadow-sm">
-                    <div className="bg-[#1B1C3E] text-gray-400 p-2 rounded-full">
+                  <div className="bg-[#2E3152] p-1 rounded-full border border-white/10 shadow-sm">
+                    <div className="bg-[#252844] text-gray-400 p-2 rounded-full">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
                     </div>
                   </div>
@@ -227,7 +227,7 @@ export default function Home() {
                     <div className="relative" ref={selectRef}>
                       <button 
                         onClick={() => setIsSelectOpen(!isSelectOpen)}
-                        className="flex items-center gap-2 bg-[#25274A] pl-3 pr-2 py-2 rounded-xl border border-white/10 shadow-sm font-semibold text-white cursor-pointer hover:bg-[#353866] transition-colors outline-none w-[110px]"
+                        className="flex items-center gap-2 bg-[#2E3152] pl-3 pr-2 py-2 rounded-xl border border-white/10 shadow-sm font-semibold text-white cursor-pointer hover:bg-[#353866] transition-colors outline-none w-[110px]"
                       >
                         <img src={selectedCrypto.icon} alt={selectedCrypto.name} className="w-5 h-5 rounded-full" />
                         <span className="truncate">{selectedCrypto.symbol}</span>
@@ -241,13 +241,13 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.15 }}
-                            className="absolute right-0 top-full mt-2 w-64 bg-[#25274A] border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden"
+                            className="absolute right-0 top-full mt-2 w-64 bg-[#2E3152] border border-white/10 rounded-2xl shadow-xl z-50 overflow-hidden"
                           >
                             <div className="p-2 border-b border-white/10">
                               <input 
                                 type="text" 
                                 placeholder="Rechercher (ex: SOL, Ethereum)..." 
-                                className="w-full bg-[#1B1C3E] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                className="w-full bg-[#252844] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onClick={(e) => e.stopPropagation()}
@@ -292,12 +292,12 @@ export default function Home() {
               </div>
 
               {/* Encadrement des frais mis en avant */}
-              <div className="mt-6 bg-[#1B1C3E] rounded-xl p-4 text-sm border border-white/10">
+              <div className="mt-6 bg-[#252844] rounded-xl p-4 text-sm border border-white/10">
                 <div className="flex justify-between text-gray-400 mb-2">
                   <span>Taux estimé</span>
                   <span className="font-medium">1 {selectedCrypto.name} = {currentPrice ? currentPrice.toFixed(2) : '...'} €</span>
                 </div>
-                <div className="flex justify-between text-white font-semibold bg-[#25274A] p-2 rounded-lg border border-white/10 shadow-sm">
+                <div className="flex justify-between text-white font-semibold bg-[#2E3152] p-2 rounded-lg border border-white/10 shadow-sm">
                   <span>Frais transparents (~1.99%)</span>
                   <span>{feeAmount > 0 ? feeAmount.toFixed(2) : '0.00'} €</span>
                 </div>
@@ -324,7 +324,7 @@ export default function Home() {
       </section>
 
       {/* PARTNERS / SOCIAL PROOF */}
-      <section className="py-10 border-y border-white/10 bg-[#1B1C3E]">
+      <section className="py-10 border-y border-white/10 bg-[#252844]">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-center text-sm font-semibold text-gray-400 uppercase tracking-widest mb-6">
             L'infrastructure sécurisée par
@@ -388,7 +388,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
+          <div className="bg-[#2E3152] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
             <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">🛡️</div>
             <h3 className="text-xl font-bold text-white mb-3">Sécurité Bancaire</h3>
             <p className="text-gray-300 leading-relaxed text-sm mb-4">
@@ -399,7 +399,7 @@ export default function Home() {
             </Link>
           </div>
           
-          <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
+          <div className="bg-[#2E3152] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
             <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">⚡</div>
             <h3 className="text-xl font-bold text-white mb-3">Instantané</h3>
             <p className="text-gray-300 leading-relaxed text-sm">
@@ -407,7 +407,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="bg-[#25274A] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
+          <div className="bg-[#2E3152] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
             <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">💶</div>
             <h3 className="text-xl font-bold text-white mb-3">Frais Transparents</h3>
             <p className="text-gray-300 leading-relaxed text-sm">
@@ -429,7 +429,7 @@ export default function Home() {
             {faqs.map((faq, index) => (
               <div 
                 key={index} 
-                className="border border-white/10 rounded-2xl overflow-hidden bg-[#25274A]"
+                className="border border-white/10 rounded-2xl overflow-hidden bg-[#2E3152]"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}

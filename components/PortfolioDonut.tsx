@@ -37,7 +37,7 @@ export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutP
   const btcOffset = solOffset - (solPercent * circumference);
 
   return (
-    <div className="flex items-center gap-8 bg-[#25274A] border border-white/10 rounded-2xl p-6 shadow-lg">
+    <div className="flex items-center gap-8 bg-[#2E3152] border border-white/10 rounded-2xl p-6 shadow-lg">
       <div className="relative w-40 h-40 shrink-0">
         <svg width={size} height={size} className="-rotate-90 transform">
           {isEmpty ? (

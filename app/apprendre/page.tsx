@@ -8,7 +8,7 @@ import { articles } from '@/lib/articles';
 
 export default function ApprendrePage() {
   return (
-    <main className="bg-[#1B1C3E] min-h-screen text-white flex flex-col">
+    <main className="bg-[#252844] min-h-screen text-white flex flex-col">
       <Navbar />
 
       <div className="flex-1 max-w-4xl mx-auto w-full px-6 py-16">
@@ -38,9 +38,9 @@ export default function ApprendrePage() {
               transition={{ duration: 0.4, delay: 0.1 * (index + 1) }}
             >
               <Link href={`/apprendre/${article.slug}`} className="block group">
-                <div className="bg-[#25274A] rounded-2xl border border-white/10 p-8 hover:border-indigo-500/50 hover:shadow-lg transition-all h-full flex flex-col">
+                <div className="bg-[#2E3152] rounded-2xl border border-white/10 p-8 hover:border-indigo-500/50 hover:shadow-lg transition-all h-full flex flex-col">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="text-xs font-semibold px-2.5 py-1 bg-[#1B1C3E] text-gray-300 rounded-md">
+                    <span className="text-xs font-semibold px-2.5 py-1 bg-[#252844] text-gray-300 rounded-md">
                       {article.category}
                     </span>
                     <span className="text-xs text-gray-400 font-medium">

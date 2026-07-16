@@ -10,7 +10,7 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="flex items-center justify-between px-6 py-4 md:px-8 md:py-5 border-b border-white/10 sticky top-0 bg-[#1B1C3E]/80 backdrop-blur-xl z-50">
+      <nav className="flex items-center justify-between px-6 py-4 md:px-8 md:py-5 border-b border-white/10 sticky top-0 bg-[#252844]/80 backdrop-blur-xl z-50">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2.5 no-underline group">
             <img src="/logo.png" alt="Remedly Logo" className="w-8 h-8 object-contain group-hover:scale-105 transition-transform" />
@@ -56,7 +56,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden fixed top-[69px] left-0 right-0 bg-[#1B1C3E] border-b border-white/10 shadow-xl z-40 p-4"
+            className="md:hidden fixed top-[69px] left-0 right-0 bg-[#252844] border-b border-white/10 shadow-xl z-40 p-4"
           >
             <div className="flex flex-col gap-4">
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="block px-4 py-3 text-base font-medium text-white hover:bg-white/5 rounded-xl">Accueil</Link>

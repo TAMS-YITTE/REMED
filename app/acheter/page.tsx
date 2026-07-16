@@ -58,7 +58,7 @@ import Link from 'next/link';
 
 export default function AcheterPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#1B1C3E] text-white">
+    <div className="min-h-screen flex flex-col bg-[#252844] text-white">
       <Navbar />
 
       <div className="flex-1">

@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function PlateformePage() {
   return (
-    <main className="bg-[#1B1C3E] text-white min-h-screen flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
+    <main className="bg-[#252844] text-white min-h-screen flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
       <Navbar />
 
       <section className="pt-16 pb-12 px-6 text-center max-w-3xl mx-auto">
@@ -19,7 +19,7 @@ export default function PlateformePage() {
       </section>
 
       {/* 1. Parcours d'achat en 4 étapes */}
-      <section className="py-16 px-6 bg-[#25274A] border-y border-white/10">
+      <section className="py-16 px-6 bg-[#2E3152] border-y border-white/10">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12">Le parcours le plus rapide du marché</h2>
           <div className="grid md:grid-cols-4 gap-8 relative">
@@ -27,22 +27,22 @@ export default function PlateformePage() {
             <div className="hidden md:block absolute top-8 left-1/8 right-1/8 h-0.5 bg-indigo-500/30 z-0"></div>
 
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">1</div>
+              <div className="w-16 h-16 mx-auto bg-[#252844] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">1</div>
               <h3 className="font-bold text-lg mb-2">Choisir</h3>
               <p className="text-sm text-gray-300">Sélectionnez la cryptomonnaie (BTC, ETH, SOL) et le montant en euros.</p>
             </div>
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">2</div>
+              <div className="w-16 h-16 mx-auto bg-[#252844] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">2</div>
               <h3 className="font-bold text-lg mb-2">S'identifier</h3>
               <p className="text-sm text-gray-300">Entrez votre e-mail. Un portefeuille sécurisé est créé instantanément, sans mot de passe à retenir.</p>
             </div>
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">3</div>
+              <div className="w-16 h-16 mx-auto bg-[#252844] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">3</div>
               <h3 className="font-bold text-lg mb-2">Payer</h3>
               <p className="text-sm text-gray-300">Optez pour le <strong>virement bancaire</strong> (recommandé pour réduire vos frais) ou payez instantanément par Carte Bancaire/Apple Pay.</p>
             </div>
             <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto bg-[#1B1C3E] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">4</div>
+              <div className="w-16 h-16 mx-auto bg-[#252844] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">4</div>
               <h3 className="font-bold text-lg mb-2">Recevoir</h3>
               <p className="text-sm text-gray-300">Vos cryptos arrivent en quelques minutes directement dans votre portefeuille privé.</p>
             </div>
@@ -94,17 +94,17 @@ export default function PlateformePage() {
           <p className="text-gray-400 mb-12">Nous avons volontairement limité notre offre aux trois cryptomonnaies les plus solides et liquides de l'écosystème pour vous protéger des projets spéculatifs.</p>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-6 border border-white/10 rounded-2xl bg-[#25274A] flex flex-col items-center">
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
               <img src="/btc.svg" alt="Bitcoin" className="w-16 h-16 mb-4" />
               <h3 className="font-bold text-lg">Bitcoin (BTC)</h3>
               <p className="text-sm text-gray-400 mt-2">L'or numérique. Idéal pour conserver de la valeur sur le long terme.</p>
             </div>
-            <div className="p-6 border border-white/10 rounded-2xl bg-[#25274A] flex flex-col items-center">
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
               <img src="/eth.svg" alt="Ethereum" className="w-16 h-16 mb-4" />
               <h3 className="font-bold text-lg">Ethereum (ETH)</h3>
               <p className="text-sm text-gray-400 mt-2">L'ordinateur mondial. L'infrastructure principale du Web3 et de la DeFi.</p>
             </div>
-            <div className="p-6 border border-white/10 rounded-2xl bg-[#25274A] flex flex-col items-center">
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
               <img src="/sol.svg" alt="Solana" className="w-16 h-16 mb-4" />
               <h3 className="font-bold text-lg">Solana (SOL)</h3>
               <p className="text-sm text-gray-400 mt-2">La vitesse pure. Des transactions instantanées pour des frais minimes.</p>
@@ -152,7 +152,7 @@ export default function PlateformePage() {
       </section>
 
       {/* 5. Statut réglementaire */}
-      <section className="py-12 px-6 bg-[#25274A] border-t border-white/10 text-sm text-gray-300">
+      <section className="py-12 px-6 bg-[#2E3152] border-t border-white/10 text-sm text-gray-300">
         <div className="max-w-4xl mx-auto">
           <h3 className="font-bold text-white mb-3 text-center">Un cadre légal strict et transparent</h3>
           <p className="mb-4 text-justify">

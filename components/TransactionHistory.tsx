@@ -19,7 +19,7 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
     return (
       <div className="flex items-center justify-center py-10">
         <div className="text-center">
-          <div className="w-12 h-12 bg-[#1B1C3E] rounded-full flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 bg-[#252844] rounded-full flex items-center justify-center mx-auto mb-3">
             <span className="text-gray-400">💸</span>
           </div>
           <p className="text-sm text-gray-400">Aucune transaction pour le moment.</p>

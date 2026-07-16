@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AuthButton } from '@/components/AuthButton';
 import { Navbar } from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Footer } from '@/components/Footer';
@@ -11,6 +10,7 @@ import { getCryptoPrices } from '@/app/actions/prices';
 export default function Home() {
   const [eurAmount, setEurAmount] = useState<string>('100');
   const [prices, setPrices] = useState<{eth: number, sol: number, btc: number} | null>(null);
+  const [selectedCrypto, setSelectedCrypto] = useState<'eth' | 'sol' | 'btc'>('eth');
   
   useEffect(() => {
     getCryptoPrices().then(p => {
@@ -18,11 +18,17 @@ export default function Home() {
     });
   }, []);
 
-  const ethPrice = prices?.eth || 3100; // Live price or Fallback
+  const currentPrice = prices ? prices[selectedCrypto] : (selectedCrypto === 'eth' ? 3100 : selectedCrypto === 'sol' ? 140 : 60000); // Live price or Fallback
   const feeRate = 0.0199; // 1.99%
   const feeAmount = Number(eurAmount) * feeRate;
   const netAmount = Number(eurAmount) - feeAmount;
-  const cryptoAmount = netAmount > 0 ? (netAmount / ethPrice).toFixed(4) : '0.0000';
+  const cryptoAmount = netAmount > 0 ? (netAmount / currentPrice).toFixed(selectedCrypto === 'btc' ? 5 : 4) : '0.0000';
+
+  const cryptoOptions = {
+    eth: { name: 'ETH', icon: '/eth.svg' },
+    sol: { name: 'SOL', icon: '/sol.svg' },
+    btc: { name: 'BTC', icon: '/btc.svg' }
+  };
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -109,7 +115,7 @@ export default function Home() {
                 Acheter maintenant
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </Link>
-              <Link href="/apprendre" className="flex items-center justify-center bg-white text-gray-700 border border-gray-200 px-6 py-4 rounded-xl text-base font-semibold hover:bg-gray-50 hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
+              <Link href="/plateforme" className="flex items-center justify-center bg-white text-gray-700 border border-gray-200 px-6 py-4 rounded-xl text-base font-semibold hover:bg-gray-50 hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
                 Découvrir la plateforme
               </Link>
             </div>
@@ -172,9 +178,20 @@ export default function Home() {
                     <div className="text-3xl font-bold text-indigo-900 truncate pr-4">
                       {cryptoAmount}
                     </div>
-                    <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-sm font-semibold text-gray-900 shrink-0">
-                      <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=025" alt="ETH" className="w-5 h-5" />
-                      ETH
+                    <div className="relative">
+                      <select 
+                        value={selectedCrypto}
+                        onChange={(e) => setSelectedCrypto(e.target.value as 'eth' | 'sol' | 'btc')}
+                        className="appearance-none flex items-center gap-2 bg-white pl-9 pr-8 py-2 rounded-xl border border-gray-200 shadow-sm font-semibold text-gray-900 shrink-0 cursor-pointer hover:bg-gray-50 transition-colors outline-none"
+                      >
+                        <option value="eth">ETH</option>
+                        <option value="btc">BTC</option>
+                        <option value="sol">SOL</option>
+                      </select>
+                      <img src={cryptoOptions[selectedCrypto].icon} alt={cryptoOptions[selectedCrypto].name} className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -184,7 +201,7 @@ export default function Home() {
               <div className="mt-6 bg-gray-50 rounded-xl p-4 text-sm border border-gray-100">
                 <div className="flex justify-between text-gray-600 mb-2">
                   <span>Taux estimé</span>
-                  <span className="font-medium">1 ETH = {ethPrice} €</span>
+                  <span className="font-medium">1 {cryptoOptions[selectedCrypto].name} = {currentPrice} €</span>
                 </div>
                 <div className="flex justify-between text-gray-900 font-semibold bg-white p-2 rounded-lg border border-gray-200/50 shadow-sm">
                   <span>Frais transparents (~1.99%)</span>
@@ -195,7 +212,6 @@ export default function Home() {
               <div className="mt-6 pt-4 border-t border-gray-100">
                 <p className="text-center text-xs text-gray-400 mb-3 font-medium">Moyens de paiement acceptés</p>
                 <div className="flex justify-center items-center gap-4 opacity-70">
-                  {/* Utilisation de textes génériques élégants pour éviter les problèmes de licence SVG */}
                   <span className="text-sm font-bold font-sans">Pay</span>
                   <span className="text-sm font-bold font-sans italic">VISA</span>
                   <span className="text-sm font-bold font-sans">SEPA</span>
@@ -203,7 +219,7 @@ export default function Home() {
               </div>
 
               <Link 
-                href={`/acheter?crypto=eth`}
+                href={`/acheter?crypto=${selectedCrypto}`}
                 className="w-full mt-6 bg-gray-900 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors shadow-lg hidden md:flex"
               >
                 Continuer l'achat
@@ -347,7 +363,7 @@ export default function Home() {
 
           <div className="mt-10 text-center">
             <p className="text-gray-500 text-sm">
-              Vous avez d'autres questions ? <br/> Consultez notre <Link href="/apprendre" className="text-indigo-600 font-semibold hover:underline">Espace Apprendre</Link> ou contactez notre support.
+              Vous avez d'autres questions ? <br/> Consultez notre <Link href="/apprendre" className="text-indigo-600 font-semibold hover:underline">Blog</Link> ou contactez notre support.
             </p>
           </div>
         </div>
@@ -358,7 +374,7 @@ export default function Home() {
 
       {/* MOBILE STICKY CTA */}
       <div className="md:hidden fixed bottom-4 left-4 right-4 z-50">
-        <Link href="/acheter" className="block w-full bg-indigo-600 text-white text-center py-4 rounded-2xl font-bold shadow-[0_8px_30px_rgb(79,70,229,0.4)] active:scale-95 transition-transform">
+        <Link href={`/acheter?crypto=${selectedCrypto}`} className="block w-full bg-indigo-600 text-white text-center py-4 rounded-2xl font-bold shadow-[0_8px_30px_rgb(79,70,229,0.4)] active:scale-95 transition-transform">
           Acheter des cryptos maintenant
         </Link>
       </div>

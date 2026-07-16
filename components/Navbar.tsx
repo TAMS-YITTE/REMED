@@ -17,8 +17,8 @@ export function Navbar() {
           </Link>
           <div className="hidden md:flex gap-6">
             <Link href="/" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Accueil</Link>
-            <Link href="/apprendre" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Apprendre</Link>
             <Link href="/acheter" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Acheter</Link>
+            <Link href="/apprendre" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Blog</Link>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -52,8 +52,8 @@ export function Navbar() {
           >
             <div className="flex flex-col gap-4">
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-xl">Accueil</Link>
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-xl">Apprendre</Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/acheter" className="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-xl">Acheter</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-xl">Blog</Link>
               <div className="mt-4 pt-4 border-t border-gray-100 px-4">
                 <AuthButton />
               </div>

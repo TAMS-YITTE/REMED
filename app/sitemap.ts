@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: url, lastModified: new Date() },
     { url: `${url}/acheter`, lastModified: new Date() },
     { url: `${url}/apprendre`, lastModified: new Date() },
+    { url: `${url}/plateforme`, lastModified: new Date() },
     { url: `${url}/cgu`, lastModified: new Date() },
     { url: `${url}/confidentialite`, lastModified: new Date() },
     { url: `${url}/mentions-legales`, lastModified: new Date() },

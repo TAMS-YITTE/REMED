@@ -2,7 +2,7 @@ import { articles } from '@/lib/articles';
 import { notFound } from 'next/navigation';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
-import { AuthButton } from '@/components/AuthButton';
+import { Navbar } from '@/components/Navbar';
 import ReactMarkdown from 'react-markdown';
 
 export function generateStaticParams() {
@@ -18,24 +18,25 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
     notFound();
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.title,
+    "description": article.excerpt,
+    "datePublished": article.date,
+    "author": {
+      "@type": "Organization",
+      "name": "Remedly"
+    }
+  };
+
   return (
     <main className="bg-white min-h-screen text-gray-900 flex flex-col">
-      {/* NAVIGATION */}
-      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-200/50 sticky top-0 bg-white/80 backdrop-blur-md z-50">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="text-lg font-semibold tracking-tight text-gray-900 no-underline">
-            rem<span className="text-[#534AB7]">e</span>dly
-          </Link>
-          <div className="hidden md:flex gap-6">
-            <Link href="/" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Accueil</Link>
-            <Link href="/apprendre" className="text-sm font-medium text-[#534AB7]">Apprendre</Link>
-            <Link href="/acheter" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">Acheter</Link>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <AuthButton />
-        </div>
-      </nav>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Navbar />
 
       <article className="flex-1 max-w-3xl mx-auto w-full px-6 py-16">
         <Link href="/apprendre" className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-[#534AB7] mb-8 transition-colors">

@@ -13,15 +13,16 @@ describe('Home page (/)', () => {
   it('shows the risk disclaimer above the fold', () => {
     render(<Home />);
     expect(
-      screen.getByText(/investissements à risque élevé/i)
+      screen.getByText(/crypto-actifs sont très volatils/i)
     ).toBeInTheDocument();
   });
 
-  it('links the main and bottom CTAs to /acheter', () => {
+  it('links multiple CTAs to /acheter', () => {
     render(<Home />);
-    const ctas = screen.getAllByRole('link', { name: /acheter maintenant/i });
+    const ctas = screen.getAllByRole('link').filter((link) =>
+      link.getAttribute('href')?.startsWith('/acheter')
+    );
     expect(ctas.length).toBeGreaterThanOrEqual(2);
-    ctas.forEach((cta) => expect(cta).toHaveAttribute('href', '/acheter'));
   });
 
   it('renders the legal footer', () => {

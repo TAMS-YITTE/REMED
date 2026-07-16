@@ -78,32 +78,56 @@ C'est aujourd'hui le compromis parfait entre la sécurité d'un portefeuille dé
     `
   },
   {
-    slug: 'pourquoi-bitcoin',
-    title: "Pourquoi Bitcoin ? Comprendre l'or numérique",
-    excerpt: "Bitcoin est souvent qualifié d'or numérique, mais qu'est-ce qui donne réellement de la valeur à cette monnaie virtuelle ?",
+    slug: 'bitcoin-ethereum-solana-differences-debutant',
+    title: "Bitcoin, Ethereum, Solana : quelles différences pour un débutant ?",
+    excerpt: "Vous débutez et vous vous perdez parmi les milliers de cryptomonnaies ? Voici un guide simple pour comprendre les 3 plus grands projets de l'écosystème.",
     category: 'Crypto',
-    date: '14 Juillet 2026',
-    readTime: '3 min',
+    date: '16 Juillet 2026',
+    readTime: '5 min',
     content: `
-## La rareté numérique, une première historique
+## L'écosystème crypto ne se résume pas à Bitcoin
 
-Avant la création de Bitcoin en 2009 par l'anonyme Satoshi Nakamoto, tout ce qui était numérique pouvait être copié à l'infini. Une photo, un fichier mp3, un document texte... tout est duplicable par un simple "copier-coller".
+Quand on débute, il est facile de penser que "Crypto = Bitcoin". S'il est vrai que Bitcoin est le précurseur et le leader incontesté, il existe aujourd'hui des milliers d'autres projets appelés des *altcoins* (alternative coins). 
 
-Comment créer une monnaie numérique si on peut la copier à l'infini ? C'était le problème de la "double dépense", résolu brillamment par Bitcoin grâce à la blockchain.
+Parmi eux, **Ethereum** et **Solana** se détachent du lot. Mais à quoi servent-ils ? Sont-ils des concurrents de Bitcoin ? Faisons le point simplement.
 
-Bitcoin a inventé **la rareté numérique**. 
+### 1. Bitcoin (BTC) : L'or numérique et la réserve de valeur
 
-### Qu'est-ce qui fait la valeur de Bitcoin ?
+Créé en 2009, Bitcoin a un objectif simple mais révolutionnaire : être une **monnaie numérique décentralisée**, incensurable et avec une masse monétaire fixe (il n'y aura jamais plus de 21 millions de bitcoins).
 
-Contrairement à l'Euro ou au Dollar qui peuvent être imprimés à l'infini par les banques centrales (ce qui crée de l'inflation et fait baisser notre pouvoir d'achat), Bitcoin a des règles mathématiques strictes et immuables :
+* **Son but principal :** Transférer de la valeur de manière sécurisée et servir de réserve de valeur contre l'inflation.
+* **L'analogie :** C'est l'**Or numérique**. On l'achète pour le conserver à long terme.
+* **Point fort :** C'est le réseau le plus ancien, le plus décentralisé et le plus sécurisé au monde.
+* **Point faible :** Il est relativement lent (environ 10 minutes pour confirmer une transaction) et ne permet pas facilement de créer des applications complexes.
 
-1. **Il n'y aura jamais plus de 21 millions de Bitcoins.** C'est inscrit dans le code, et personne ne peut le changer. Actuellement, plus de 19 millions ont déjà été créés.
-2. **L'émission est divisée par deux tous les 4 ans.** C'est ce qu'on appelle le "Halving". La création de nouveaux Bitcoins devient de plus en plus difficile et lente avec le temps, renforçant sa rareté.
-3. **Il n'a pas de chef.** Il n'y a pas de PDG de Bitcoin, pas d'entreprise derrière, pas de serveur central à éteindre. C'est un protocole mondial, entretenu par des dizaines de milliers d'ordinateurs. Personne ne peut le censurer ou l'arrêter.
+### 2. Ethereum (ETH) : L'ordinateur mondial
 
-### L'Or Numérique
+Lancé en 2015, Ethereum ne cherche pas à concurrencer Bitcoin sur le terrain de la réserve de valeur pure. Son objectif est d'être un **ordinateur géant mondial**. 
 
-Grâce à ces caractéristiques (rareté, incensurabilité, durabilité), Bitcoin est aujourd'hui considéré par de nombreux experts et institutions financières comme une réserve de valeur, au même titre que l'or physique. La grande différence ? Bitcoin est divisible en infimes fractions (les "Satoshis"), transportable sur un simple téléphone, et transférable à l'autre bout du monde en quelques minutes, de manière totalement indépendante du système bancaire traditionnel.
+Ethereum a introduit les *Smart Contracts* (contrats intelligents). Ce sont de petits programmes informatiques qui s'exécutent automatiquement sur la blockchain. Grâce à eux, on peut créer des applications financières (la DeFi) ou des œuvres d'art numériques (les NFTs).
+
+* **Son but principal :** Servir d'infrastructure (comme iOS ou Android) sur laquelle les développeurs peuvent créer des applications décentralisées.
+* **L'analogie :** C'est le **Pétrole numérique** ou le cloud mondial. On a besoin d'ETH pour faire fonctionner le réseau.
+* **Point fort :** Un écosystème d'applications gigantesque et une innovation constante.
+* **Point faible :** Les frais de transaction peuvent devenir très élevés lorsque le réseau est très sollicité.
+
+### 3. Solana (SOL) : La Formule 1 des blockchains
+
+Solana, lancé en 2020, est souvent qualifié d'"Ethereum Killer". Il part du même principe qu'Ethereum (permettre de créer des applications décentralisées), mais avec une architecture technique différente axée sur la **vitesse** et les **frais ultra-réduits**.
+
+* **Son but principal :** Être la blockchain la plus rapide pour un usage quotidien (paiements, jeux, trading haute fréquence).
+* **L'analogie :** C'est le **Réseau Visa/Mastercard** de la crypto. Construit pour la vitesse.
+* **Point fort :** Peut traiter des milliers de transactions par seconde pour des frais inférieurs à 1 centime.
+* **Point faible :** Il a connu quelques pannes techniques dans ses premières années, bien que le réseau soit de plus en plus stable aujourd'hui. Il est aussi considéré comme moins décentralisé qu'Ethereum.
+
+### Résumé pour vos investissements
+
+Pour un investisseur débutant, ces 3 cryptomonnaies constituent souvent la base d'un portefeuille solide :
+* **Bitcoin** pour la sécurité et le long terme.
+* **Ethereum** pour parier sur le développement de la finance décentralisée et du Web3.
+* **Solana** pour son adoption massive liée à sa vitesse et ses faibles frais.
+
+*Rappel : Sur Remedly, vous pouvez acheter ces trois actifs directement avec votre carte bancaire.* 
     `
   }
 ];

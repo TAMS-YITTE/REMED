@@ -27,7 +27,7 @@ export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalle
         return (
           <div className="flex items-center justify-between gap-3 bg-white/5 p-3 rounded-lg border border-white/10 border-dashed">
             <div className="flex flex-col flex-1 overflow-hidden">
-              <span className="text-[11px] text-indigo-200 font-medium uppercase tracking-wider mb-0.5">{label}</span>
+              <span className="text-[11px] text-indigo-100 font-medium uppercase tracking-wider mb-0.5">{label}</span>
               <span className="text-[12px] text-white/50 italic">Non générée</span>
             </div>
             <button 
@@ -44,7 +44,7 @@ export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalle
     return (
       <div className="flex items-center justify-between gap-3 bg-white/10 p-3 rounded-lg border border-white/10 hover:bg-white/15 transition-colors">
         <div className="flex flex-col flex-1 overflow-hidden">
-          <span className="text-[11px] text-indigo-200 font-medium uppercase tracking-wider mb-0.5">{label}</span>
+          <span className="text-[11px] text-indigo-100 font-medium uppercase tracking-wider mb-0.5">{label}</span>
           <code className="text-[13px] text-white truncate tracking-wide">
             {address}
           </code>
@@ -67,12 +67,12 @@ export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalle
       
       <div className="relative flex justify-between items-start mb-8 z-10">
         <div>
-          <h2 className="text-[13px] font-medium text-indigo-200 mb-1.5 uppercase tracking-wider">Solde Total (ETH Testnet)</h2>
+          <h2 className="text-[13px] font-medium text-indigo-100 mb-1.5 uppercase tracking-wider">Solde Total (ETH Testnet)</h2>
           <div className="text-4xl font-semibold tracking-tight flex items-center gap-3">
             {isLoading ? (
               <div className="h-10 w-32 bg-white/10 animate-pulse rounded-lg"></div>
             ) : (
-              <>{balance || "0.00"} <span className="text-xl text-indigo-200">ETH</span></>
+              <>{balance || "0.00"} <span className="text-xl text-indigo-100">ETH</span></>
             )}
           </div>
         </div>
@@ -83,7 +83,7 @@ export function WalletBalance({ walletAddress, solanaWalletAddress, bitcoinWalle
 
       <div className="relative bg-black/25 rounded-xl p-5 backdrop-blur-md border border-white/5 z-10">
         <div className="flex justify-between items-center mb-4">
-          <div className="text-xs text-indigo-200 font-medium uppercase tracking-wider">
+          <div className="text-xs text-indigo-100 font-medium uppercase tracking-wider">
             Adresses sécurisées
           </div>
           <div className="text-[10px] text-white/90 bg-indigo-500/30 px-2 py-0.5 rounded-full font-medium border border-indigo-400/30">

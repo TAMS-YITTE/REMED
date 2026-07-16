@@ -66,6 +66,12 @@ function RealAuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  useEffect(() => {
+    if (ready && authenticated && user && !bitcoinWalletAddress) {
+      createWallet({ chainType: 'bitcoin-taproot' }).catch(console.error);
+    }
+  }, [ready, authenticated, user, bitcoinWalletAddress, createWallet]);
+
   const value = {
     ready,
     authenticated,

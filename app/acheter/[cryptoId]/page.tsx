@@ -4,6 +4,8 @@ import { Footer } from '@/components/Footer';
 import { BuyWidget } from '@/components/BuyWidget';
 import { CryptoChart } from '@/components/CryptoChart';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { cryptoList } from '@/lib/cryptoList';
 
 // Mappage des informations basiques pour le SEO
 const cryptoMap: Record<string, { name: string; symbol: string; description: string }> = {
@@ -14,6 +16,14 @@ const cryptoMap: Record<string, { name: string; symbol: string; description: str
   // Par défaut
   default: { name: 'Cryptomonnaie', symbol: 'CRYPTO', description: 'Achetez vos cryptomonnaies préférées simplement et de façon sécurisée sur Remedly.' }
 };
+
+export function generateStaticParams() {
+  return cryptoList
+    .filter((crypto) => crypto.supported)
+    .map((crypto) => ({
+      cryptoId: crypto.id,
+    }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ cryptoId: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
@@ -34,6 +44,12 @@ export async function generateMetadata({ params }: { params: Promise<{ cryptoId:
 export default async function AcheterCryptoPage({ params }: { params: Promise<{ cryptoId: string }> }) {
   const resolvedParams = await params;
   const id = resolvedParams.cryptoId.toLowerCase();
+
+  const isSupported = cryptoList.some((c) => c.id === id && c.supported);
+  if (!isSupported) {
+    notFound();
+  }
+
   const cryptoInfo = cryptoMap[id] || { ...cryptoMap.default, name: id.toUpperCase(), symbol: id.toUpperCase() };
 
   return (

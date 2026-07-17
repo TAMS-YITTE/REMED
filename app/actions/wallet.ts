@@ -4,7 +4,7 @@ import { safeFetch } from './utils';
 import type { Transaction, WalletData } from './utils';
 
 export async function getWalletData(address: string): Promise<WalletData> {
-  const ETHERSCAN_API = 'https://api.etherscan.io/api';
+  const ETHERSCAN_API = 'https://api-sepolia.etherscan.io/api';
   const API_KEY = process.env.ETHERSCAN_API_KEY || '';
   
   try {
@@ -47,7 +47,7 @@ export async function getWalletData(address: string): Promise<WalletData> {
 }
 
 export async function getErc20Balances(address: string) {
-  const ETHERSCAN_API = 'https://api.etherscan.io/api';
+  const ETHERSCAN_API = 'https://api-sepolia.etherscan.io/api';
   const API_KEY = process.env.ETHERSCAN_API_KEY || '';
   
   const tokens = [
@@ -77,6 +77,25 @@ export async function getErc20Balances(address: string) {
   } catch (err) {
     console.error("Erreur lors de la récupération des tokens ERC20 :", err);
   }
-  
+  try {
+    const SNOWTRACE_API = 'https://api.snowtrace.io/api';
+    const SNOWTRACE_KEY = process.env.SNOWTRACE_API_KEY || '';
+    const avaxData = await safeFetch<any>(
+      `${SNOWTRACE_API}?module=account&action=balance&address=${address}&tag=latest&apikey=${SNOWTRACE_KEY}`,
+      { next: { revalidate: 10 } },
+      null
+    );
+    if (avaxData?.status === "1" && avaxData?.result) {
+      const wei = BigInt(avaxData.result);
+      const avaxVal = Number(wei / BigInt(10 ** 14)) / 10000;
+      balances['AVAX'] = avaxVal > 0 ? avaxVal.toFixed(4) : "0.00";
+    } else {
+      balances['AVAX'] = "0.00";
+    }
+  } catch (err) {
+    console.error("Erreur lors de la récupération de AVAX via Snowtrace :", err);
+    balances['AVAX'] = "0.00";
+  }
+
   return balances;
 }

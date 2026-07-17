@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface MarketData {
-  fngValue: number;
-  fngClassification: string;
-  btcChange: number;
-  ethChange: number;
-  solChange: number;
-  rsiValue: number;
+  fngValue: number | null;
+  fngClassification: string | null;
+  btcChange: number | null;
+  ethChange: number | null;
+  solChange: number | null;
+  rsiValue: number | null;
 }
 
 const GaugeChart = ({ value, label }: { value: number, label: string }) => {
@@ -53,16 +53,8 @@ export function MarketTrends() {
     return res;
   };
 
-  const { data, error, isLoading } = useSWR<MarketData>('marketTrends', fetcher, {
+  const { data, error, isLoading } = useSWR<MarketData | null>('marketTrends', fetcher, {
     refreshInterval: 60000, // Refresh every 60s
-    fallbackData: {
-      fngValue: 50,
-      fngClassification: 'Neutral',
-      btcChange: 0,
-      ethChange: 0,
-      solChange: 0,
-      rsiValue: 50,
-    }
   });
 
   if (isLoading && !data) {
@@ -75,8 +67,12 @@ export function MarketTrends() {
     );
   }
 
-  if (error) {
-    return null; // Silently fail and hide widget if API is down
+  if (error || !data) {
+    return (
+      <div className="flex items-center justify-center bg-[#2E3152] border border-white/10 rounded-xl p-4 mb-8 text-sm text-gray-400">
+        Données de marché momentanément indisponibles
+      </div>
+    );
   }
 
   const translateFng = (enClass: string) => {
@@ -90,7 +86,8 @@ export function MarketTrends() {
     return map[enClass] || enClass;
   };
 
-  const formatChange = (val: number) => {
+  const formatChange = (val: number | null) => {
+    if (val === null) return '';
     const prefix = val > 0 ? '+' : '';
     return `${prefix}${val.toFixed(2)}%`;
   };
@@ -111,7 +108,11 @@ export function MarketTrends() {
           Fear & Greed
           <span className="text-[10px] text-gray-500">›</span>
         </h3>
-        <GaugeChart value={data?.fngValue || 50} label={translateFng(data?.fngClassification || 'Neutral')} />
+        {data.fngValue !== null ? (
+          <GaugeChart value={data.fngValue} label={translateFng(data.fngClassification || '')} />
+        ) : (
+          <span className="text-xs text-gray-500 text-center mt-2">Indisponible</span>
+        )}
       </motion.div>
 
       {/* RSI Card */}
@@ -119,47 +120,71 @@ export function MarketTrends() {
         <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold shadow-inner flex-shrink-0">
           RSI
         </div>
-        <p className="text-sm font-bold tracking-tight text-gray-200">
-          {data?.rsiValue}
-        </p>
-      </motion.div>
-
-      {/* BTC Card */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
-        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-          <img src="/btc.svg" alt="Bitcoin" className="w-full h-full" />
-        </div>
-        <div className="flex flex-col items-center sm:items-start leading-none">
-          <span className={`text-sm font-bold tracking-tight ${(data?.btcChange || 0) > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {formatChange(data?.btcChange || 0)}
-          </span>
-          <span className="text-[9px] text-gray-500 font-medium">24h</span>
+        <div className="flex flex-col">
+          {data.rsiValue !== null ? (
+            <>
+              <span className="text-lg font-extrabold text-white leading-none">{data.rsiValue}</span>
+              <span className="text-[9px] text-gray-400 font-medium">
+                {data.rsiValue > 70 ? 'Suracheté' : data.rsiValue < 30 ? 'Survendu' : 'Neutre'}
+              </span>
+            </>
+          ) : (
+            <span className="text-xs text-gray-500">Indisponible</span>
+          )}
         </div>
       </motion.div>
 
-      {/* ETH Card */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
-        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-          <img src="/eth.svg" alt="Ethereum" className="w-full h-full" />
+      {/* BTC Change */}
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+        <div className="flex items-center gap-1.5 mb-1 px-1">
+          <img src="/btc.svg" alt="BTC" className="w-4 h-4 rounded-full" />
+          <span className="text-[10px] font-semibold text-white/80">Bitcoin</span>
         </div>
-        <div className="flex flex-col items-center sm:items-start leading-none">
-          <span className={`text-sm font-bold tracking-tight ${(data?.ethChange || 0) > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {formatChange(data?.ethChange || 0)}
-          </span>
-          <span className="text-[9px] text-gray-500 font-medium">24h</span>
+        <div className="flex items-end justify-between px-1">
+          {data.btcChange !== null ? (
+            <span className={`text-sm font-bold ${data.btcChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {formatChange(data.btcChange)}
+            </span>
+          ) : (
+            <span className="text-xs text-gray-500">Indisponible</span>
+          )}
+          <span className="text-[8px] text-gray-500 mb-0.5">24h</span>
         </div>
       </motion.div>
 
-      {/* SOL Card */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
-        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden bg-black/40">
-          <img src="/sol.svg" alt="Solana" className="w-full h-full" />
+      {/* ETH Change */}
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+        <div className="flex items-center gap-1.5 mb-1 px-1">
+          <img src="/eth.svg" alt="ETH" className="w-4 h-4 rounded-full bg-white/90 p-0.5" />
+          <span className="text-[10px] font-semibold text-white/80">Ethereum</span>
         </div>
-        <div className="flex flex-col items-center sm:items-start leading-none">
-          <span className={`text-sm font-bold tracking-tight ${(data?.solChange || 0) > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {formatChange(data?.solChange || 0)}
-          </span>
-          <span className="text-[9px] text-gray-500 font-medium">24h</span>
+        <div className="flex items-end justify-between px-1">
+          {data.ethChange !== null ? (
+            <span className={`text-sm font-bold ${data.ethChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {formatChange(data.ethChange)}
+            </span>
+          ) : (
+            <span className="text-xs text-gray-500">Indisponible</span>
+          )}
+          <span className="text-[8px] text-gray-500 mb-0.5">24h</span>
+        </div>
+      </motion.div>
+
+      {/* SOL Change */}
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 sm:col-span-1 md:col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+        <div className="flex items-center gap-1.5 mb-1 px-1">
+          <img src="/sol.svg" alt="SOL" className="w-4 h-4 rounded-full" />
+          <span className="text-[10px] font-semibold text-white/80">Solana</span>
+        </div>
+        <div className="flex items-end justify-between px-1">
+          {data.solChange !== null ? (
+            <span className={`text-sm font-bold ${data.solChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+              {formatChange(data.solChange)}
+            </span>
+          ) : (
+            <span className="text-xs text-gray-500">Indisponible</span>
+          )}
+          <span className="text-[8px] text-gray-500 mb-0.5">24h</span>
         </div>
       </motion.div>
     </motion.div>

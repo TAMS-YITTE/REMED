@@ -149,7 +149,7 @@ export function WalletBalance({
             
             {totalEur !== null && (
               <div className="text-sm font-normal text-indigo-200 mt-1">
-                ≈ {balance || "0.00"} ETH (Mainnet)
+                ≈ {balance || "0.00"} ETH (Testnet)
               </div>
             )}
           </div>

@@ -6,7 +6,8 @@ import { useAuth } from '@/hooks/useAuth';
 jest.mock('@/hooks/useAuth');
 
 jest.mock('@/app/actions/wallet', () => ({
-  getWalletData: jest.fn().mockResolvedValue({ balanceEth: '0.00', transactions: [] })
+  getWalletData: jest.fn().mockResolvedValue({ balanceEth: '0.00', transactions: [] }),
+  getErc20Balances: jest.fn().mockResolvedValue({})
 }));
 
 jest.mock('@/app/actions/solana', () => ({

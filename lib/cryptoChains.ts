@@ -25,7 +25,7 @@ const CHAIN_BY_CRYPTO: Record<string, ChainFamily> = {
   usdc: 'ethereum',
   avax: 'ethereum',
   link: 'ethereum',
-  matic: 'ethereum',
+  pol: 'ethereum',
   shib: 'ethereum',
   uni: 'ethereum',
 };

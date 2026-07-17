@@ -10,10 +10,12 @@ interface WalletBalanceProps {
   balance?: string;
   solanaBalance?: string;
   bitcoinBalance?: string;
+  erc20Balances?: Record<string, string>;
   prices?: Record<string, number> | null;
   isLoading?: boolean;
   isLoadingSolana?: boolean;
   isLoadingBitcoin?: boolean;
+  isLoadingErc20?: boolean;
   onCreateBitcoinWallet?: () => void;
 }
 
@@ -102,10 +104,12 @@ export function WalletBalance({
   balance, 
   solanaBalance,
   bitcoinBalance,
+  erc20Balances,
   prices,
   isLoading, 
   isLoadingSolana,
   isLoadingBitcoin,
+  isLoadingErc20,
   onCreateBitcoinWallet 
 }: WalletBalanceProps) {
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
@@ -145,7 +149,7 @@ export function WalletBalance({
             
             {totalEur !== null && (
               <div className="text-sm font-normal text-indigo-200 mt-1">
-                ≈ {balance || "0.00"} ETH (Testnet)
+                ≈ {balance || "0.00"} ETH (Mainnet)
               </div>
             )}
           </div>
@@ -166,6 +170,18 @@ export function WalletBalance({
         </div>
         <div className="flex flex-col gap-2">
           <AddressRow label="Ethereum / EVM" address={walletAddress} copied={copiedAddress === walletAddress} onCopy={handleCopy} balance={balance} isLoadingBalance={isLoading} symbol="ETH" priceEur={prices?.eth} />
+          {erc20Balances && Object.entries(erc20Balances).filter(([_, bal]) => parseFloat(bal) > 0 || isLoadingErc20).map(([sym, bal]) => (
+            <div key={sym} className="flex items-center justify-between gap-3 bg-white/5 p-2 rounded-lg border border-white/5 ml-4">
+              <span className="text-[11px] text-indigo-100 font-medium">{sym} (ERC-20)</span>
+              <div className="text-[12px] font-medium text-white">
+                {isLoadingErc20 ? (
+                  <div className="h-4 w-12 bg-white/20 animate-pulse rounded"></div>
+                ) : (
+                  <>{bal} <span className="text-white/60 text-[10px]">{sym}</span></>
+                )}
+              </div>
+            </div>
+          ))}
           <AddressRow label="Solana" address={solanaWalletAddress} copied={copiedAddress === solanaWalletAddress} onCopy={handleCopy} balance={solanaBalance} isLoadingBalance={isLoadingSolana} symbol="SOL" priceEur={prices?.sol} />
           <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} copied={copiedAddress === bitcoinWalletAddress} onCopy={handleCopy} onGenerate={onCreateBitcoinWallet} balance={bitcoinBalance} isLoadingBalance={isLoadingBitcoin} symbol="BTC" priceEur={prices?.btc} />
         </div>

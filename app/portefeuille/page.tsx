@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { getWalletData } from '@/app/actions/wallet';
+import { getWalletData, getErc20Balances } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
 import { getCryptoPrices } from '@/app/actions/prices';
@@ -24,10 +24,12 @@ export default function PortefeuillePage() {
   const [ethData, setEthData] = useState<WalletData | null>(null);
   const [solData, setSolData] = useState<WalletData | null>(null);
   const [btcData, setBtcData] = useState<WalletData | null>(null);
+  const [erc20Balances, setErc20Balances] = useState<Record<string, string>>({});
   
   const [isLoadingEth, setIsLoadingEth] = useState(false);
   const [isLoadingSol, setIsLoadingSol] = useState(false);
   const [isLoadingBtc, setIsLoadingBtc] = useState(false);
+  const [isLoadingErc20, setIsLoadingErc20] = useState(false);
 
   const [prices, setPrices] = useState<CryptoPrices | null | undefined>(undefined);
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -39,9 +41,14 @@ export default function PortefeuillePage() {
   useEffect(() => {
     if (walletAddress) {
       setIsLoadingEth(true);
+      setIsLoadingErc20(true);
       getWalletData(walletAddress).then(data => {
         setEthData(data);
         setIsLoadingEth(false);
+      });
+      getErc20Balances(walletAddress).then(data => {
+        setErc20Balances(data);
+        setIsLoadingErc20(false);
       });
     }
   }, [walletAddress]);
@@ -142,10 +149,12 @@ export default function PortefeuillePage() {
               balance={ethData?.balanceEth} 
               solanaBalance={solData?.balanceSol}
               bitcoinBalance={btcData?.balanceBtc}
+              erc20Balances={erc20Balances}
               prices={prices}
               isLoading={isLoadingEth} 
               isLoadingSolana={isLoadingSol}
               isLoadingBitcoin={isLoadingBtc}
+              isLoadingErc20={isLoadingErc20}
             />
           </motion.div>
         ) : (

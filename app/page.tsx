@@ -20,7 +20,7 @@ const cryptoList = [
   { id: 'usdc', name: 'USDC', symbol: 'USDC', icon: '/usdc.svg', supported: true },
   { id: 'avax', name: 'Avalanche', symbol: 'AVAX', icon: '/avax.svg', supported: true },
   { id: 'link', name: 'Chainlink', symbol: 'LINK', icon: '/link.svg', supported: true },
-  { id: 'matic', name: 'Polygon', symbol: 'MATIC', icon: '/matic.svg', supported: true },
+  { id: 'pol', name: 'Polygon', symbol: 'POL', icon: '/matic.svg', supported: true },
   { id: 'shib', name: 'Shiba Inu', symbol: 'SHIB', icon: '/shib.svg', supported: true },
   { id: 'uni', name: 'Uniswap', symbol: 'UNI', icon: '/uni.svg', supported: true },
   { id: 'xrp', name: 'Ripple', symbol: 'XRP', icon: '/xrp.svg', supported: false },

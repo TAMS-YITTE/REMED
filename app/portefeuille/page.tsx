@@ -12,6 +12,7 @@ import { WalletBalance } from '@/components/WalletBalance';
 import { TransactionHistory } from '@/components/TransactionHistory';
 import { PortfolioDonut } from '@/components/PortfolioDonut';
 import { SendModal } from '@/components/SendModal';
+import { MarketTrends } from '@/components/MarketTrends';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
@@ -127,6 +128,10 @@ export default function PortefeuillePage() {
           <p className="text-[13px] text-gray-300 mt-2 bg-[#2E3152] p-3 rounded-lg border border-white/10">
             🔒 <strong>100% Non-Custodial :</strong> Ce portefeuille a été généré automatiquement par <strong>Privy</strong> lors de votre connexion. Vous seul y avez accès. Remedly ne détient pas vos fonds.
           </p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.05 }}>
+          <MarketTrends />
         </motion.div>
 
         {walletAddress ? (

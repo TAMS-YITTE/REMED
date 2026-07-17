@@ -52,7 +52,7 @@ export function CryptoChart({ cryptoId, cryptoName, cryptoSymbol, currentPrice }
   };
 
   return (
-    <div className="w-full bg-[#252844]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+    <div className="w-full h-full flex flex-col bg-[#252844]/80 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -78,7 +78,7 @@ export function CryptoChart({ cryptoId, cryptoName, cryptoSymbol, currentPrice }
         </div>
       </div>
 
-      <div className="h-[200px] w-full">
+      <div className="flex-1 w-full min-h-[300px]">
         {isLoading && !data ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="animate-pulse flex gap-1 items-end h-32">

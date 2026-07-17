@@ -176,7 +176,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
           {/* GRAPH BLOCK */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }} 
@@ -201,7 +201,7 @@ export default function Home() {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-30 transform rotate-3 animate-pulse duration-1000"></div>
             
-            <div className="glass-panel rounded-3xl p-6 sm:p-8 relative z-10">
+            <div className="glass-panel rounded-3xl p-6 sm:p-8 relative z-10 h-full flex flex-col justify-between">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-white">{t('sim.title')}</h3>
                 <span className="flex items-center gap-1 text-xs font-semibold bg-green-50 text-green-700 px-2 py-1 rounded-md">

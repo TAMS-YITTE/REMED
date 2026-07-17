@@ -46,21 +46,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('remedly_language') as Language;
-    if (saved === 'fr' || saved === 'en') {
-      setLanguage(saved);
-    }
+    setLanguage('fr');
     setMounted(true);
   }, []);
 
   const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang);
-    localStorage.setItem('remedly_language', lang);
+    setLanguage('fr');
   };
 
   const t = (key: string) => {
-    if (!mounted) return dictionaries['fr'][key] || key;
-    return dictionaries[language][key] || key;
+    return dictionaries['fr'][key] || key;
   };
 
   return (

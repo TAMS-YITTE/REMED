@@ -5,6 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { AuthButton } from '@/components/AuthButton';
+import { MfaSection } from '@/components/MfaSection';
+import { isPrivyMock } from '@/lib/privyMode';
 import Link from 'next/link';
 
 function CopyableAddress({ label, address }: { label: string; address?: string }) {
@@ -83,6 +85,8 @@ export default function DashboardPage() {
             <span className="text-sm text-white">{email || 'Non disponible'}</span>
           </div>
         </section>
+
+        {!isPrivyMock() && <MfaSection />}
 
         <section className="glass-panel rounded-2xl p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">Adresses de portefeuille</h2>

@@ -6,6 +6,7 @@ import { useCreateWallet } from '@privy-io/react-auth/extended-chains';
 import { useEffect, useState, createContext } from 'react';
 import posthog from 'posthog-js';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { isPrivyMock } from '@/lib/privyMode';
 
 export const AuthContext = createContext<any>(null);
 
@@ -107,9 +108,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
-  const isMock = !appId || appId === 'cldummyappid0000000000000' || appId.includes('votre');
+  const isMock = isPrivyMock();
 
-  if (isMock) {
+  if (isMock || !appId) {
     return (
       <LanguageProvider>
         <MockAuthProvider>{children}</MockAuthProvider>

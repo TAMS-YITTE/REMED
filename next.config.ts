@@ -10,6 +10,7 @@ export default withSentryConfig(nextConfig, {
   org: "remedly",
   project: "remedly",
   widenClientFileUpload: true,
-  hideSourceMaps: true,
-  disableLogger: true,
+  sourcemaps: {
+    disable: true
+  }
 });

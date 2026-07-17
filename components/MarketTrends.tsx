@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 interface MarketData {
   fngValue: number;
   fngClassification: string;
-  fngClassification: string;
   btcChange: number;
   ethChange: number;
   solChange: number;

@@ -8,22 +8,27 @@ import Link from 'next/link';
 import { getCryptoPrices, CryptoPrices } from '@/app/actions/prices';
 import { MarketTrends } from '@/components/MarketTrends';
 
+// `supported: false` = le wallet Ethereum/Solana/Bitcoin de Privy ne peut pas
+// recevoir cet actif (réseau natif incompatible, confirmé via l'API publique
+// MoonPay https://api.moonpay.com/v3/currencies : format d'adresse et/ou tag
+// de destination différents). Reste visible dans le sélecteur mais désactivé
+// tant qu'aucun wallet compatible n'existe côté Privy. Voir lib/cryptoChains.ts.
 const cryptoList = [
-  { id: 'btc', name: 'Bitcoin', symbol: 'BTC', icon: '/btc.svg' },
-  { id: 'eth', name: 'Ethereum', symbol: 'ETH', icon: '/eth.svg' },
-  { id: 'sol', name: 'Solana', symbol: 'SOL', icon: '/sol.svg' },
-  { id: 'usdc', name: 'USDC', symbol: 'USDC', icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.svg?v=025' },
-  { id: 'xrp', name: 'Ripple', symbol: 'XRP', icon: 'https://cryptologos.cc/logos/xrp-xrp-logo.svg?v=025' },
-  { id: 'ada', name: 'Cardano', symbol: 'ADA', icon: 'https://cryptologos.cc/logos/cardano-ada-logo.svg?v=025' },
-  { id: 'avax', name: 'Avalanche', symbol: 'AVAX', icon: 'https://cryptologos.cc/logos/avalanche-avax-logo.svg?v=025' },
-  { id: 'dot', name: 'Polkadot', symbol: 'DOT', icon: 'https://cryptologos.cc/logos/polkadot-new-dot-logo.svg?v=025' },
-  { id: 'link', name: 'Chainlink', symbol: 'LINK', icon: 'https://cryptologos.cc/logos/chainlink-link-logo.svg?v=025' },
-  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', icon: 'https://cryptologos.cc/logos/dogecoin-doge-logo.svg?v=025' },
-  { id: 'matic', name: 'Polygon', symbol: 'MATIC', icon: 'https://cryptologos.cc/logos/polygon-matic-logo.svg?v=025' },
-  { id: 'shib', name: 'Shiba Inu', symbol: 'SHIB', icon: 'https://cryptologos.cc/logos/shiba-inu-shib-logo.svg?v=025' },
-  { id: 'ltc', name: 'Litecoin', symbol: 'LTC', icon: 'https://cryptologos.cc/logos/litecoin-ltc-logo.svg?v=025' },
-  { id: 'uni', name: 'Uniswap', symbol: 'UNI', icon: 'https://cryptologos.cc/logos/uniswap-uni-logo.svg?v=025' },
-  { id: 'atom', name: 'Cosmos', symbol: 'ATOM', icon: 'https://cryptologos.cc/logos/cosmos-atom-logo.svg?v=025' }
+  { id: 'btc', name: 'Bitcoin', symbol: 'BTC', icon: '/btc.svg', supported: true },
+  { id: 'eth', name: 'Ethereum', symbol: 'ETH', icon: '/eth.svg', supported: true },
+  { id: 'sol', name: 'Solana', symbol: 'SOL', icon: '/sol.svg', supported: true },
+  { id: 'usdc', name: 'USDC', symbol: 'USDC', icon: '/usdc.svg', supported: true },
+  { id: 'avax', name: 'Avalanche', symbol: 'AVAX', icon: '/avax.svg', supported: true },
+  { id: 'link', name: 'Chainlink', symbol: 'LINK', icon: '/link.svg', supported: true },
+  { id: 'matic', name: 'Polygon', symbol: 'MATIC', icon: '/matic.svg', supported: true },
+  { id: 'shib', name: 'Shiba Inu', symbol: 'SHIB', icon: '/shib.svg', supported: true },
+  { id: 'uni', name: 'Uniswap', symbol: 'UNI', icon: '/uni.svg', supported: true },
+  { id: 'xrp', name: 'Ripple', symbol: 'XRP', icon: '/xrp.svg', supported: false },
+  { id: 'ada', name: 'Cardano', symbol: 'ADA', icon: '/ada.svg', supported: false },
+  { id: 'dot', name: 'Polkadot', symbol: 'DOT', icon: '/dot.png', supported: false },
+  { id: 'doge', name: 'Dogecoin', symbol: 'DOGE', icon: '/doge.svg', supported: false },
+  { id: 'ltc', name: 'Litecoin', symbol: 'LTC', icon: '/ltc.svg', supported: false },
+  { id: 'atom', name: 'Cosmos', symbol: 'ATOM', icon: '/atom.svg', supported: false }
 ];
 
 export default function Home() {
@@ -273,19 +278,23 @@ export default function Home() {
                                 listToDisplay.map(c => (
                                   <button
                                     key={c.id}
+                                    disabled={!c.supported}
                                     onClick={() => {
+                                      if (!c.supported) return;
                                       setSelectedCryptoId(c.id);
                                       setIsSelectOpen(false);
                                       setSearchQuery('');
                                     }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${selectedCryptoId === c.id ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-[#353866] text-gray-300'}`}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${!c.supported ? 'opacity-40 cursor-not-allowed' : selectedCryptoId === c.id ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-[#353866] text-gray-300'}`}
                                   >
                                     <img src={c.icon} alt={c.name} className="w-6 h-6 rounded-full" />
                                     <div className="flex flex-col">
                                       <span className="font-bold text-sm leading-tight">{c.symbol}</span>
                                       <span className="text-xs opacity-70 leading-tight">{c.name}</span>
                                     </div>
-                                    {prices && prices[c.id] && (
+                                    {!c.supported ? (
+                                      <span className="ml-auto text-[10px] font-medium uppercase tracking-wide text-gray-500">Bientôt</span>
+                                    ) : prices && prices[c.id] && (
                                       <span className="ml-auto text-xs font-medium opacity-60">€{prices[c.id]}</span>
                                     )}
                                   </button>

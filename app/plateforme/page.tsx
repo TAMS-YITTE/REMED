@@ -29,7 +29,7 @@ export default function PlateformePage() {
             <div className="relative z-10 text-center">
               <div className="w-16 h-16 mx-auto bg-[#252844] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">1</div>
               <h3 className="font-bold text-lg mb-2">Choisir</h3>
-              <p className="text-sm text-gray-300">Sélectionnez la cryptomonnaie (BTC, ETH, SOL) et le montant en euros.</p>
+              <p className="text-sm text-gray-300">Sélectionnez votre cryptomonnaie parmi celles disponibles et le montant en euros.</p>
             </div>
             <div className="relative z-10 text-center">
               <div className="w-16 h-16 mx-auto bg-[#252844] border-2 border-indigo-500/50 text-indigo-400 rounded-full flex items-center justify-center text-2xl font-bold mb-4 shadow-sm">2</div>
@@ -90,9 +90,9 @@ export default function PlateformePage() {
       {/* 3. Cryptos disponibles */}
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-8">Les leaders du marché, rien de superflu</h2>
-          <p className="text-gray-400 mb-12">Nous avons volontairement limité notre offre aux trois cryptomonnaies les plus solides et liquides de l'écosystème pour vous protéger des projets spéculatifs.</p>
-          
+          <h2 className="text-3xl font-bold mb-8">Une offre qui s'élargit, toujours vérifiée</h2>
+          <p className="text-gray-400 mb-12">9 cryptomonnaies sont aujourd'hui disponibles à l'achat. Certaines, comme Bitcoin, Ethereum ou Solana, sont des valeurs établies de l'écosystème ; d'autres, comme Shiba Inu, sont bien plus spéculatives et volatiles — informez-vous avant d'investir.</p>
+
           <div className="grid md:grid-cols-3 gap-6">
             <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
               <img src="/btc.svg" alt="Bitcoin" className="w-16 h-16 mb-4" />
@@ -109,7 +109,41 @@ export default function PlateformePage() {
               <h3 className="font-bold text-lg">Solana (SOL)</h3>
               <p className="text-sm text-gray-400 mt-2">La vitesse pure. Des transactions instantanées pour des frais minimes.</p>
             </div>
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
+              <img src="/usdc.svg" alt="USDC" className="w-16 h-16 mb-4" />
+              <h3 className="font-bold text-lg">USD Coin (USDC)</h3>
+              <p className="text-sm text-gray-400 mt-2">Un stablecoin adossé au dollar, utile pour se mettre à l'abri de la volatilité.</p>
+            </div>
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
+              <img src="/avax.svg" alt="Avalanche" className="w-16 h-16 mb-4" />
+              <h3 className="font-bold text-lg">Avalanche (AVAX)</h3>
+              <p className="text-sm text-gray-400 mt-2">Une blockchain rapide et peu coûteuse pour les applications décentralisées.</p>
+            </div>
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
+              <img src="/link.svg" alt="Chainlink" className="w-16 h-16 mb-4" />
+              <h3 className="font-bold text-lg">Chainlink (LINK)</h3>
+              <p className="text-sm text-gray-400 mt-2">Un réseau d'oracles qui connecte la blockchain aux données du monde réel.</p>
+            </div>
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
+              <img src="/matic.svg" alt="Polygon" className="w-16 h-16 mb-4" />
+              <h3 className="font-bold text-lg">Polygon (MATIC)</h3>
+              <p className="text-sm text-gray-400 mt-2">Un réseau conçu pour rendre Ethereum plus rapide et moins cher à utiliser.</p>
+            </div>
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
+              <img src="/uni.svg" alt="Uniswap" className="w-16 h-16 mb-4" />
+              <h3 className="font-bold text-lg">Uniswap (UNI)</h3>
+              <p className="text-sm text-gray-400 mt-2">Le jeton du plus grand échange décentralisé de cryptomonnaies.</p>
+            </div>
+            <div className="p-6 border border-white/10 rounded-2xl bg-[#2E3152] flex flex-col items-center">
+              <img src="/shib.svg" alt="Shiba Inu" className="w-16 h-16 mb-4" />
+              <h3 className="font-bold text-lg">Shiba Inu (SHIB)</h3>
+              <p className="text-sm text-gray-400 mt-2">Un memecoin très populaire mais hautement spéculatif — pas un investissement de long terme.</p>
+            </div>
           </div>
+
+          <p className="text-sm text-gray-500 mt-10">
+            Bientôt disponibles : Ripple (XRP), Cardano (ADA), Dogecoin (DOGE), Litecoin (LTC), Polkadot (DOT) et Cosmos (ATOM), le temps d'intégrer un portefeuille compatible avec leurs réseaux respectifs.
+          </p>
         </div>
       </section>
 

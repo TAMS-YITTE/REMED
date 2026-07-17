@@ -22,6 +22,19 @@ export function BuyWidget({ crypto = 'eth' }: BuyWidgetProps) {
     }
   }, [chain, bitcoinWalletAddress, createBitcoinWallet]);
 
+  if (!chain) {
+    return (
+      <div className="flex flex-col items-center justify-center w-full h-[600px] bg-[#2E3152] border border-white/10 rounded-xl text-center p-6">
+        <h3 className="text-lg font-semibold text-white mb-2">{crypto.toUpperCase()} arrive bientôt</h3>
+        <p className="text-gray-400 text-sm max-w-sm">
+          Cette cryptomonnaie tourne sur un réseau que notre portefeuille ne
+          prend pas encore en charge. Elle sera disponible à l&apos;achat dès
+          que ce sera le cas.
+        </p>
+      </div>
+    );
+  }
+
   const activeWalletAddress = chain === 'solana' ? solanaWalletAddress : chain === 'bitcoin' ? bitcoinWalletAddress : walletAddress;
 
   if (!activeWalletAddress) {

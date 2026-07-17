@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 interface MarketData {
   fngValue: number;
@@ -9,6 +10,37 @@ interface MarketData {
   ethChange: number;
   isLoading: boolean;
   error: boolean;
+}
+
+const GaugeChart = ({ value, label }: { value: number, label: string }) => {
+  // value from 0 to 100
+  // rotation from -90 to +90
+  const rotation = (value / 100) * 180 - 90;
+
+  return (
+    <div className="relative flex flex-col items-center w-full h-24 mt-2">
+      <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible max-w-[160px]">
+        <defs>
+          <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#ef4444" />
+            <stop offset="30%" stopColor="#f97316" />
+            <stop offset="60%" stopColor="#eab308" />
+            <stop offset="100%" stopColor="#22c55e" />
+          </linearGradient>
+        </defs>
+        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="url(#gaugeGradient)" strokeWidth="6" strokeLinecap="round" />
+        
+        {/* Indicator dot */}
+        <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '50px 50px', transition: 'transform 1s ease-out' }}>
+          <circle cx="50" cy="10" r="4" fill="white" className="shadow-md drop-shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
+        </g>
+      </svg>
+      <div className="absolute bottom-0 flex flex-col items-center pb-2">
+        <span className="text-2xl font-bold text-white leading-none">{value}</span>
+        <span className="text-xs text-gray-400 mt-1">{label}</span>
+      </div>
+    </div>
+  )
 }
 
 export function MarketTrends() {
@@ -53,8 +85,10 @@ export function MarketTrends() {
 
   if (data.isLoading) {
     return (
-      <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-6 shadow-lg mb-8 animate-pulse flex items-center justify-center min-h-[120px]">
-        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="bg-[#2E3152] border border-white/10 rounded-2xl h-36 animate-pulse" />
+        ))}
       </div>
     );
   }
@@ -62,23 +96,6 @@ export function MarketTrends() {
   if (data.error) {
     return null; // Silently fail and hide widget if API is down
   }
-
-  // Calculate visual properties for Fear & Greed
-  const getFngColor = (val: number) => {
-    if (val <= 25) return 'text-red-400';
-    if (val <= 45) return 'text-orange-400';
-    if (val <= 55) return 'text-yellow-400';
-    if (val <= 75) return 'text-green-400';
-    return 'text-emerald-400';
-  };
-
-  const getFngBg = (val: number) => {
-    if (val <= 25) return 'bg-red-400/20 border-red-400/30';
-    if (val <= 45) return 'bg-orange-400/20 border-orange-400/30';
-    if (val <= 55) return 'bg-yellow-400/20 border-yellow-400/30';
-    if (val <= 75) return 'bg-green-400/20 border-green-400/30';
-    return 'bg-emerald-400/20 border-emerald-400/30';
-  };
 
   const translateFng = (enClass: string) => {
     const map: Record<string, string> = {
@@ -96,48 +113,31 @@ export function MarketTrends() {
     return `${prefix}${val.toFixed(2)}%`;
   };
 
-  const getSummaryText = (val: number) => {
-    if (val <= 25) return "Le marché panique, c'est souvent le moment des bonnes affaires.";
-    if (val <= 45) return "Les investisseurs sont craintifs. Restez méthodique.";
-    if (val <= 55) return "Marché neutre. Bonne période pour de l'achat programmé (DCA).";
-    if (val <= 75) return "L'optimisme règne. Les prix montent, restez prudent.";
-    return "Euphorie totale sur le marché. Attention aux corrections.";
-  };
-
   return (
-    <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-6 shadow-lg mb-8 flex flex-col md:flex-row gap-6 items-center justify-between">
-      <div className="flex-1">
-        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Tendance du Marché</h3>
-        <div className="flex items-center gap-4">
-          <div className={`flex flex-col items-center justify-center w-20 h-20 rounded-full border-4 ${getFngBg(data.fngValue)} ${getFngColor(data.fngValue)} shadow-inner bg-[#252844] flex-shrink-0`}>
-            <span className="text-2xl font-bold">{data.fngValue}</span>
-          </div>
-          <div>
-            <p className={`text-lg font-bold ${getFngColor(data.fngValue)}`}>{translateFng(data.fngClassification)}</p>
-            <p className="text-sm text-gray-300 mt-1 max-w-sm leading-relaxed">{getSummaryText(data.fngValue)}</p>
-          </div>
-        </div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+      {/* Fear & Greed Card */}
+      <div className="col-span-2 sm:col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col hover:border-indigo-500/30 transition-colors shadow-lg">
+        <h3 className="text-sm font-semibold text-white mb-2 flex items-center justify-between">
+          Fear & Greed
+          <span className="text-xs text-gray-500">›</span>
+        </h3>
+        <GaugeChart value={data.fngValue} label={translateFng(data.fngClassification)} />
       </div>
 
-      <div className="w-full md:w-auto flex flex-row md:flex-col gap-3 justify-center border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
-        <div className="bg-[#252844] rounded-xl p-3 px-4 flex items-center gap-3 border border-white/5 min-w-[140px]">
-          <div className="w-8 h-8 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-xs font-bold">₿</div>
-          <div>
-            <p className="text-xs text-gray-400 font-medium">Bitcoin</p>
-            <p className={`text-sm font-bold ${data.btcChange > 0 ? 'text-green-400' : 'text-red-400'}`}>
-              {formatChange(data.btcChange)}
-            </p>
-          </div>
-        </div>
-        <div className="bg-[#252844] rounded-xl p-3 px-4 flex items-center gap-3 border border-white/5 min-w-[140px]">
-          <div className="w-8 h-8 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-xs font-bold">Ξ</div>
-          <div>
-            <p className="text-xs text-gray-400 font-medium">Ethereum</p>
-            <p className={`text-sm font-bold ${data.ethChange > 0 ? 'text-green-400' : 'text-red-400'}`}>
-              {formatChange(data.ethChange)}
-            </p>
-          </div>
-        </div>
+      {/* BTC Card */}
+      <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+        <div className="w-12 h-12 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-2xl font-bold mb-3 shadow-inner">₿</div>
+        <p className={`text-xl font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          {formatChange(data.btcChange)}
+        </p>
+      </div>
+
+      {/* ETH Card */}
+      <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+        <div className="w-12 h-12 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-2xl font-bold mb-3 shadow-inner">Ξ</div>
+        <p className={`text-xl font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          {formatChange(data.ethChange)}
+        </p>
       </div>
     </div>
   );

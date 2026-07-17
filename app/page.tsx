@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { getCryptoPrices, CryptoPrices } from '@/app/actions/prices';
+import { MarketTrends } from '@/components/MarketTrends';
 
 const cryptoList = [
   { id: 'btc', name: 'Bitcoin', symbol: 'BTC', icon: '/btc.svg' },
@@ -321,6 +322,11 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
+      </section>
+
+      {/* MARKET TRENDS WIDGET */}
+      <section className="px-6 max-w-6xl mx-auto -mt-6 relative z-20">
+        <MarketTrends />
       </section>
 
       {/* PARTNERS / SOCIAL PROOF */}

@@ -7,12 +7,17 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cryptoList } from '@/lib/cryptoList';
 
-// Mappage des informations basiques pour le SEO
+// Mappage des informations basiques pour le SEO (clés = ids courts de lib/cryptoList.ts)
 const cryptoMap: Record<string, { name: string; symbol: string; description: string }> = {
-  bitcoin: { name: 'Bitcoin', symbol: 'BTC', description: 'Achetez du Bitcoin (BTC) facilement, en toute sécurité et avec des frais réduits sur Remedly. Profitez de l\'actif crypto le plus populaire.' },
-  ethereum: { name: 'Ethereum', symbol: 'ETH', description: 'Investissez dans Ethereum (ETH) sur Remedly. Rejoignez le réseau de contrats intelligents le plus utilisé au monde.' },
-  solana: { name: 'Solana', symbol: 'SOL', description: 'Achetez du Solana (SOL) rapidement. Profitez de transactions ultra-rapides et peu coûteuses avec Remedly.' },
+  btc: { name: 'Bitcoin', symbol: 'BTC', description: 'Achetez du Bitcoin (BTC) facilement, en toute sécurité et avec des frais réduits sur Remedly. Profitez de l\'actif crypto le plus populaire.' },
+  eth: { name: 'Ethereum', symbol: 'ETH', description: 'Investissez dans Ethereum (ETH) sur Remedly. Rejoignez le réseau de contrats intelligents le plus utilisé au monde.' },
+  sol: { name: 'Solana', symbol: 'SOL', description: 'Achetez du Solana (SOL) rapidement. Profitez de transactions ultra-rapides et peu coûteuses avec Remedly.' },
   usdc: { name: 'USDC', symbol: 'USDC', description: 'Achetez des USDC sur Remedly pour vous protéger de la volatilité avec ce stablecoin adossé au dollar américain.' },
+  avax: { name: 'Avalanche', symbol: 'AVAX', description: 'Achetez de l\'Avalanche (AVAX) sur Remedly, une blockchain rapide et peu coûteuse pour les applications décentralisées.' },
+  link: { name: 'Chainlink', symbol: 'LINK', description: 'Achetez du Chainlink (LINK) sur Remedly, le réseau d\'oracles qui connecte la blockchain aux données du monde réel.' },
+  pol: { name: 'Polygon', symbol: 'POL', description: 'Achetez du Polygon (POL) sur Remedly, un réseau conçu pour rendre Ethereum plus rapide et moins cher à utiliser.' },
+  shib: { name: 'Shiba Inu', symbol: 'SHIB', description: 'Achetez du Shiba Inu (SHIB) sur Remedly. Attention : un memecoin très populaire mais hautement spéculatif.' },
+  uni: { name: 'Uniswap', symbol: 'UNI', description: 'Achetez de l\'Uniswap (UNI) sur Remedly, le jeton du plus grand échange décentralisé de cryptomonnaies.' },
   // Par défaut
   default: { name: 'Cryptomonnaie', symbol: 'CRYPTO', description: 'Achetez vos cryptomonnaies préférées simplement et de façon sécurisée sur Remedly.' }
 };
@@ -76,8 +81,8 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Colonne Graphique & Infos SEO */}
           <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-8">
-            <CryptoChart 
-              cryptoId={id === 'bitcoin' ? 'btc' : id === 'ethereum' ? 'eth' : id === 'solana' ? 'sol' : id}
+            <CryptoChart
+              cryptoId={id}
               cryptoName={cryptoInfo.name}
               cryptoSymbol={cryptoInfo.symbol}
             />
@@ -108,7 +113,7 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
               </h3>
-              <BuyWidget crypto={id === 'bitcoin' ? 'btc' : id === 'ethereum' ? 'eth' : id === 'solana' ? 'sol' : id} />
+              <BuyWidget crypto={id} />
             </div>
           </div>
         </div>

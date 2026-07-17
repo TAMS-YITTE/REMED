@@ -145,7 +145,7 @@ export default function Home() {
           </h1>
           
           <p className="text-lg lg:text-xl text-gray-300 leading-relaxed max-w-2xl">
-            Achetez Bitcoin, Ethereum et plus encore en 3 clics. Sans phrase de récupération complexe, avec une sécurité bancaire.
+            Achetez Bitcoin, Ethereum, Solana et plus encore en 3 clics. Sans phrase de récupération complexe, avec une sécurité bancaire.
           </p>
         </div>
 

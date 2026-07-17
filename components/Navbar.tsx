@@ -4,9 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage, Language } from '@/contexts/LanguageContext';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <>
@@ -24,12 +26,17 @@ export function Navbar() {
             </div>
           </Link>
           <div className="hidden md:flex gap-6">
-            <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Accueil</Link>
-            <Link href="/acheter" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Acheter</Link>
-            <Link href="/apprendre" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Blog</Link>
+            <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.home')}</Link>
+            <Link href="/acheter" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.buy')}</Link>
+            <Link href="/apprendre" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.blog')}</Link>
+            <Link href="/apprendre/quiz" className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors">{t('nav.quiz')}</Link>
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/10">
+            <button onClick={() => setLanguage('fr')} className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${language === 'fr' ? 'bg-indigo-500 text-white' : 'text-gray-400 hover:text-white'}`}>FR</button>
+            <button onClick={() => setLanguage('en')} className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${language === 'en' ? 'bg-indigo-500 text-white' : 'text-gray-400 hover:text-white'}`}>EN</button>
+          </div>
           <div className="hidden sm:block">
             <AuthButton />
           </div>
@@ -84,9 +91,10 @@ export function Navbar() {
               </button>
             </div>
             <div className="flex flex-col gap-2 p-6 overflow-y-auto flex-1">
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Accueil</Link>
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/acheter" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Acheter</Link>
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Blog</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.home')}</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/acheter" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.buy')}</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.blog')}</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre/quiz" className="px-4 py-4 text-base font-medium text-indigo-400 hover:text-indigo-300 hover:bg-white/5 rounded-xl transition-colors">{t('nav.quiz')}</Link>
               <div className="mt-auto pt-6">
                 <AuthButton />
               </div>

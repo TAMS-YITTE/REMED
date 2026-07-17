@@ -98,11 +98,20 @@ export function CryptoChart({ cryptoId, cryptoName, cryptoSymbol, currentPrice }
               </defs>
               <XAxis 
                 dataKey="time" 
-                hide 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#9ca3af', fontSize: 10 }}
+                tickMargin={10}
+                minTickGap={30}
               />
               <YAxis 
                 domain={['auto', 'auto']} 
-                hide 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#9ca3af', fontSize: 10 }}
+                tickFormatter={(val) => `€${val.toLocaleString()}`}
+                width={60}
+                tickMargin={5}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area 

@@ -5,6 +5,7 @@ import { useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
 import { useCreateWallet } from '@privy-io/react-auth/extended-chains';
 import { useEffect, useState, createContext } from 'react';
 import posthog from 'posthog-js';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 
 export const AuthContext = createContext<any>(null);
 
@@ -113,27 +114,29 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <PrivyProvider
-      appId={appId}
-      config={{
-        loginMethods: ['email'],
-        appearance: {
-          theme: 'light',
-          accentColor: '#534AB7',
-          logo: 'https://remedly.fr/logo.png',
-        },
-        embeddedWallets: {
-          ethereum: {
-            createOnLogin: 'users-without-wallets',
+    <LanguageProvider>
+      <PrivyProvider
+        appId={appId}
+        config={{
+          loginMethods: ['email'],
+          appearance: {
+            theme: 'light',
+            accentColor: '#534AB7',
+            logo: 'https://remedly.fr/logo.png',
           },
-          solana: {
-            createOnLogin: 'users-without-wallets',
-          },
-          noPromptOnSignature: true,
-        } as any,
-      }}
-    >
-      <RealAuthProvider>{children}</RealAuthProvider>
-    </PrivyProvider>
+          embeddedWallets: {
+            ethereum: {
+              createOnLogin: 'users-without-wallets',
+            },
+            solana: {
+              createOnLogin: 'users-without-wallets',
+            },
+            noPromptOnSignature: true,
+          } as any,
+        }}
+      >
+        <RealAuthProvider>{children}</RealAuthProvider>
+      </PrivyProvider>
+    </LanguageProvider>
   );
 }

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BuyWidget } from '@/components/BuyWidget';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { getCryptoPrices, CryptoPrices } from '@/app/actions/prices';
@@ -33,8 +35,9 @@ const cryptoList = [
 ];
 
 export default function Home() {
-  const [eurAmount, setEurAmount] = useState<string>('100');
+  const [eurAmount, setEurAmount] = useState<string>('');
   const [prices, setPrices] = useState<CryptoPrices | null>(null);
+  const { t } = useLanguage();
   const [selectedCryptoId, setSelectedCryptoId] = useState<string>('eth');
   
   // Custom Select State
@@ -120,13 +123,22 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col xl:flex-row items-center justify-between gap-6 xl:gap-12">
           
           {/* Partners */}
-          <div className="flex items-center justify-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 text-white flex-shrink-0">
+          <div className="flex items-center justify-center gap-8 opacity-70 hover:opacity-100 transition-opacity duration-300 flex-shrink-0">
             <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest hidden md:inline">
               Sécurisé par
             </span>
-            <span className="text-sm font-black">Transak</span>
-            <span className="text-sm font-black tracking-tighter">MoonPay</span>
-            <span className="text-sm font-bold">Privy</span>
+            {/* Using text logos with distinct styling as reliable fallbacks for logos */}
+            <div className="flex items-center gap-6">
+               <span className="text-lg font-black tracking-tight text-white flex items-center gap-1"><span className="text-blue-500">/</span>Transak</span>
+               <span className="text-lg font-black tracking-tighter text-white flex items-center gap-1">
+                 <svg className="w-5 h-5 text-purple-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                 MoonPay
+               </span>
+               <span className="text-lg font-bold text-white flex items-center gap-1">
+                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                 Privy
+               </span>
+            </div>
           </div>
 
           {/* Market Trends */}
@@ -138,57 +150,46 @@ export default function Home() {
       </section>
 
       {/* HERO SECTION PREMIUM */}
-      <section className="relative pt-16 pb-20 md:pt-20 md:pb-24 px-6 overflow-hidden">
+      <section className="relative pt-12 pb-16 md:pt-16 md:pb-20 px-6 overflow-hidden">
         {/* Abstract Background Elements */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-br from-indigo-100/40 via-purple-50/40 to-transparent rounded-[100%] blur-3xl -z-10 pointer-events-none"></div>
         <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-blue-50/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* TEXT BLOCK */}
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            </span>
+            Disponible en France
+          </div>
+          
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
+            La crypto,<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+              simplement.
+            </span>
+          </h1>
+          
+          <p className="text-lg lg:text-xl text-gray-300 leading-relaxed max-w-2xl">
+            Achetez Bitcoin, Ethereum et plus encore en 3 clics. Sans phrase de récupération complexe, avec une sécurité bancaire.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* GRAPH BLOCK */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-left"
+            className="w-full lg:col-span-7 xl:col-span-8"
           >
-            <div className="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-              </span>
-              Disponible en France
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
-              La crypto,<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
-                simplement.
-              </span>
-            </h1>
-            
-            <p className="text-lg lg:text-xl text-gray-300 leading-relaxed mb-8 max-w-lg">
-              Achetez Bitcoin, Ethereum et plus encore en 3 clics. Sans phrase de récupération complexe, avec une sécurité bancaire.
-            </p>
-
-            <div className="hidden md:flex flex-col sm:flex-row gap-4 mb-8">
-              <Link href={`/acheter?crypto=${selectedCryptoId}`} className="btn-shimmer flex items-center justify-center gap-2 text-white border-none px-6 py-4 rounded-xl text-base font-semibold shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:-translate-y-0.5 transition-all duration-200">
-                Acheter maintenant
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-              </Link>
-              <Link href="/plateforme" className="flex items-center justify-center bg-[#2E3152] text-white border border-white/10 px-6 py-4 rounded-xl text-base font-semibold hover:bg-[#353866] hover:-translate-y-0.5 transition-all duration-200 shadow-sm">
-                Découvrir la plateforme
-              </Link>
-            </div>
-            
-            <div className="flex flex-col gap-2 mt-6 p-4 bg-[#2E3152]/50 border border-white/10 rounded-xl text-sm text-gray-400 font-medium max-w-lg">
-              <p>🚀 Rejoignez-nous en <strong className="text-white">accès anticipé</strong> en attente de la mise en production.</p>
-              <p>
-                Donnez-nous votre avis anticipé en écrivant à :{' '}
-                <a href="mailto:contact@remedly.fr" className="text-indigo-400 hover:text-white transition-colors underline">
-                  contact@remedly.fr
-                </a>
-              </p>
-            </div>
+            <CryptoChart 
+              cryptoId={selectedCrypto.id} 
+              cryptoName={selectedCrypto.name} 
+              cryptoSymbol={selectedCrypto.symbol}
+              currentPrice={prices?.[selectedCrypto.id]} 
+            />
           </motion.div>
 
           {/* SIMULATOR BLOCK */}
@@ -196,13 +197,13 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="w-full max-w-md mx-auto lg:ml-auto relative"
+            className="w-full lg:col-span-5 xl:col-span-4 relative"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-30 transform rotate-3 animate-pulse duration-1000"></div>
             
             <div className="glass-panel rounded-3xl p-6 sm:p-8 relative z-10">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-white">Simulateur Rapide</h3>
+                <h3 className="font-bold text-white">{t('sim.title')}</h3>
                 <span className="flex items-center gap-1 text-xs font-semibold bg-green-50 text-green-700 px-2 py-1 rounded-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {prices ? 'Live' : 'Chargement...'}
                 </span>
@@ -210,7 +211,7 @@ export default function Home() {
               
               <div className="space-y-4">
                 <div className="bg-[#252844] rounded-2xl p-4 border border-white/10 hover:border-indigo-500/50 transition-colors">
-                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Vous payez</label>
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">{t('sim.pay')}</label>
                   <div className="flex items-center justify-between">
                     <input 
                       type="number" 
@@ -219,22 +220,23 @@ export default function Home() {
                       className="bg-transparent text-3xl font-bold text-white w-full outline-none"
                       placeholder="0"
                     />
-                    <div className="flex items-center gap-2 bg-[#2E3152] px-3 py-1.5 rounded-xl border border-white/10 shadow-sm font-semibold text-white">
-                      🇪🇺 EUR
+                    <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-1.5">
+                      <span className="text-xl">🇪🇺</span>
+                      <span className="font-bold">EUR</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex justify-center -my-3 relative z-10 pointer-events-none">
-                  <div className="bg-[#2E3152] p-1 rounded-full border border-white/10 shadow-sm">
-                    <div className="bg-[#252844] text-gray-400 p-2 rounded-full">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-                    </div>
+                <div className="flex justify-center -my-2 relative z-10">
+                  <div className="bg-[#2E3152] border border-white/10 rounded-full p-2 shadow-lg">
+                    <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
                   </div>
                 </div>
 
-                <div className="bg-indigo-500/10 rounded-2xl p-4 border border-indigo-500/20 relative">
-                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">Vous recevez</label>
+                <div className="bg-[#252844] rounded-2xl p-4 border border-white/10 hover:border-indigo-500/50 transition-colors">
+                  <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 block">{t('sim.receive')}</label>
                   <div className="flex items-center justify-between">
                     <div className="text-3xl font-bold text-indigo-300 truncate pr-4">
                       {cryptoAmount}
@@ -348,23 +350,13 @@ export default function Home() {
 
               <Link 
                 href={`/acheter?crypto=${selectedCryptoId}`}
-                className="btn-shimmer w-full mt-6 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5 shadow-lg hidden md:flex"
+                className="btn-shimmer w-full mt-6 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5 shadow-lg"
               >
-                Continuer l'achat
+                {t('sim.buy')}
               </Link>
             </div>
           </motion.div>
         </div>
-      </section>
-
-      {/* GRAPH BLOCK */}
-      <section className="px-6 max-w-5xl mx-auto -mt-6 mb-12 relative z-20">
-        <CryptoChart 
-          cryptoId={selectedCrypto.id} 
-          cryptoName={selectedCrypto.name} 
-          cryptoSymbol={selectedCrypto.symbol}
-          currentPrice={prices?.[selectedCrypto.id]} 
-        />
       </section>
 
 

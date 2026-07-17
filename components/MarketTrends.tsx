@@ -120,9 +120,9 @@ export function MarketTrends() {
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 items-stretch w-full">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 items-stretch w-full">
       {/* Fear & Greed Card */}
-      <div className="col-span-2 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
         <h3 className="text-[10px] font-semibold text-white/80 flex items-center justify-between mb-0.5 px-1">
           Fear & Greed
           <span className="text-[10px] text-gray-500">›</span>

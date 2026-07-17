@@ -126,6 +126,20 @@ export default function Home() {
         <MarketTrends />
       </section>
 
+      {/* PARTNERS / SOCIAL PROOF (Moved up) */}
+      <section className="pt-12 pb-6 relative z-20">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
+            L'infrastructure sécurisée par
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 text-white">
+            <span className="text-lg font-black">Transak</span>
+            <span className="text-lg font-black tracking-tighter">MoonPay</span>
+            <span className="text-lg font-bold">Privy</span>
+          </div>
+        </div>
+      </section>
+
       {/* HERO SECTION PREMIUM */}
       <section className="relative pt-16 pb-20 md:pt-20 md:pb-24 px-6 overflow-hidden">
         {/* Abstract Background Elements */}
@@ -330,20 +344,6 @@ export default function Home() {
       </section>
 
 
-
-      {/* PARTNERS / SOCIAL PROOF */}
-      <section className="py-10 border-y border-white/10 bg-[#252844]">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-center text-sm font-semibold text-gray-400 uppercase tracking-widest mb-6">
-            L'infrastructure sécurisée par
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 text-white">
-            <span className="text-xl font-black">Transak</span>
-            <span className="text-xl font-black tracking-tighter">MoonPay</span>
-            <span className="text-xl font-bold">Privy</span>
-          </div>
-        </div>
-      </section>
 
       {/* BLOC SÉCURITÉ & WALLET MAGIQUE */}
       <section className="py-20 px-6 max-w-5xl mx-auto">

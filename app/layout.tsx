@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Remedly — La crypto, simplement.",
-  description: "Achetez Bitcoin, Ethereum, USDC et plus encore en quelques minutes. Sans jargon, sans prise de tête. La plateforme idéale pour débuter en cryptomonnaies.",
+  description: "Achetez Bitcoin, Ethereum, Solana et plus encore en quelques minutes. Sans jargon, sans prise de tête. La plateforme idéale pour débuter en cryptomonnaies.",
   keywords: ["crypto", "acheter bitcoin", "ethereum", "portefeuille crypto", "débutant", "achat crypto france"],
   openGraph: {
     title: "Remedly — La crypto, simplement.",

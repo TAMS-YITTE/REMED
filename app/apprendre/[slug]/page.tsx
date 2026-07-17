@@ -1,5 +1,6 @@
 import { articles } from '@/lib/articles';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
@@ -9,6 +10,23 @@ export function generateStaticParams() {
   return articles.map((article) => ({
     slug: article.slug,
   }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const article = articles.find((a) => a.slug === resolvedParams.slug);
+
+  if (!article) {
+    return {
+      title: 'Article introuvable | Remedly',
+      description: 'Cet article n\'existe pas ou a été supprimé.',
+    };
+  }
+
+  return {
+    title: `${article.title} | Remedly`,
+    description: article.excerpt,
+  };
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {

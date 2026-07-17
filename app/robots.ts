@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/portefeuille', // Page privée nécessitant connexion
+      disallow: ['/portefeuille', '/dashboard'], // Pages privées nécessitant connexion
     },
     sitemap: 'https://www.remedly.fr/sitemap.xml',
   };

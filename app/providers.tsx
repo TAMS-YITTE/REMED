@@ -110,7 +110,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const isMock = !appId || appId === 'cldummyappid0000000000000' || appId.includes('votre');
 
   if (isMock) {
-    return <MockAuthProvider>{children}</MockAuthProvider>;
+    return (
+      <LanguageProvider>
+        <MockAuthProvider>{children}</MockAuthProvider>
+      </LanguageProvider>
+    );
   }
 
   return (

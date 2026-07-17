@@ -13,6 +13,11 @@ export function AuthButton() {
   if (authenticated) {
     return (
       <div className="flex items-center gap-4">
+        {pathname !== '/dashboard' && (
+          <Link href="/dashboard" className="text-[14px] font-medium text-indigo-400 hover:underline">
+            Mon Espace
+          </Link>
+        )}
         {pathname !== '/portefeuille' && (
           <Link href="/portefeuille" className="text-[14px] font-medium text-indigo-400 hover:underline">
             Mon Portefeuille

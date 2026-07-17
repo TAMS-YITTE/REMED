@@ -379,5 +379,156 @@ Chez **Remedly**, nous utilisons la technologie des *Embedded Wallets* fournis p
 
 Vous bénéficiez ainsi de la sécurité absolue du "non-custodial", avec la simplicité d'utilisation d'une application classique.
     `
+  },
+  {
+    slug: 'usdc-le-stablecoin-explique',
+    title: "USDC : à quoi sert un stablecoin adossé au dollar ?",
+    excerpt: "Le prix du Bitcoin bouge tous les jours. Découvrez l'USDC, une cryptomonnaie pensée pour rester stable, et à quoi elle peut vous servir.",
+    category: 'Crypto',
+    date: '23 Juillet 2026',
+    readTime: '3 min',
+    content: `
+## Une cryptomonnaie qui ne bouge (presque) pas
+
+La plupart des cryptomonnaies sont connues pour leur volatilité : le prix du Bitcoin ou de l'Ethereum peut varier de plusieurs pourcents en quelques heures. L'**USDC (USD Coin)** répond à un besoin différent : rester stable.
+
+Un USDC vaut, en théorie, toujours 1 dollar américain. C'est ce qu'on appelle un **stablecoin**. Concrètement, chaque USDC en circulation est censé être garanti par un dollar (ou un actif équivalent) détenu en réserve par son émetteur, Circle.
+
+### À quoi ça sert concrètement ?
+
+* **Se mettre à l'abri de la volatilité** : si vous pensez que le marché va baisser, convertir une partie de vos cryptos en USDC permet de "sortir" temporairement de la volatilité sans repasser par un virement bancaire classique.
+* **Un point de repère stable** : beaucoup de plateformes utilisent l'USDC comme unité de compte de référence dans l'écosystème crypto.
+
+### Les points de vigilance
+
+Un stablecoin n'est stable que si les réserves qui le soutiennent sont réelles et bien gérées — c'est le rôle de l'émetteur, pas de la blockchain elle-même. Ce n'est pas un placement censé rapporter un rendement : sa vocation est justement de ne pas bouger.
+
+Sur Remedly, l'USDC s'achète comme n'importe quelle autre cryptomonnaie, avec votre portefeuille non-custodial habituel.
+    `
+  },
+  {
+    slug: 'avalanche-avax-explication',
+    title: "Avalanche (AVAX) : une blockchain pensée pour la vitesse",
+    excerpt: "Transactions rapides, frais réduits : découvrez ce qui différencie Avalanche des autres blockchains, en langage simple.",
+    category: 'Crypto',
+    date: '24 Juillet 2026',
+    readTime: '3 min',
+    content: `
+## Le problème qu'Avalanche essaie de résoudre
+
+Les blockchains historiques comme Bitcoin ou Ethereum ont un point commun : plus il y a de monde qui les utilise, plus les transactions peuvent devenir lentes et coûteuses. **Avalanche** est un réseau conçu pour traiter un grand nombre de transactions rapidement, avec des frais généralement plus bas.
+
+### Comment ça fonctionne, sans le jargon
+
+Avalanche utilise un mécanisme de validation différent de celui du Bitcoin (qui repose sur le minage). Plusieurs petits groupes de validateurs se mettent d'accord en parallèle, ce qui permet au réseau de confirmer les transactions en quelques secondes plutôt qu'en plusieurs minutes.
+
+Son jeton natif, l'**AVAX**, sert à payer les frais de transaction sur le réseau et à participer à sa sécurisation.
+
+### Pourquoi les investisseurs s'y intéressent
+
+Avalanche héberge de nombreuses applications décentralisées (finance, jeux, NFT) qui ont besoin de rapidité et de coûts prévisibles. Comme pour toute cryptomonnaie, sa valeur dépend de l'adoption réelle du réseau — ce n'est pas une garantie de performance future.
+
+Sur Remedly, AVAX s'achète directement avec votre portefeuille non-custodial habituel, sans configuration technique supplémentaire.
+    `
+  },
+  {
+    slug: 'chainlink-link-oracles-explication',
+    title: "Chainlink (LINK) : à quoi servent les oracles blockchain ?",
+    excerpt: "Une blockchain ne peut pas consulter internet toute seule. Découvrez comment Chainlink lui apporte des données du monde réel.",
+    category: 'Crypto',
+    date: '25 Juillet 2026',
+    readTime: '3 min',
+    content: `
+## Le problème que Chainlink résout
+
+Une blockchain fonctionne en vase clos : elle ne peut pas, par elle-même, aller consulter le cours d'une action, la météo ou le résultat d'un match de foot sur internet. Pourtant, de nombreuses applications décentralisées ont besoin de ces informations pour fonctionner (par exemple, connaître le prix réel d'une cryptomonnaie).
+
+C'est le rôle d'un **oracle** : un service qui va chercher une donnée à l'extérieur de la blockchain et la lui transmet de façon fiable. **Chainlink** est le réseau d'oracles le plus utilisé de l'écosystème.
+
+### Comment ça fonctionne, sans le jargon
+
+Plutôt que de faire confiance à une seule source d'information (qui pourrait être fausse ou piratée), Chainlink interroge plusieurs sources indépendantes et compare leurs réponses avant de les transmettre à la blockchain. Le jeton **LINK** sert à rémunérer les opérateurs qui font tourner ce réseau d'oracles.
+
+### Pourquoi c'est important
+
+Sans oracles fiables, une grande partie de la finance décentralisée (DeFi) ne pourrait tout simplement pas fonctionner correctement. Chainlink est aujourd'hui utilisé par un grand nombre de projets pour cette brique technique.
+
+Sur Remedly, LINK s'achète comme les autres cryptomonnaies disponibles, avec votre portefeuille non-custodial habituel.
+    `
+  },
+  {
+    slug: 'polygon-pol-explication',
+    title: "Polygon (POL) : pourquoi Ethereum a besoin d'un coup de pouce",
+    excerpt: "Ethereum peut être lent et coûteux aux heures de forte affluence. Découvrez comment Polygon (anciennement MATIC) l'aide à passer à l'échelle.",
+    category: 'Crypto',
+    date: '26 Juillet 2026',
+    readTime: '3 min',
+    content: `
+## Le problème que Polygon résout
+
+Ethereum est l'une des blockchains les plus utilisées au monde, mais son succès a un revers : quand le réseau est très sollicité, les frais de transaction ("gas") peuvent grimper et les confirmations ralentir. **Polygon** est un réseau construit pour fonctionner à côté d'Ethereum et lui apporter davantage de rapidité, avec des frais nettement plus bas.
+
+### Comment ça fonctionne, sans le jargon
+
+Polygon traite les transactions sur son propre réseau, puis vient régulièrement ancrer un résumé de son activité sur la blockchain Ethereum, ce qui lui permet de bénéficier indirectement de sa sécurité tout en restant rapide et peu coûteux au quotidien.
+
+### Le changement de nom : de MATIC à POL
+
+Le jeton du réseau s'appelait historiquement **MATIC**. Depuis 2024, le projet Polygon a fait migrer son jeton vers un nouveau nom, **POL**, dans le cadre de l'évolution de son architecture technique. Sur Remedly, c'est ce nouveau jeton (POL) qui est proposé à l'achat.
+
+### Pourquoi les investisseurs s'y intéressent
+
+De nombreuses applications (jeux, paiements, NFT) choisissent Polygon pour éviter les frais élevés d'Ethereum. Comme pour tout actif, sa valeur dépend de l'adoption réelle du réseau dans la durée.
+
+Sur Remedly, POL s'achète directement avec votre portefeuille non-custodial habituel.
+    `
+  },
+  {
+    slug: 'shiba-inu-shib-comprendre-les-risques',
+    title: "Shiba Inu (SHIB) : comprendre un memecoin avant d'y toucher",
+    excerpt: "SHIB est l'un des memecoins les plus connus du marché. Avant d'y investir un euro, voici ce qu'il faut absolument comprendre.",
+    category: 'Crypto',
+    date: '27 Juillet 2026',
+    readTime: '3 min',
+    content: `
+## Qu'est-ce qu'un "memecoin" ?
+
+Un **memecoin** est une cryptomonnaie née d'une blague ou d'un phénomène internet plutôt que d'un projet technique avec une utilité précise. **Shiba Inu (SHIB)**, lancé en 2020 en clin d'œil au Dogecoin, en est l'un des exemples les plus connus.
+
+Contrairement à Chainlink ou Polygon, SHIB n'a pas vocation à résoudre un problème technique particulier : sa valeur repose presque entièrement sur la popularité, la spéculation et l'engouement de sa communauté.
+
+### Ce qu'il faut absolument savoir avant d'en acheter
+
+* **Une volatilité extrême** : les memecoins peuvent gagner ou perdre une grande partie de leur valeur en très peu de temps, bien plus brutalement que Bitcoin ou Ethereum.
+* **Pas de "valeur refuge"** : à la différence d'un stablecoin comme l'USDC, rien ne garantit un prix plancher.
+* **Ce n'est pas un investissement de long terme classique** : c'est un actif spéculatif, à traiter comme tel — n'y mettez que ce que vous êtes prêt à perdre.
+
+### Notre position chez Remedly
+
+Nous rendons SHIB accessible à l'achat comme les autres cryptomonnaies de notre offre, mais nous ne donnons aucun conseil en investissement (voir nos [mentions légales](/mentions-legales)) et tenons à être transparents : SHIB est, par nature, l'un des actifs les plus risqués de notre plateforme.
+    `
+  },
+  {
+    slug: 'uniswap-uni-echange-decentralise',
+    title: "Uniswap (UNI) : comment fonctionne un échange sans intermédiaire ?",
+    excerpt: "Pas de banque, pas de courtier : découvrez comment Uniswap permet d'échanger des cryptomonnaies directement entre utilisateurs.",
+    category: 'Crypto',
+    date: '28 Juillet 2026',
+    readTime: '3 min',
+    content: `
+## Un échange sans intermédiaire central
+
+Sur une plateforme d'échange classique (comme un exchange centralisé), c'est l'entreprise elle-même qui met en relation acheteurs et vendeurs, un peu comme une bourse traditionnelle. **Uniswap** fonctionne différemment : c'est un protocole décentralisé qui permet aux utilisateurs d'échanger des cryptomonnaies directement entre eux, sans société intermédiaire pour tenir le carnet d'ordres.
+
+### Comment ça fonctionne, sans le jargon
+
+Au lieu d'un carnet d'ordres classique, Uniswap repose sur des "réserves de liquidité" : des utilisateurs déposent une paire de cryptomonnaies dans un contrat automatisé, et ce contrat calcule lui-même les prix d'échange en fonction de l'offre et de la demande. Le jeton **UNI** sert notamment à la gouvernance du protocole : ses détenteurs peuvent voter sur les évolutions futures d'Uniswap.
+
+### Pourquoi c'est important dans l'écosystème crypto
+
+Uniswap est l'un des protocoles d'échange décentralisé (DEX) les plus utilisés au monde, et un pilier historique de la finance décentralisée (DeFi).
+
+**À noter** : Remedly ne fait pas d'échange (swap) de cryptomonnaies pour le compte de ses utilisateurs — nous vous proposons uniquement d'acheter le jeton UNI par carte bancaire ou virement, comme n'importe quel autre actif de notre offre.
+    `
   }
 ];

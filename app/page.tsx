@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { getCryptoPrices, CryptoPrices } from '@/app/actions/prices';
 import { MarketTrends } from '@/components/MarketTrends';
+import { CryptoChart } from '@/components/CryptoChart';
 
 // `supported: false` = le wallet Ethereum/Solana/Bitcoin de Privy ne peut pas
 // recevoir cet actif (réseau natif incompatible, confirmé via l'API publique
@@ -341,6 +342,16 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
+      </section>
+
+      {/* GRAPH BLOCK */}
+      <section className="px-6 max-w-5xl mx-auto -mt-6 mb-12 relative z-20">
+        <CryptoChart 
+          cryptoId={selectedCrypto.id} 
+          cryptoName={selectedCrypto.name} 
+          cryptoSymbol={selectedCrypto.symbol}
+          currentPrice={prices?.[selectedCrypto.id]} 
+        />
       </section>
 
 

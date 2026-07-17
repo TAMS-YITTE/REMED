@@ -9,8 +9,7 @@ interface MarketData {
   btcChange: number;
   ethChange: number;
   solChange: number;
-  isLoading: boolean;
-  error: boolean;
+  rsiValue: number;
 }
 
 const GaugeChart = ({ value, label }: { value: number, label: string }) => {
@@ -44,62 +43,39 @@ const GaugeChart = ({ value, label }: { value: number, label: string }) => {
   )
 }
 
+import useSWR from 'swr';
+import { getMarketTrendsData } from '@/app/actions/market';
+
 export function MarketTrends() {
-  const [data, setData] = useState<MarketData>({
-    fngValue: 50,
-    fngClassification: 'Neutral',
-    btcChange: 0,
-    ethChange: 0,
-    solChange: 0,
-    isLoading: true,
-    error: false,
+  const fetcher = async () => {
+    const res = await getMarketTrendsData();
+    if (!res) throw new Error("Failed to fetch market trends");
+    return res;
+  };
+
+  const { data, error, isLoading } = useSWR<MarketData>('marketTrends', fetcher, {
+    refreshInterval: 60000, // Refresh every 60s
+    fallbackData: {
+      fngValue: 50,
+      fngClassification: 'Neutral',
+      btcChange: 0,
+      ethChange: 0,
+      solChange: 0,
+      rsiValue: 50,
+    }
   });
 
-  // Mock RSI value for now (neutral)
-  const rsiValue = 54;
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [fngRes, cgRes] = await Promise.all([
-          fetch('https://api.alternative.me/fng/'),
-          fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=eur&include_24hr_change=true')
-        ]);
-
-        if (!fngRes.ok || !cgRes.ok) throw new Error('Failed to fetch');
-
-        const fngData = await fngRes.json();
-        const cgData = await cgRes.json();
-
-        setData({
-          fngValue: parseInt(fngData.data[0].value, 10),
-          fngClassification: fngData.data[0].value_classification,
-          btcChange: cgData.bitcoin?.eur_24h_change || 0,
-          ethChange: cgData.ethereum?.eur_24h_change || 0,
-          solChange: cgData.solana?.eur_24h_change || 0,
-          isLoading: false,
-          error: false,
-        });
-      } catch (err) {
-        console.error('Error fetching market trends:', err);
-        setData(prev => ({ ...prev, isLoading: false, error: true }));
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  if (data.isLoading) {
+  if (isLoading && !data) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8 items-center">
-        {[1, 2, 3, 4, 5, 6].map(i => (
-          <div key={i} className={`bg-[#2E3152] border border-white/10 rounded-xl h-16 animate-pulse ${i === 1 ? 'col-span-2' : 'col-span-1'}`} />
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 items-center">
+        {[1, 2, 3, 4, 5].map(i => (
+          <div key={i} className={`bg-[#2E3152] border border-white/10 rounded-xl h-16 animate-pulse col-span-1`} />
         ))}
       </div>
     );
   }
 
-  if (data.error) {
+  if (error) {
     return null; // Silently fail and hide widget if API is down
   }
 
@@ -127,7 +103,7 @@ export function MarketTrends() {
           Fear & Greed
           <span className="text-[10px] text-gray-500">›</span>
         </h3>
-        <GaugeChart value={data.fngValue} label={translateFng(data.fngClassification)} />
+        <GaugeChart value={data?.fngValue || 50} label={translateFng(data?.fngClassification || 'Neutral')} />
       </div>
 
       {/* RSI Card */}
@@ -136,7 +112,7 @@ export function MarketTrends() {
           RSI
         </div>
         <p className="text-sm font-bold tracking-tight text-gray-200">
-          {rsiValue}
+          {data?.rsiValue}
         </p>
       </div>
 
@@ -146,8 +122,8 @@ export function MarketTrends() {
           <img src="/btc.svg" alt="Bitcoin" className="w-full h-full" />
         </div>
         <div className="flex flex-col items-center sm:items-start leading-none">
-          <span className={`text-sm font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {formatChange(data.btcChange)}
+          <span className={`text-sm font-bold tracking-tight ${(data?.btcChange || 0) > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {formatChange(data?.btcChange || 0)}
           </span>
           <span className="text-[9px] text-gray-500 font-medium">24h</span>
         </div>
@@ -159,8 +135,8 @@ export function MarketTrends() {
           <img src="/eth.svg" alt="Ethereum" className="w-full h-full" />
         </div>
         <div className="flex flex-col items-center sm:items-start leading-none">
-          <span className={`text-sm font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {formatChange(data.ethChange)}
+          <span className={`text-sm font-bold tracking-tight ${(data?.ethChange || 0) > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {formatChange(data?.ethChange || 0)}
           </span>
           <span className="text-[9px] text-gray-500 font-medium">24h</span>
         </div>
@@ -172,8 +148,8 @@ export function MarketTrends() {
           <img src="/sol.svg" alt="Solana" className="w-full h-full" />
         </div>
         <div className="flex flex-col items-center sm:items-start leading-none">
-          <span className={`text-sm font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-            {formatChange(data.solChange)}
+          <span className={`text-sm font-bold tracking-tight ${(data?.solChange || 0) > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {formatChange(data?.solChange || 0)}
           </span>
           <span className="text-[9px] text-gray-500 font-medium">24h</span>
         </div>

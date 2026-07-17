@@ -22,9 +22,14 @@ export default function Home() {
   // Custom Select State
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [favorites, setFavorites] = useState<string[]>([]);
   const selectRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const savedFavs = localStorage.getItem('remedly_favorite_cryptos');
+    if (savedFavs) {
+      try { setFavorites(JSON.parse(savedFavs)); } catch (e) {}
+    }
     getCryptoPrices().then(p => {
       if (p) setPrices(p);
     });
@@ -53,8 +58,16 @@ export default function Home() {
     c.symbol.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const toggleFavorite = (id: string) => {
+    const newFavs = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
+    setFavorites(newFavs);
+    localStorage.setItem('remedly_favorite_cryptos', JSON.stringify(newFavs));
+  };
+
   // Top 5 cryptos to show when search is empty
-  const defaultList = cryptoList.slice(0, 5);
+  const favoriteCryptos = cryptoList.filter(c => c.supported && favorites.includes(c.id));
+  const defaultBase = cryptoList.slice(0, 5).filter(c => !favorites.includes(c.id));
+  const defaultList = [...favoriteCryptos, ...defaultBase];
   const listToDisplay = searchQuery ? filteredCryptos : defaultList;
 
   const faqs = [
@@ -248,7 +261,9 @@ export default function Home() {
                             </div>
                             <div className="max-h-60 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-200">
                               {!searchQuery && (
-                                <div className="px-3 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Top Cryptos</div>
+                                <div className="px-3 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                  {favorites.length > 0 ? 'Favoris & Top Cryptos' : 'Top Cryptos'}
+                                </div>
                               )}
                               {listToDisplay.length > 0 ? (
                                 <motion.div
@@ -282,8 +297,20 @@ export default function Home() {
                                     </div>
                                     {!c.supported ? (
                                       <span className="ml-auto text-[10px] font-medium uppercase tracking-wide text-gray-500">Bientôt</span>
-                                    ) : prices && prices[c.id] && (
-                                      <span className="ml-auto text-xs font-medium opacity-60">€{prices[c.id]}</span>
+                                    ) : (
+                                      <div className="ml-auto flex items-center gap-3">
+                                        {prices && prices[c.id] && (
+                                          <span className="text-xs font-medium opacity-60">€{prices[c.id]}</span>
+                                        )}
+                                        <div 
+                                          onClick={(e) => { e.stopPropagation(); toggleFavorite(c.id); }}
+                                          className="p-1 hover:bg-white/10 rounded-full transition-colors group/star"
+                                        >
+                                          <svg className={`w-4 h-4 ${favorites.includes(c.id) ? 'text-yellow-400 fill-current' : 'text-gray-500 group-hover/star:text-yellow-400'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                          </svg>
+                                        </div>
+                                      </div>
                                     )}
                                     </motion.button>
                                   ))}

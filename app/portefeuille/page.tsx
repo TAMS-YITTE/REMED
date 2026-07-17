@@ -85,6 +85,57 @@ export default function PortefeuillePage() {
 
   const isLoadingHistory = isLoadingEth || isLoadingSol || isLoadingBtc;
 
+  const handleExportCSV = () => {
+    if (!prices) return;
+
+    const rows = [
+      ['Actif', 'Solde', 'Prix unitaire (EUR)', 'Valeur totale (EUR)', 'Horodatage']
+    ];
+
+    const timestamp = new Date().toLocaleString('fr-FR');
+    
+    const addRow = (ticker: string, balanceStr: string | undefined | null, priceKey: string) => {
+      if (!balanceStr) return;
+      const balance = parseFloat(balanceStr);
+      if (balance > 0 && prices[priceKey] !== undefined) {
+        const price = prices[priceKey];
+        const value = balance * price;
+        rows.push([
+          ticker, 
+          balance.toString(), 
+          price.toString(), 
+          value.toFixed(2), 
+          timestamp
+        ]);
+      }
+    };
+
+    addRow('ETH', ethData?.balanceEth, 'eth');
+    addRow('SOL', solData?.balanceSol, 'sol');
+    addRow('BTC', btcData?.balanceBtc, 'btc');
+
+    Object.entries(erc20Balances).forEach(([sym, bal]) => {
+      const priceKey = sym.toLowerCase();
+      addRow(sym, bal, priceKey);
+    });
+
+    if (rows.length === 1) {
+      alert("Aucun actif à exporter.");
+      return;
+    }
+
+    const csvContent = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const dateStr = new Date().toISOString().split('T')[0];
+    link.setAttribute('download', `remedly-releve-${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#252844]">
@@ -165,6 +216,25 @@ export default function PortefeuillePage() {
 
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }} className="mb-10">
           <PortfolioDonut ethValue={ethValue} solValue={solValue} btcValue={btcValue} />
+        </motion.div>
+
+        {/* CSV EXPORT */}
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.18 }} className="mb-10 bg-[#2E3152] border border-white/10 rounded-2xl p-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-1">Déclaration Fiscale</h3>
+              <p className="text-xs text-gray-400 max-w-lg">
+                Relevé indicatif de la valeur de vos actifs à la date du jour — ne remplace pas un conseil fiscal professionnel.
+              </p>
+            </div>
+            <button 
+              onClick={handleExportCSV}
+              className="shrink-0 bg-white/10 hover:bg-white/20 border border-white/10 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 w-full md:w-auto justify-center"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Télécharger mon relevé (CSV)
+            </button>
+          </div>
         </motion.div>
 
         {/* CTAs */}

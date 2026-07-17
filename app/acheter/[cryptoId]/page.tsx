@@ -15,8 +15,9 @@ const cryptoMap: Record<string, { name: string; symbol: string; description: str
   default: { name: 'Cryptomonnaie', symbol: 'CRYPTO', description: 'Achetez vos cryptomonnaies préférées simplement et de façon sécurisée sur Remedly.' }
 };
 
-export async function generateMetadata({ params }: { params: { cryptoId: string } }): Promise<Metadata> {
-  const id = params.cryptoId.toLowerCase();
+export async function generateMetadata({ params }: { params: Promise<{ cryptoId: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  const id = resolvedParams.cryptoId.toLowerCase();
   const cryptoInfo = cryptoMap[id] || { ...cryptoMap.default, name: id.toUpperCase(), symbol: id.toUpperCase() };
 
   return {
@@ -30,8 +31,9 @@ export async function generateMetadata({ params }: { params: { cryptoId: string 
   };
 }
 
-export default function AcheterCryptoPage({ params }: { params: { cryptoId: string } }) {
-  const id = params.cryptoId.toLowerCase();
+export default async function AcheterCryptoPage({ params }: { params: Promise<{ cryptoId: string }> }) {
+  const resolvedParams = await params;
+  const id = resolvedParams.cryptoId.toLowerCase();
   const cryptoInfo = cryptoMap[id] || { ...cryptoMap.default, name: id.toUpperCase(), symbol: id.toUpperCase() };
 
   return (

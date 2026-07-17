@@ -35,7 +35,7 @@ const cryptoList = [
 ];
 
 export default function Home() {
-  const [eurAmount, setEurAmount] = useState<string>('');
+  const [eurAmount, setEurAmount] = useState<string>('100');
   const [prices, setPrices] = useState<CryptoPrices | null>(null);
   const { t } = useLanguage();
   const [selectedCryptoId, setSelectedCryptoId] = useState<string>('eth');
@@ -156,13 +156,7 @@ export default function Home() {
         <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-blue-50/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-wide shadow-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-            </span>
-            Disponible en France
-          </div>
+
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
             La crypto,<br />

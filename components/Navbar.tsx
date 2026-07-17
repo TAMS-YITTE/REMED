@@ -33,10 +33,6 @@ export function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 bg-white/5 p-1 rounded-lg border border-white/10">
-            <button onClick={() => setLanguage('fr')} className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${language === 'fr' ? 'bg-indigo-500 text-white' : 'text-gray-400 hover:text-white'}`}>FR</button>
-            <button onClick={() => setLanguage('en')} className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${language === 'en' ? 'bg-indigo-500 text-white' : 'text-gray-400 hover:text-white'}`}>EN</button>
-          </div>
           <div className="hidden sm:block">
             <AuthButton />
           </div>

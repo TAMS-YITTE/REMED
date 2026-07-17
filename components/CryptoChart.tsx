@@ -78,7 +78,7 @@ export function CryptoChart({ cryptoId, cryptoName, cryptoSymbol, currentPrice }
         </div>
       </div>
 
-      <div className="h-[250px] w-full">
+      <div className="h-[200px] w-full">
         {isLoading && !data ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="animate-pulse flex gap-1 items-end h-32">

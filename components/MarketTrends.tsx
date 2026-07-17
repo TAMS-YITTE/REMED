@@ -120,7 +120,7 @@ export function MarketTrends() {
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-6 items-stretch">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 items-stretch w-full">
       {/* Fear & Greed Card */}
       <div className="col-span-2 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
         <h3 className="text-[10px] font-semibold text-white/80 flex items-center justify-between mb-0.5 px-1">
@@ -141,33 +141,42 @@ export function MarketTrends() {
       </div>
 
       {/* BTC Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
         <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
           <img src="/btc.svg" alt="Bitcoin" className="w-full h-full" />
         </div>
-        <p className={`text-sm font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-          {formatChange(data.btcChange)}
-        </p>
+        <div className="flex flex-col items-center sm:items-start leading-none">
+          <span className={`text-sm font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {formatChange(data.btcChange)}
+          </span>
+          <span className="text-[9px] text-gray-500 font-medium">24h</span>
+        </div>
       </div>
 
       {/* ETH Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
         <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
           <img src="/eth.svg" alt="Ethereum" className="w-full h-full" />
         </div>
-        <p className={`text-sm font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-          {formatChange(data.ethChange)}
-        </p>
+        <div className="flex flex-col items-center sm:items-start leading-none">
+          <span className={`text-sm font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {formatChange(data.ethChange)}
+          </span>
+          <span className="text-[9px] text-gray-500 font-medium">24h</span>
+        </div>
       </div>
 
       {/* SOL Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
         <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden bg-black/40">
           <img src="/sol.svg" alt="Solana" className="w-full h-full" />
         </div>
-        <p className={`text-sm font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-          {formatChange(data.solChange)}
-        </p>
+        <div className="flex flex-col items-center sm:items-start leading-none">
+          <span className={`text-sm font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {formatChange(data.solChange)}
+          </span>
+          <span className="text-[9px] text-gray-500 font-medium">24h</span>
+        </div>
       </div>
     </div>
   );

@@ -109,23 +109,26 @@ export default function Home() {
       />
       <Navbar />
 
-      {/* PARTNERS / SOCIAL PROOF (Moved to top) */}
-      <section className="pt-8 pb-2 relative z-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-center text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">
-            L'infrastructure sécurisée par
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 text-white">
-            <span className="text-lg font-black">Transak</span>
-            <span className="text-lg font-black tracking-tighter">MoonPay</span>
-            <span className="text-lg font-bold">Privy</span>
+      {/* INFO BAR: PARTNERS + MARKET TRENDS */}
+      <section className="py-4 border-y border-white/10 bg-[#252844] relative z-20">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col xl:flex-row items-center justify-between gap-6 xl:gap-12">
+          
+          {/* Partners */}
+          <div className="flex items-center justify-center gap-6 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 text-white flex-shrink-0">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest hidden md:inline">
+              Sécurisé par
+            </span>
+            <span className="text-sm font-black">Transak</span>
+            <span className="text-sm font-black tracking-tighter">MoonPay</span>
+            <span className="text-sm font-bold">Privy</span>
           </div>
-        </div>
-      </section>
 
-      {/* MARKET TRENDS WIDGET */}
-      <section className="px-6 max-w-6xl mx-auto pt-6 -mb-6 relative z-20">
-        <MarketTrends />
+          {/* Market Trends */}
+          <div className="flex-1 w-full">
+            <MarketTrends />
+          </div>
+
+        </div>
       </section>
 
       {/* HERO SECTION PREMIUM */}

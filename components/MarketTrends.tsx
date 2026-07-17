@@ -6,8 +6,10 @@ import { motion } from 'framer-motion';
 interface MarketData {
   fngValue: number;
   fngClassification: string;
+  fngClassification: string;
   btcChange: number;
   ethChange: number;
+  solChange: number;
   isLoading: boolean;
   error: boolean;
 }
@@ -49,6 +51,7 @@ export function MarketTrends() {
     fngClassification: 'Neutral',
     btcChange: 0,
     ethChange: 0,
+    solChange: 0,
     isLoading: true,
     error: false,
   });
@@ -58,7 +61,7 @@ export function MarketTrends() {
       try {
         const [fngRes, cgRes] = await Promise.all([
           fetch('https://api.alternative.me/fng/'),
-          fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=eur&include_24hr_change=true')
+          fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=eur&include_24hr_change=true')
         ]);
 
         if (!fngRes.ok || !cgRes.ok) throw new Error('Failed to fetch');
@@ -71,6 +74,7 @@ export function MarketTrends() {
           fngClassification: fngData.data[0].value_classification,
           btcChange: cgData.bitcoin?.eur_24h_change || 0,
           ethChange: cgData.ethereum?.eur_24h_change || 0,
+          solChange: cgData.solana?.eur_24h_change || 0,
           isLoading: false,
           error: false,
         });
@@ -85,8 +89,8 @@ export function MarketTrends() {
 
   if (data.isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        {[1, 2, 3].map(i => (
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {[1, 2, 3, 4].map(i => (
           <div key={i} className="bg-[#2E3152] border border-white/10 rounded-2xl h-36 animate-pulse" />
         ))}
       </div>
@@ -114,9 +118,9 @@ export function MarketTrends() {
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       {/* Fear & Greed Card */}
-      <div className="col-span-2 sm:col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col hover:border-indigo-500/30 transition-colors shadow-lg">
+      <div className="col-span-2 md:col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col hover:border-indigo-500/30 transition-colors shadow-lg">
         <h3 className="text-sm font-semibold text-white mb-2 flex items-center justify-between">
           Fear & Greed
           <span className="text-xs text-gray-500">›</span>
@@ -125,7 +129,7 @@ export function MarketTrends() {
       </div>
 
       {/* BTC Card */}
-      <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
         <div className="w-12 h-12 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-2xl font-bold mb-3 shadow-inner">₿</div>
         <p className={`text-xl font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.btcChange)}
@@ -133,10 +137,20 @@ export function MarketTrends() {
       </div>
 
       {/* ETH Card */}
-      <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
         <div className="w-12 h-12 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-2xl font-bold mb-3 shadow-inner">Ξ</div>
         <p className={`text-xl font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.ethChange)}
+        </p>
+      </div>
+
+      {/* SOL Card */}
+      <div className="col-span-2 sm:col-span-1 md:col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+        <div className="w-12 h-12 rounded-full bg-[#14F195]/20 flex items-center justify-center text-[#14F195] text-xs font-bold mb-3 shadow-inner relative overflow-hidden">
+          <img src="/sol.svg" alt="Solana" className="w-6 h-6" />
+        </div>
+        <p className={`text-xl font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          {formatChange(data.solChange)}
         </p>
       </div>
     </div>

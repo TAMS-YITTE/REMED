@@ -121,6 +121,11 @@ export default function Home() {
         </div>
       </div>
 
+      {/* MARKET TRENDS WIDGET */}
+      <section className="px-6 max-w-6xl mx-auto pt-6 -mb-6 relative z-20">
+        <MarketTrends />
+      </section>
+
       {/* HERO SECTION PREMIUM */}
       <section className="relative pt-16 pb-20 md:pt-20 md:pb-24 px-6 overflow-hidden">
         {/* Abstract Background Elements */}
@@ -324,10 +329,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MARKET TRENDS WIDGET */}
-      <section className="px-6 max-w-6xl mx-auto -mt-6 relative z-20">
-        <MarketTrends />
-      </section>
+
 
       {/* PARTNERS / SOCIAL PROOF */}
       <section className="py-10 border-y border-white/10 bg-[#252844]">

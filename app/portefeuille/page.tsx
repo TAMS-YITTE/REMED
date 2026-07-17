@@ -12,7 +12,7 @@ import { WalletBalance } from '@/components/WalletBalance';
 import { TransactionHistory } from '@/components/TransactionHistory';
 import { PortfolioDonut } from '@/components/PortfolioDonut';
 import { SendModal } from '@/components/SendModal';
-import { MarketTrends } from '@/components/MarketTrends';
+
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
@@ -130,9 +130,7 @@ export default function PortefeuillePage() {
           </p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.05 }}>
-          <MarketTrends />
-        </motion.div>
+
 
         {walletAddress ? (
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="mb-8">

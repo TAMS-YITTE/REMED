@@ -142,7 +142,9 @@ export function MarketTrends() {
 
       {/* BTC Card */}
       <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
-        <div className="w-6 h-6 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-sm font-bold shadow-inner flex-shrink-0">₿</div>
+        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <img src="/btc.svg" alt="Bitcoin" className="w-full h-full" />
+        </div>
         <p className={`text-sm font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.btcChange)}
         </p>
@@ -150,7 +152,9 @@ export function MarketTrends() {
 
       {/* ETH Card */}
       <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
-        <div className="w-6 h-6 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-sm font-bold shadow-inner flex-shrink-0">Ξ</div>
+        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <img src="/eth.svg" alt="Ethereum" className="w-full h-full" />
+        </div>
         <p className={`text-sm font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.ethChange)}
         </p>
@@ -158,8 +162,8 @@ export function MarketTrends() {
 
       {/* SOL Card */}
       <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
-        <div className="w-6 h-6 rounded-full bg-[#14F195]/20 flex items-center justify-center text-[#14F195] text-xs font-bold shadow-inner flex-shrink-0 overflow-hidden">
-          <img src="/sol.svg" alt="Solana" className="w-3 h-3" />
+        <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden bg-black/40">
+          <img src="/sol.svg" alt="Solana" className="w-full h-full" />
         </div>
         <p className={`text-sm font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.solChange)}

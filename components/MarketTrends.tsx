@@ -19,8 +19,8 @@ const GaugeChart = ({ value, label }: { value: number, label: string }) => {
   const rotation = (value / 100) * 180 - 90;
 
   return (
-    <div className="relative flex flex-col items-center w-full h-20 mt-1">
-      <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible max-w-[140px]">
+    <div className="relative flex flex-col items-center w-full h-12 mt-1">
+      <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible max-w-[100px]">
         <defs>
           <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#ef4444" />
@@ -29,16 +29,16 @@ const GaugeChart = ({ value, label }: { value: number, label: string }) => {
             <stop offset="100%" stopColor="#22c55e" />
           </linearGradient>
         </defs>
-        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="url(#gaugeGradient)" strokeWidth="6" strokeLinecap="round" />
+        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="url(#gaugeGradient)" strokeWidth="8" strokeLinecap="round" />
         
         {/* Indicator dot */}
         <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '50px 50px', transition: 'transform 1s ease-out' }}>
           <circle cx="50" cy="10" r="4" fill="white" className="shadow-md drop-shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
         </g>
       </svg>
-      <div className="absolute bottom-0 flex flex-col items-center pb-1">
-        <span className="text-xl font-bold text-white leading-none">{value}</span>
-        <span className="text-[10px] text-gray-400 mt-1">{label}</span>
+      <div className="absolute bottom-0 flex flex-col items-center pb-0.5">
+        <span className="text-sm font-bold text-white leading-none">{value}</span>
+        <span className="text-[9px] text-gray-400 mt-0.5">{label}</span>
       </div>
     </div>
   )
@@ -91,9 +91,9 @@ export function MarketTrends() {
 
   if (data.isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8 items-center">
         {[1, 2, 3, 4, 5, 6].map(i => (
-          <div key={i} className={`bg-[#2E3152] border border-white/10 rounded-xl h-24 animate-pulse ${i === 1 ? 'col-span-2' : 'col-span-1'}`} />
+          <div key={i} className={`bg-[#2E3152] border border-white/10 rounded-xl h-16 animate-pulse ${i === 1 ? 'col-span-2' : 'col-span-1'}`} />
         ))}
       </div>
     );
@@ -120,49 +120,49 @@ export function MarketTrends() {
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-8">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-6 items-stretch">
       {/* Fear & Greed Card */}
-      <div className="col-span-2 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col hover:border-indigo-500/30 transition-colors shadow-lg">
-        <h3 className="text-xs font-semibold text-white mb-1 flex items-center justify-between">
+      <div className="col-span-2 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+        <h3 className="text-[10px] font-semibold text-white/80 flex items-center justify-between mb-0.5 px-1">
           Fear & Greed
           <span className="text-[10px] text-gray-500">›</span>
         </h3>
         <GaugeChart value={data.fngValue} label={translateFng(data.fngClassification)} />
       </div>
 
+      {/* RSI Card */}
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+        <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold shadow-inner flex-shrink-0">
+          RSI
+        </div>
+        <p className="text-sm font-bold tracking-tight text-gray-200">
+          {rsiValue}
+        </p>
+      </div>
+
       {/* BTC Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
-        <div className="w-8 h-8 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-lg font-bold mb-2 shadow-inner">₿</div>
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+        <div className="w-6 h-6 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-sm font-bold shadow-inner flex-shrink-0">₿</div>
         <p className={`text-sm font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.btcChange)}
         </p>
       </div>
 
       {/* ETH Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
-        <div className="w-8 h-8 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-lg font-bold mb-2 shadow-inner">Ξ</div>
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+        <div className="w-6 h-6 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-sm font-bold shadow-inner flex-shrink-0">Ξ</div>
         <p className={`text-sm font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.ethChange)}
         </p>
       </div>
 
       {/* SOL Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
-        <div className="w-8 h-8 rounded-full bg-[#14F195]/20 flex items-center justify-center text-[#14F195] text-xs font-bold mb-2 shadow-inner relative overflow-hidden">
-          <img src="/sol.svg" alt="Solana" className="w-4 h-4" />
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+        <div className="w-6 h-6 rounded-full bg-[#14F195]/20 flex items-center justify-center text-[#14F195] text-xs font-bold shadow-inner flex-shrink-0 overflow-hidden">
+          <img src="/sol.svg" alt="Solana" className="w-3 h-3" />
         </div>
         <p className={`text-sm font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.solChange)}
-        </p>
-      </div>
-
-      {/* RSI Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
-        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold mb-2 shadow-inner">
-          RSI
-        </div>
-        <p className="text-sm font-bold tracking-tight text-gray-200">
-          {rsiValue}
         </p>
       </div>
     </div>

@@ -19,8 +19,8 @@ const GaugeChart = ({ value, label }: { value: number, label: string }) => {
   const rotation = (value / 100) * 180 - 90;
 
   return (
-    <div className="relative flex flex-col items-center w-full h-24 mt-2">
-      <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible max-w-[160px]">
+    <div className="relative flex flex-col items-center w-full h-20 mt-1">
+      <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible max-w-[140px]">
         <defs>
           <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#ef4444" />
@@ -36,9 +36,9 @@ const GaugeChart = ({ value, label }: { value: number, label: string }) => {
           <circle cx="50" cy="10" r="4" fill="white" className="shadow-md drop-shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
         </g>
       </svg>
-      <div className="absolute bottom-0 flex flex-col items-center pb-2">
-        <span className="text-2xl font-bold text-white leading-none">{value}</span>
-        <span className="text-xs text-gray-400 mt-1">{label}</span>
+      <div className="absolute bottom-0 flex flex-col items-center pb-1">
+        <span className="text-xl font-bold text-white leading-none">{value}</span>
+        <span className="text-[10px] text-gray-400 mt-1">{label}</span>
       </div>
     </div>
   )
@@ -54,6 +54,9 @@ export function MarketTrends() {
     isLoading: true,
     error: false,
   });
+
+  // Mock RSI value for now (neutral)
+  const rsiValue = 54;
 
   useEffect(() => {
     async function fetchData() {
@@ -88,9 +91,9 @@ export function MarketTrends() {
 
   if (data.isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[1, 2, 3, 4].map(i => (
-          <div key={i} className="bg-[#2E3152] border border-white/10 rounded-2xl h-36 animate-pulse" />
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
+        {[1, 2, 3, 4, 5, 6].map(i => (
+          <div key={i} className={`bg-[#2E3152] border border-white/10 rounded-xl h-24 animate-pulse ${i === 1 ? 'col-span-2' : 'col-span-1'}`} />
         ))}
       </div>
     );
@@ -117,39 +120,49 @@ export function MarketTrends() {
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-8">
       {/* Fear & Greed Card */}
-      <div className="col-span-2 md:col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col hover:border-indigo-500/30 transition-colors shadow-lg">
-        <h3 className="text-sm font-semibold text-white mb-2 flex items-center justify-between">
+      <div className="col-span-2 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col hover:border-indigo-500/30 transition-colors shadow-lg">
+        <h3 className="text-xs font-semibold text-white mb-1 flex items-center justify-between">
           Fear & Greed
-          <span className="text-xs text-gray-500">›</span>
+          <span className="text-[10px] text-gray-500">›</span>
         </h3>
         <GaugeChart value={data.fngValue} label={translateFng(data.fngClassification)} />
       </div>
 
       {/* BTC Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
-        <div className="w-12 h-12 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-2xl font-bold mb-3 shadow-inner">₿</div>
-        <p className={`text-xl font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+        <div className="w-8 h-8 rounded-full bg-[#f7931a]/20 flex items-center justify-center text-[#f7931a] text-lg font-bold mb-2 shadow-inner">₿</div>
+        <p className={`text-sm font-bold tracking-tight ${data.btcChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.btcChange)}
         </p>
       </div>
 
       {/* ETH Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
-        <div className="w-12 h-12 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-2xl font-bold mb-3 shadow-inner">Ξ</div>
-        <p className={`text-xl font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+        <div className="w-8 h-8 rounded-full bg-[#627eea]/20 flex items-center justify-center text-[#627eea] text-lg font-bold mb-2 shadow-inner">Ξ</div>
+        <p className={`text-sm font-bold tracking-tight ${data.ethChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.ethChange)}
         </p>
       </div>
 
       {/* SOL Card */}
-      <div className="col-span-2 sm:col-span-1 md:col-span-1 bg-[#2E3152] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
-        <div className="w-12 h-12 rounded-full bg-[#14F195]/20 flex items-center justify-center text-[#14F195] text-xs font-bold mb-3 shadow-inner relative overflow-hidden">
-          <img src="/sol.svg" alt="Solana" className="w-6 h-6" />
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+        <div className="w-8 h-8 rounded-full bg-[#14F195]/20 flex items-center justify-center text-[#14F195] text-xs font-bold mb-2 shadow-inner relative overflow-hidden">
+          <img src="/sol.svg" alt="Solana" className="w-4 h-4" />
         </div>
-        <p className={`text-xl font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+        <p className={`text-sm font-bold tracking-tight ${data.solChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
           {formatChange(data.solChange)}
+        </p>
+      </div>
+
+      {/* RSI Card */}
+      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center hover:border-indigo-500/30 transition-colors shadow-lg">
+        <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs font-bold mb-2 shadow-inner">
+          RSI
+        </div>
+        <p className="text-sm font-bold tracking-tight text-gray-200">
+          {rsiValue}
         </p>
       </div>
     </div>

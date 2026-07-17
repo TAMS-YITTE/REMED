@@ -49,20 +49,45 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Panel */}
+      {/* Mobile Menu Drawer Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="md:hidden fixed top-[69px] left-0 right-0 bg-[#252844] border-b border-white/10 shadow-xl z-40 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Menu Drawer */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="md:hidden fixed top-0 right-0 bottom-0 w-[80%] max-w-sm bg-[#2E3152] border-l border-white/10 shadow-2xl z-50 flex flex-col"
           >
-            <div className="flex flex-col gap-4">
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="block px-4 py-3 text-base font-medium text-white hover:bg-white/5 rounded-xl">Accueil</Link>
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/acheter" className="block px-4 py-3 text-base font-medium text-white hover:bg-white/5 rounded-xl">Acheter</Link>
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="block px-4 py-3 text-base font-medium text-white hover:bg-white/5 rounded-xl">Blog</Link>
-              <div className="mt-4 pt-4 border-t border-white/10 px-4">
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <span className="text-lg font-bold text-white">Menu</span>
+              <button 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 p-6 overflow-y-auto flex-1">
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Accueil</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/acheter" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Acheter</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">Blog</Link>
+              <div className="mt-auto pt-6">
                 <AuthButton />
               </div>
             </div>

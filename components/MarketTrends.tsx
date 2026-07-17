@@ -96,28 +96,36 @@ export function MarketTrends() {
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 items-stretch w-full">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: 0.1 } }
+      }}
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 items-stretch w-full"
+    >
       {/* Fear & Greed Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
         <h3 className="text-[10px] font-semibold text-white/80 flex items-center justify-between mb-0.5 px-1">
           Fear & Greed
           <span className="text-[10px] text-gray-500">›</span>
         </h3>
         <GaugeChart value={data?.fngValue || 50} label={translateFng(data?.fngClassification || 'Neutral')} />
-      </div>
+      </motion.div>
 
       {/* RSI Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
         <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold shadow-inner flex-shrink-0">
           RSI
         </div>
         <p className="text-sm font-bold tracking-tight text-gray-200">
           {data?.rsiValue}
         </p>
-      </div>
+      </motion.div>
 
       {/* BTC Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
         <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
           <img src="/btc.svg" alt="Bitcoin" className="w-full h-full" />
         </div>
@@ -127,10 +135,10 @@ export function MarketTrends() {
           </span>
           <span className="text-[9px] text-gray-500 font-medium">24h</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* ETH Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
         <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
           <img src="/eth.svg" alt="Ethereum" className="w-full h-full" />
         </div>
@@ -140,10 +148,10 @@ export function MarketTrends() {
           </span>
           <span className="text-[9px] text-gray-500 font-medium">24h</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* SOL Card */}
-      <div className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
         <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden bg-black/40">
           <img src="/sol.svg" alt="Solana" className="w-full h-full" />
         </div>
@@ -153,7 +161,7 @@ export function MarketTrends() {
           </span>
           <span className="text-[9px] text-gray-500 font-medium">24h</span>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

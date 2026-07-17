@@ -171,7 +171,7 @@ export default function Home() {
             </p>
 
             <div className="hidden md:flex flex-col sm:flex-row gap-4 mb-8">
-              <Link href={`/acheter?crypto=${selectedCryptoId}`} className="flex items-center justify-center gap-2 bg-indigo-600 text-white border-none px-6 py-4 rounded-xl text-base font-semibold shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200">
+              <Link href={`/acheter?crypto=${selectedCryptoId}`} className="btn-shimmer flex items-center justify-center gap-2 text-white border-none px-6 py-4 rounded-xl text-base font-semibold shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:-translate-y-0.5 transition-all duration-200">
                 Acheter maintenant
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
               </Link>
@@ -198,9 +198,9 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="w-full max-w-md mx-auto lg:ml-auto relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-20 transform rotate-3"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-30 transform rotate-3 animate-pulse duration-1000"></div>
             
-            <div className="bg-[#2E3152]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative z-10">
+            <div className="glass-panel rounded-3xl p-6 sm:p-8 relative z-10">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-white">Simulateur Rapide</h3>
                 <span className="flex items-center gap-1 text-xs font-semibold bg-green-50 text-green-700 px-2 py-1 rounded-md">
@@ -276,18 +276,30 @@ export default function Home() {
                                 <div className="px-3 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">Top Cryptos</div>
                               )}
                               {listToDisplay.length > 0 ? (
-                                listToDisplay.map(c => (
-                                  <button
-                                    key={c.id}
-                                    disabled={!c.supported}
-                                    onClick={() => {
-                                      if (!c.supported) return;
-                                      setSelectedCryptoId(c.id);
-                                      setIsSelectOpen(false);
-                                      setSearchQuery('');
-                                    }}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${!c.supported ? 'opacity-40 cursor-not-allowed' : selectedCryptoId === c.id ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-[#353866] text-gray-300'}`}
-                                  >
+                                <motion.div
+                                  initial="hidden"
+                                  animate="visible"
+                                  variants={{
+                                    hidden: {},
+                                    visible: { transition: { staggerChildren: 0.05 } }
+                                  }}
+                                >
+                                  {listToDisplay.map(c => (
+                                    <motion.button
+                                      key={c.id}
+                                      variants={{
+                                        hidden: { opacity: 0, x: -10 },
+                                        visible: { opacity: 1, x: 0 }
+                                      }}
+                                      disabled={!c.supported}
+                                      onClick={() => {
+                                        if (!c.supported) return;
+                                        setSelectedCryptoId(c.id);
+                                        setIsSelectOpen(false);
+                                        setSearchQuery('');
+                                      }}
+                                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left ${!c.supported ? 'opacity-40 cursor-not-allowed' : selectedCryptoId === c.id ? 'bg-indigo-500/20 text-indigo-300' : 'hover:bg-[#353866] text-gray-300'}`}
+                                    >
                                     <img src={c.icon} alt={c.name} className="w-6 h-6 rounded-full" />
                                     <div className="flex flex-col">
                                       <span className="font-bold text-sm leading-tight">{c.symbol}</span>
@@ -298,8 +310,9 @@ export default function Home() {
                                     ) : prices && prices[c.id] && (
                                       <span className="ml-auto text-xs font-medium opacity-60">€{prices[c.id]}</span>
                                     )}
-                                  </button>
-                                ))
+                                    </motion.button>
+                                  ))}
+                                </motion.div>
                               ) : (
                                 <div className="text-center py-6 text-sm text-gray-500">Aucune crypto trouvée</div>
                               )}
@@ -335,7 +348,7 @@ export default function Home() {
 
               <Link 
                 href={`/acheter?crypto=${selectedCryptoId}`}
-                className="w-full mt-6 bg-indigo-600 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors shadow-lg hidden md:flex"
+                className="btn-shimmer w-full mt-6 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5 shadow-lg hidden md:flex"
               >
                 Continuer l'achat
               </Link>

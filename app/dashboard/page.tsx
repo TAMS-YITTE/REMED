@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -9,42 +8,8 @@ import { MfaSection } from '@/components/MfaSection';
 import { isPrivyMock } from '@/lib/privyMode';
 import Link from 'next/link';
 
-function CopyableAddress({ label, address }: { label: string; address?: string }) {
-  const [copied, setCopied] = useState(false);
-
-  if (!address) {
-    return (
-      <div className="flex items-center justify-between gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
-        <span className="text-xs text-gray-400">{label}</span>
-        <span className="text-xs text-gray-500">Non créé</span>
-      </div>
-    );
-  }
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(address);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
-  return (
-    <div className="flex items-center justify-between gap-3 bg-white/5 p-3 rounded-xl border border-white/5">
-      <div className="min-w-0">
-        <div className="text-xs text-gray-400 mb-0.5">{label}</div>
-        <div className="text-sm text-white font-mono truncate">{address}</div>
-      </div>
-      <button
-        onClick={handleCopy}
-        className="shrink-0 text-xs font-medium text-indigo-400 hover:text-indigo-300 px-2 py-1 rounded-lg hover:bg-white/5 transition-colors"
-      >
-        {copied ? 'Copié !' : 'Copier'}
-      </button>
-    </div>
-  );
-}
-
 export default function DashboardPage() {
-  const { isReady, authenticated, user, walletAddress, solanaWalletAddress, bitcoinWalletAddress } = useAuth();
+  const { isReady, authenticated, user } = useAuth();
 
   if (!isReady) {
     return (
@@ -89,12 +54,14 @@ export default function DashboardPage() {
         {!isPrivyMock() && <MfaSection />}
 
         <section className="glass-panel rounded-2xl p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Adresses de portefeuille</h2>
-          <div className="flex flex-col gap-3">
-            <CopyableAddress label="Ethereum / EVM" address={walletAddress} />
-            <CopyableAddress label="Solana" address={solanaWalletAddress} />
-            <CopyableAddress label="Bitcoin (Taproot)" address={bitcoinWalletAddress} />
-          </div>
+          <h2 className="text-lg font-semibold mb-2">Adresses et soldes</h2>
+          <p className="text-sm text-gray-400">
+            Vos adresses de portefeuille et vos soldes se trouvent sur votre{' '}
+            <Link href="/portefeuille" className="text-indigo-400 hover:underline">
+              page portefeuille
+            </Link>
+            .
+          </p>
         </section>
 
         <section className="glass-panel rounded-2xl p-6 mb-6">

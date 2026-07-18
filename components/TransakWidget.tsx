@@ -11,16 +11,27 @@ export function TransakWidget({ crypto = 'BTC', walletAddress }: TransakWidgetPr
 
   const baseUrl = isStaging ? 'https://global-stg.transak.com' : 'https://global.transak.com';
   
+  // Validation basique de l'adresse pour éviter que Transak plante sur un format invalide
+  let finalWalletAddress = walletAddress;
+  if (crypto === 'BTC' && walletAddress.startsWith('0x')) {
+    finalWalletAddress = ''; // On ne donne pas d'adresse EVM pour du Bitcoin
+  } else if (crypto === 'SOL' && walletAddress.startsWith('0x')) {
+    finalWalletAddress = ''; // On ne donne pas d'adresse EVM pour du Solana
+  }
+
   const queryParams = new URLSearchParams({
     apiKey,
     environment: isStaging ? 'STAGING' : 'PRODUCTION',
-    walletAddress,
     defaultCryptoCurrency: crypto,
     fiatCurrency: 'EUR',
     themeColor: '534AB7',
     hideMenu: 'true',
     language: 'fr'
   });
+
+  if (finalWalletAddress) {
+    queryParams.append('walletAddress', finalWalletAddress);
+  }
 
   const widgetUrl = `${baseUrl}?${queryParams.toString()}`;
 

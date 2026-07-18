@@ -25,14 +25,26 @@ export function TransakWidget({ crypto = 'BTC', walletAddress }: TransakWidgetPr
       return;
     }
 
-    const transak = new Transak({
+    const baseUrl = isStaging ? 'https://global-stg.transak.com' : 'https://global.transak.com';
+    
+    const queryParams = new URLSearchParams({
       apiKey,
       environment: isStaging ? 'STAGING' : 'PRODUCTION',
-      walletAddress: finalWalletAddress || undefined,
       defaultCryptoCurrency: crypto,
       fiatCurrency: 'EUR',
       themeColor: '534AB7',
-      hideMenu: true,
+      hideMenu: 'true',
+    });
+
+    if (finalWalletAddress) {
+      queryParams.append('walletAddress', finalWalletAddress);
+    }
+
+    const widgetUrl = `${baseUrl}?${queryParams.toString()}`;
+
+    const transak = new Transak({
+      widgetUrl,
+      referrer: typeof window !== 'undefined' ? window.location.origin : '',
     });
 
     transak.init();

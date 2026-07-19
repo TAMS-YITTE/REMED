@@ -10,6 +10,7 @@ interface MarketData {
   ethChange: number | null;
   solChange: number | null;
   rsiValue: number | null;
+  altcoinSeason: number | null;
 }
 
 const GaugeChart = ({ value, label }: { value: number, label: string }) => {
@@ -59,8 +60,8 @@ export function MarketTrends() {
 
   if (isLoading && !data) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 items-center">
-        {[1, 2, 3, 4, 5].map(i => (
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8 items-center">
+        {[1, 2, 3, 4, 5, 6].map(i => (
           <div key={i} className={`bg-[#2E3152] border border-white/10 rounded-xl h-16 animate-pulse col-span-1`} />
         ))}
       </div>
@@ -100,7 +101,7 @@ export function MarketTrends() {
         hidden: {},
         visible: { transition: { staggerChildren: 0.1 } }
       }}
-      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 items-stretch w-full"
+      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 items-stretch w-full"
     >
       {/* Fear & Greed Card */}
       <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
@@ -110,6 +111,19 @@ export function MarketTrends() {
         </h3>
         {data.fngValue !== null ? (
           <GaugeChart value={data.fngValue} label={translateFng(data.fngClassification || '')} />
+        ) : (
+          <span className="text-xs text-gray-500 text-center mt-2">Indisponible</span>
+        )}
+      </motion.div>
+
+      {/* Altcoin Season Card */}
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+        <h3 className="text-[10px] font-semibold text-white/80 flex items-center justify-between mb-0.5 px-1">
+          Altcoin Season
+          <span className="text-[10px] text-gray-500">›</span>
+        </h3>
+        {data.altcoinSeason !== null ? (
+          <GaugeChart value={data.altcoinSeason} label={data.altcoinSeason >= 75 ? 'Altcoin Season' : data.altcoinSeason <= 25 ? 'Bitcoin Season' : 'Neutre'} />
         ) : (
           <span className="text-xs text-gray-500 text-center mt-2">Indisponible</span>
         )}

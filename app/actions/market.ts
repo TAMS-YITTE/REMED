@@ -5,6 +5,17 @@ import * as Sentry from '@sentry/nextjs';
 
 const TIMEOUT_MS = 5000;
 
+export async function getAltcoinSeason(): Promise<number | null> {
+  try {
+    // Simulation de l'Altcoin Season Index (0-100)
+    // Faute d'API publique gratuite et stable, on retourne une valeur fixe ou basée sur la date.
+    // Dans une version de production, il faudrait une clé API vers CoinGlass ou calculer via CoinGecko.
+    return 35; // 35 = Bitcoin Season
+  } catch {
+    return null;
+  }
+}
+
 export async function getBitcoinRsi(): Promise<number | null> {
   try {
     // Binance (utilisé précédemment) bloque structurellement les requêtes
@@ -104,7 +115,8 @@ export async function getMarketTrendsData() {
       btcChange: cgData?.bitcoin?.eur_24h_change ?? null,
       ethChange: cgData?.ethereum?.eur_24h_change ?? null,
       solChange: cgData?.solana?.eur_24h_change ?? null,
-      rsiValue: rsi
+      rsiValue: rsi,
+      altcoinSeason: 35 // Mock data for Altcoin Season Index
     };
   } catch (err) {
     console.error('Error fetching combined market trends:', err);
@@ -115,7 +127,8 @@ export async function getMarketTrendsData() {
       btcChange: null,
       ethChange: null,
       solChange: null,
-      rsiValue: null
+      rsiValue: null,
+      altcoinSeason: null
     };
   }
 }

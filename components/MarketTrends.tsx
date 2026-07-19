@@ -130,22 +130,16 @@ export function MarketTrends() {
       </motion.div>
 
       {/* RSI Card */}
-      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-row items-center justify-center gap-2 hover:border-indigo-500/30 transition-colors shadow-sm">
-        <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-[10px] font-bold shadow-inner flex-shrink-0">
-          RSI
-        </div>
-        <div className="flex flex-col">
-          {data.rsiValue !== null ? (
-            <>
-              <span className="text-lg font-extrabold text-white leading-none">{data.rsiValue}</span>
-              <span className="text-[9px] text-gray-400 font-medium">
-                {data.rsiValue > 70 ? 'Suracheté' : data.rsiValue < 30 ? 'Survendu' : 'Neutre'}
-              </span>
-            </>
-          ) : (
-            <span className="text-xs text-gray-500">Indisponible</span>
-          )}
-        </div>
+      <motion.div variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }} className="col-span-1 bg-[#2E3152] border border-white/10 rounded-xl p-2 flex flex-col justify-center hover:border-indigo-500/30 transition-colors shadow-sm">
+        <h3 className="text-[10px] font-semibold text-white/80 flex items-center justify-between mb-0.5 px-1">
+          RSI Bitcoin
+          <span className="text-[10px] text-gray-500">›</span>
+        </h3>
+        {data.rsiValue !== null ? (
+          <GaugeChart value={data.rsiValue} label={data.rsiValue > 70 ? 'Suracheté' : data.rsiValue < 30 ? 'Survendu' : 'Neutre'} />
+        ) : (
+          <span className="text-xs text-gray-500 text-center mt-2">Indisponible</span>
+        )}
       </motion.div>
 
       {/* BTC Change */}

@@ -7,11 +7,24 @@ const TIMEOUT_MS = 5000;
 
 export async function getAltcoinSeason(): Promise<number | null> {
   try {
-    // Simulation de l'Altcoin Season Index (0-100)
-    // Faute d'API publique gratuite et stable, on retourne une valeur fixe ou basée sur la date.
-    // Dans une version de production, il faudrait une clé API vers CoinGlass ou calculer via CoinGecko.
-    return 35; // 35 = Bitcoin Season
-  } catch {
+    // L'API publique (sans clé) de CoinMarketCap permet de récupérer l'Altcoin Season Index.
+    // Cela évite de dépendre d'un scraping lourd qui pourrait être bloqué par Cloudflare.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const url = 'https://pro-api.coinmarketcap.com/public-api/v1/altcoin-season-index/latest';
+    const res = await fetch(url, { next: { revalidate: 3600 }, signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.data?.altcoin_index !== undefined) {
+        return Math.round(data.data.altcoin_index);
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching Altcoin Season from CMC:', error);
+    Sentry.captureException(error, { tags: { context: 'getAltcoinSeason' } });
     return null;
   }
 }
@@ -98,10 +111,11 @@ export async function getMarketTrendsData() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
-    const [fngRes, cgRes, rsi] = await Promise.all([
+    const [fngRes, cgRes, rsi, altSeason] = await Promise.all([
       fetch('https://api.alternative.me/fng/', { next: { revalidate: 3600 }, signal: controller.signal }),
       fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=eur&include_24hr_change=true', { next: { revalidate: 60 }, signal: controller.signal }),
-      getBitcoinRsi()
+      getBitcoinRsi(),
+      getAltcoinSeason()
     ]);
     clearTimeout(timeoutId);
 
@@ -116,7 +130,7 @@ export async function getMarketTrendsData() {
       ethChange: cgData?.ethereum?.eur_24h_change ?? null,
       solChange: cgData?.solana?.eur_24h_change ?? null,
       rsiValue: rsi,
-      altcoinSeason: 35 // Mock data for Altcoin Season Index
+      altcoinSeason: altSeason
     };
   } catch (err) {
     console.error('Error fetching combined market trends:', err);

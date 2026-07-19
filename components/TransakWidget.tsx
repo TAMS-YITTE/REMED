@@ -48,24 +48,33 @@ export function TransakWidget({ crypto = 'BTC', walletAddress }: TransakWidgetPr
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div style={{ width: '100%', height: '600px', margin: '0 auto', borderRadius: '12px', overflow: 'hidden', border: '1px solid #E5E7EB' }}>
-        <iframe
-          src={widgetUrl}
-          allow="camera;microphone;payment"
-          style={{ width: '100%', height: '100%', border: 'none' }}
-        />
+    <div className="flex flex-col items-center justify-center w-full h-[600px] bg-[#2E3152] border border-white/10 rounded-xl text-center p-6">
+      <div className="bg-indigo-500/20 p-4 rounded-full text-indigo-400 mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+          <line x1="2" y1="10" x2="22" y2="10"></line>
+        </svg>
       </div>
-      <div className="text-center">
-        <a 
-          href={widgetUrl} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="inline-block px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-        >
-          La fenêtre ne s'affiche pas ? Cliquez ici pour ouvrir Transak dans un nouvel onglet
-        </a>
-      </div>
+      <h3 className="text-xl font-semibold text-white mb-2">Acheter des {crypto}</h3>
+      <p className="text-gray-400 text-sm max-w-md mb-8">
+        Vous allez être redirigé vers notre partenaire sécurisé Transak pour finaliser votre achat par carte bancaire ou virement.
+      </p>
+      
+      <a 
+        href={widgetUrl} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="px-8 py-4 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-indigo-500/25 active:scale-[0.98] inline-block"
+      >
+        Continuer vers Transak
+      </a>
+
+      {!finalWalletAddress && (
+        <p className="mt-6 text-xs text-amber-400/80 max-w-sm border border-amber-500/20 bg-amber-500/10 p-3 rounded-lg">
+          <span className="font-bold block mb-1">Action requise par Transak :</span>
+          Transak vous demandera de coller manuellement votre adresse de réception pour le {crypto}.
+        </p>
+      )}
     </div>
   );
 }

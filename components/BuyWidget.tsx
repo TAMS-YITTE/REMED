@@ -50,7 +50,24 @@ export function BuyWidget({ crypto = 'eth' }: BuyWidgetProps) {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
+      {/* Global Warning Banner for pending KYC/KYB on Transak/MoonPay */}
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex gap-3 items-start text-left">
+        <div className="text-amber-500 shrink-0 mt-0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+            <path d="M12 9v4"></path>
+            <path d="M12 17h.01"></path>
+          </svg>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold text-amber-500">Demande d'autorisation en cours</h4>
+          <p className="text-xs text-amber-400/80 mt-1">
+            Les services d'achat par carte (MoonPay et Transak) sont actuellement en attente de validation. Le service sera bientôt activé.
+          </p>
+        </div>
+      </div>
+
       {provider === 'moonpay' ? (
         <MoonPayWidget crypto={crypto.toLowerCase()} walletAddress={activeWalletAddress} />
       ) : (

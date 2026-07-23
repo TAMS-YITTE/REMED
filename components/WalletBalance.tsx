@@ -148,8 +148,10 @@ export function WalletBalance({
             )}
             
             {totalEur !== null && (
-              <div className="text-sm font-normal text-indigo-200 mt-1">
-                ≈ {balance || "0.00"} ETH (Testnet)
+              <div className="text-sm font-normal text-indigo-200 mt-1 flex items-center gap-3">
+                <span>≈ {solanaBalance || "0.00"} SOL</span>
+                <span>•</span>
+                <span>{balance || "0.00"} ETH</span>
               </div>
             )}
           </div>

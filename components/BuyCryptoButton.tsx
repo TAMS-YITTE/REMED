@@ -37,7 +37,10 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
 
   const chain        = getChainFamily(crypto);
   const currencyCode = MOONPAY_CURRENCY_CODE[crypto.toLowerCase()] ?? crypto.toLowerCase();
-  const apiKey       = process.env.NEXT_PUBLIC_MOONPAY_API_KEY ?? '';
+  const apiKey =
+    process.env.NEXT_PUBLIC_MOONPAY_API_KEY ||
+    process.env.NEXT_PUBLIC_MOONPAY_KEY ||
+    '';
 
   const activeWalletAddress =
     chain === 'solana'  ? solanaWalletAddress  :

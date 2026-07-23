@@ -3,8 +3,15 @@ import { render, screen } from '@testing-library/react';
 import CGUPage from '@/app/cgu/page';
 import ConfidentialitePage from '@/app/confidentialite/page';
 import MentionsLegalesPage from '@/app/mentions-legales/page';
+import { useAuth } from '@/hooks/useAuth';
+
+jest.mock('@/hooks/useAuth');
 
 describe('Static legal pages', () => {
+  beforeEach(() => {
+    (useAuth as jest.Mock).mockReturnValue({ ready: true, authenticated: false, login: jest.fn() });
+  });
+
   it('CGU page renders its heading and the legal footer', () => {
     render(<CGUPage />);
     expect(

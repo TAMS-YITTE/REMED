@@ -58,7 +58,7 @@ export default function MentionsLegalesPage() {
             </p>
             <p className="mt-3">
               Les transactions (achats de cryptomonnaies) sont opérées exclusivement par nos partenaires réglementés 
-              (Transak et MoonPay). Les portefeuilles non-hébergés (non-custodial wallets) sont fournis et sécurisés 
+              (MoonPay). Les portefeuilles non-hébergés (non-custodial wallets) sont fournis et sécurisés 
               par l'infrastructure de Privy.
             </p>
           </section>

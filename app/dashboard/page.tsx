@@ -1,16 +1,17 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { AuthButton } from '@/components/AuthButton';
 import { MfaSection } from '@/components/MfaSection';
 import { isPrivyMock } from '@/lib/privyMode';
+import { getPurchases } from '@/app/actions/database';
 import Link from 'next/link';
 
 export default function DashboardPage() {
   const { isReady, authenticated, user } = useAuth();
-
   if (!isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#252844]">
@@ -56,7 +57,7 @@ export default function DashboardPage() {
         <section className="glass-panel rounded-2xl p-6 mb-6">
           <h2 className="text-lg font-semibold mb-2">Adresses et soldes</h2>
           <p className="text-sm text-gray-400">
-            Vos adresses de portefeuille et vos soldes se trouvent sur votre{' '}
+            Vos adresses de portefeuille générées automatiquement et vos soldes se trouvent sur votre{' '}
             <Link href="/portefeuille" className="text-indigo-400 hover:underline">
               page portefeuille
             </Link>
@@ -65,9 +66,9 @@ export default function DashboardPage() {
         </section>
 
         <section className="glass-panel rounded-2xl p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-2">Historique des transactions</h2>
+          <h2 className="text-lg font-semibold mb-2">Historique des transactions et achats</h2>
           <p className="text-sm text-gray-400">
-            Bientôt disponible. En attendant, retrouvez vos soldes et vos dernières transactions sur votre{' '}
+            L'historique complet de vos transactions blockchain et de vos achats par carte se trouve également sur votre{' '}
             <Link href="/portefeuille" className="text-indigo-400 hover:underline">
               page portefeuille
             </Link>
@@ -95,3 +96,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

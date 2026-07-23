@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { BuyWidget } from '@/components/BuyWidget';
+import { BuyCryptoButton } from '@/components/BuyCryptoButton';
 import { CryptoChart } from '@/components/CryptoChart';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -91,7 +91,7 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
               <h2 className="text-2xl font-bold mb-4">Pourquoi acheter du {cryptoInfo.name} ?</h2>
               <div className="space-y-4 text-gray-300">
                 <p>
-                  Sur Remedly, nous rendons l'achat de {cryptoInfo.name} accessible à tous. Notre plateforme utilise l'infrastructure MoonPay pour garantir des transactions ultra-rapides, avec vos propres clés privées grâce à l'intégration Privy.
+                  Sur Remedly, nous rendons l'achat de {cryptoInfo.name} accessible à tous. Notre plateforme utilise l'infrastructure native de Privy pour garantir des transactions ultra-rapides, avec vos propres clés privées.
                 </p>
                 <ul className="list-disc pl-5 space-y-2">
                   <li>Frais transparents et ultra compétitifs</li>
@@ -113,7 +113,16 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
               </h3>
-              <BuyWidget crypto={id} />
+              <div className="flex justify-center">
+                <BuyCryptoButton crypto={id} className="w-full" />
+              </div>
+              
+              <div className="mt-6 pt-6 border-t border-white/10">
+                <p className="text-xs text-gray-400 leading-relaxed text-center">
+                  L'achat et le transfert de cryptomonnaies sont opérés par nos partenaires réglementés. 
+                  Remedly est une interface non-hébergée (non-custodial) et ne détient pas vos fonds.
+                </p>
+              </div>
             </div>
           </div>
         </div>

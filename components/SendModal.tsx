@@ -1,9 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-// Si on veut utiliser solana spécifiquement on peut faire l'import
-// Mais comme le plan l'indiquait, la feature doit être killable et on va juste
-// utiliser le mode ethereum standard d'abord, ou désactiver solana si non dispo
-// Pour l'instant on fait simple : ETH
+import { getSavedWallets, saveWallet } from '@/app/actions/database';
 
 interface SendModalProps {
   isOpen: boolean;
@@ -15,7 +12,8 @@ interface SendModalProps {
 }
 
 export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
-  const { sendTransaction } = useAuth();
+  const { sendTransaction, user } = useAuth();
+  const privyId = user?.id;
 
   const [step, setStep] = useState<1 | 2>(1);
   const [chain, setChain] = useState<'ethereum' | 'solana'>('ethereum');
@@ -24,8 +22,18 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
   const [error, setError] = useState('');
   const [isSending, setIsSending] = useState(false);
 
-  // Variable d'environnement pour désactiver la feature
+  // Address Book state
+  const [savedWallets, setSavedWallets] = useState<any[]>([]);
+  const [isSavingWallet, setIsSavingWallet] = useState(false);
+  const [walletLabel, setWalletLabel] = useState('');
+
   const isSendEnabled = process.env.NEXT_PUBLIC_ENABLE_SEND === 'true';
+
+  useEffect(() => {
+    if (isOpen && privyId) {
+      getSavedWallets(privyId).then(setSavedWallets);
+    }
+  }, [isOpen, privyId]);
 
   if (!isOpen) return null;
 
@@ -42,7 +50,7 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
     );
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setError('');
     if (!address) {
       setError('Veuillez entrer une adresse de destination.');
@@ -53,7 +61,6 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
       return;
     }
 
-    // Validation adresse simple
     if (chain === 'ethereum' && !/^0x[a-fA-F0-9]{40}$/.test(address)) {
       setError("L'adresse Ethereum n'est pas valide.");
       return;
@@ -63,11 +70,19 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
       return;
     }
 
-    // Validation solde
     const currentBalance = chain === 'ethereum' ? balances.eth : balances.sol;
     if (Number(amount) > Number(currentBalance)) {
       setError('Solde insuffisant.');
       return;
+    }
+
+    // Save wallet to address book if requested
+    if (isSavingWallet && walletLabel && privyId) {
+      try {
+        await saveWallet(privyId, address, chain, walletLabel);
+      } catch (err) {
+        console.error('Failed to save wallet:', err);
+      }
     }
 
     setStep(2);
@@ -79,28 +94,25 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
     
     try {
       if (chain === 'ethereum') {
-        // Envoi simple via Privy
-        // Conversion de l'ETH en wei (hexa)
         const weiAmount = BigInt(Math.floor(Number(amount) * 1e18));
         const hexAmount = '0x' + weiAmount.toString(16);
         
         const txConfig = {
           to: address,
           value: hexAmount,
-          chainId: 11155111, // Sepolia Testnet
+          chainId: 11155111,
         };
         
         const txReceipt = await sendTransaction(txConfig);
         console.log('Transaction envoyée :', txReceipt);
-        // Reset and close
+        
         onClose();
         setStep(1);
         setAddress('');
         setAmount('');
+        setIsSavingWallet(false);
+        setWalletLabel('');
       } else {
-        // Pour Solana, l'implémentation nécessiterait de charger un wallet Solana
-        // et de construire une version @solana/web3.js transaction. 
-        // Par sécurité et simplicité pour cet exemple on bloque.
         setError("L'envoi Solana est en cours d'intégration.");
       }
     } catch (e: any) {
@@ -111,10 +123,14 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
     }
   };
 
+  const handleSelectSavedWallet = (savedAddr: string, savedChain: string) => {
+    setAddress(savedAddr);
+    setChain(savedChain as 'ethereum' | 'solana');
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-xl overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
           <h3 className="font-bold text-lg text-gray-900">Envoyer des cryptos</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1">
@@ -137,7 +153,25 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Destinataire</label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-sm font-medium text-gray-700">Destinataire</label>
+                {savedWallets.length > 0 && (
+                  <select 
+                    className="text-xs bg-gray-50 border border-gray-200 rounded p-1 text-indigo-600 outline-none"
+                    onChange={(e) => {
+                      if(e.target.value) {
+                        const w = savedWallets.find(sw => sw.address === e.target.value);
+                        if(w) handleSelectSavedWallet(w.address, w.network);
+                      }
+                    }}
+                  >
+                    <option value="">Carnet d'adresses...</option>
+                    {savedWallets.map((w, i) => (
+                      <option key={i} value={w.address}>{w.label} ({w.network})</option>
+                    ))}
+                  </select>
+                )}
+              </div>
               <input 
                 type="text" 
                 placeholder="0x..." 
@@ -145,6 +179,29 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm"
               />
+              
+              {!savedWallets.find(w => w.address === address) && address.length > 10 && (
+                <div className="mt-2 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={isSavingWallet}
+                      onChange={(e) => setIsSavingWallet(e.target.checked)}
+                      className="rounded text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span className="text-sm text-gray-700">Sauvegarder dans mon carnet</span>
+                  </label>
+                  {isSavingWallet && (
+                    <input 
+                      type="text" 
+                      placeholder="Nom (ex: Mon Ledger)" 
+                      value={walletLabel}
+                      onChange={(e) => setWalletLabel(e.target.value)}
+                      className="mt-2 w-full border border-gray-300 rounded p-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    />
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="mb-6">
@@ -231,3 +288,4 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
     </div>
   );
 }
+

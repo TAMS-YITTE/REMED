@@ -34,7 +34,7 @@ export default function ConfidentialitePage() {
             </p>
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li><strong>Privy</strong> : gestion de l'authentification et du portefeuille cryptographique (wallet).</li>
-              <li><strong>MoonPay / Transak</strong> : lors d'un achat, ces partenaires collectent directement vos informations de paiement et pièces d'identité (KYC). Remedly n'a pas accès à vos informations bancaires ni à vos documents d'identité.</li>
+              <li><strong>MoonPay</strong> : lors d'un achat, ces partenaires collectent directement vos informations de paiement et pièces d'identité (KYC). Remedly n'a pas accès à vos informations bancaires ni à vos documents d'identité.</li>
               <li><strong>PostHog</strong> : outil d'analyse d'audience anonymisée pour améliorer notre interface.</li>
             </ul>
           </section>

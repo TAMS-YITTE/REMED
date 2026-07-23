@@ -35,19 +35,33 @@ export default function CGUPage() {
             <p className="mt-3">
               La fourniture du portefeuille numérique (wallet) est assurée techniquement par notre partenaire Privy. 
               L'achat d'actifs numériques par virement ou carte bancaire est exécuté de bout en bout par nos partenaires 
-              réglementés Transak et MoonPay.
+              réglementés MoonPay.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Inscription et Portefeuille</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Non-Custodial et Accès</h2>
             <p>
-              Lors de l'inscription via une adresse email, un portefeuille numérique "Non-Custodial" (non hébergé) est automatiquement généré. L'Utilisateur est le seul et unique détenteur de l'accès à ce portefeuille. En cas de perte de ses accès (email), Remedly n'a aucun moyen technique de restaurer l'accès ou de récupérer les fonds.
+              Remedly ne conserve, ne gère et n'a jamais accès à vos fonds ou vos clés privées. 
+              Lors de l'inscription via une adresse email, un portefeuille numérique "Non-Custodial" (non hébergé) est automatiquement généré via Privy. 
+              L'Utilisateur est le seul et unique détenteur de l'accès à ce portefeuille via des mécanismes cryptographiques (Shamir's Secret Sharing). 
+              En cas de perte de ses accès (email), Remedly n'a aucun moyen technique de restaurer l'accès ou de récupérer les fonds.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Avertissement sur les risques</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Dépôts, Transferts et Avertissements</h2>
+            <p>
+              Les fonctions de dépôt d'adresses (Deposit Address), le routage (Routing) et les ponts inter-chaînes (Bridging) sont fournis par des protocoles tiers (tels que Relay via Privy). 
+              <strong>Remedly et Privy ne contrôlent pas les délais d'exécution, la liquidité, les prix ou l'issue finale des transactions sur la blockchain.</strong>
+            </p>
+            <p className="mt-3">
+              L'Utilisateur est seul responsable des fonds qu'il choisit d'envoyer vers son portefeuille Remedly. Toute erreur d'adresse, de réseau blockchain ou de devise lors d'un dépôt peut entraîner une perte définitive et irréversible des fonds, sans aucun recours possible contre Remedly ou ses partenaires.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Avertissement sur les risques financiers</h2>
             <p>
               L'investissement dans les cryptomonnaies présente un risque très élevé de perte en capital. 
               La valeur des cryptomonnaies est extrêmement volatile. Remedly ne fournit aucun conseil d'investissement. 
@@ -56,9 +70,9 @@ export default function CGUPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Responsabilité</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Limitation de Responsabilité</h2>
             <p>
-              Remedly ne saurait être tenue pour responsable en cas de défaillance des services tiers (Privy, MoonPay, Transak), en cas de perte de l'accès au portefeuille par l'Utilisateur, ou en cas de baisse de la valeur des actifs acquis via l'interface.
+              Remedly ne saurait être tenue pour responsable en cas de défaillance des services tiers (Privy, Stripe, MoonPay, Relay, etc.), en cas de perte de l'accès au portefeuille par l'Utilisateur, de perte de fonds lors d'un transfert externe vers ou depuis la plateforme, ou en cas de baisse de la valeur des actifs acquis via l'interface.
             </p>
           </section>
         </div>

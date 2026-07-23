@@ -29,7 +29,6 @@ describe('Footer', () => {
     expect(screen.getByText(/CASP/)).toBeInTheDocument();
     expect(screen.getByText(/ne conserve à aucun moment les fonds/)).toBeInTheDocument();
     expect(screen.getByText('Privy')).toBeInTheDocument();
-    expect(screen.getByText('Transak')).toBeInTheDocument();
     expect(screen.getByText('MoonPay')).toBeInTheDocument();
   });
 

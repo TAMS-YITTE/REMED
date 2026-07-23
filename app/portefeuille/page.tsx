@@ -19,7 +19,7 @@ import { AuthButton } from '@/components/AuthButton';
 import { Footer } from '@/components/Footer';
 
 export default function PortefeuillePage() {
-  const { isReady, authenticated, walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet } = useAuth();
+  const { isReady, authenticated, user, walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet } = useAuth();
   
   const [ethData, setEthData] = useState<WalletData | null>(null);
   const [solData, setSolData] = useState<WalletData | null>(null);
@@ -30,6 +30,7 @@ export default function PortefeuillePage() {
   const [isLoadingSol, setIsLoadingSol] = useState(false);
   const [isLoadingBtc, setIsLoadingBtc] = useState(false);
   const [isLoadingErc20, setIsLoadingErc20] = useState(false);
+  const [purchases, setPurchases] = useState<any[]>([]);
 
   const [prices, setPrices] = useState<CryptoPrices | null | undefined>(undefined);
   const [isSendModalOpen, setIsSendModalOpen] = useState(false);
@@ -37,6 +38,12 @@ export default function PortefeuillePage() {
   useEffect(() => {
     getCryptoPrices().then(p => setPrices(p));
   }, []);
+
+  useEffect(() => {
+    if (authenticated && user?.id) {
+      import('@/app/actions/database').then(m => m.getPurchases(user.id)).then(setPurchases);
+    }
+  }, [authenticated, user?.id]);
 
   useEffect(() => {
     if (walletAddress) {
@@ -252,9 +259,36 @@ export default function PortefeuillePage() {
             <button onClick={() => setIsSendModalOpen(true)} className="inline-block bg-[#252844] text-white border border-white/10 px-6 py-2 rounded-lg text-sm font-medium hover:bg-[#353866] w-full transition-colors">Envoyer des cryptos</button>
           </div>
         </motion.div>
-          {/* HISTORIQUE */}
+          {/* ACHATS FIAT (SUPABASE) */}
           <div className="mt-10">
-            <h3 className="text-lg font-semibold text-white mb-4">Dernières transactions</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Historique d'achats (Carte Bancaire)</h3>
+            {purchases.length > 0 ? (
+              <div className="space-y-3">
+                {purchases.map(p => (
+                  <div key={p.id} className="flex justify-between items-center bg-[#2E3152] p-4 rounded-xl border border-white/5">
+                    <div>
+                      <p className="font-medium text-white">Achat de {p.crypto_amount || '?'} {p.crypto_currency}</p>
+                      <p className="text-xs text-gray-400">Via {p.provider} • {new Date(p.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-indigo-400">{p.fiat_amount} {p.fiat_currency}</p>
+                      <p className="text-xs text-green-400">{p.status === 'completed' ? 'Payé' : p.status}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-6 text-center">
+                <p className="text-sm text-gray-400">
+                  Vous n'avez pas encore acheté de cryptos par carte bancaire.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* HISTORIQUE BLOCKCHAIN */}
+          <div className="mt-10">
+            <h3 className="text-lg font-semibold text-white mb-4">Dernières transactions (Blockchain)</h3>
             <div className="bg-[#2E3152] border border-white/10 rounded-2xl overflow-hidden">
               <TransactionHistory 
                 transactions={allTransactions} 

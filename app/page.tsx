@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BuyWidget } from '@/components/BuyWidget';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Footer } from '@/components/Footer';
 import Link from 'next/link';

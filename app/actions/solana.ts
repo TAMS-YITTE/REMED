@@ -4,7 +4,7 @@ import { safeFetch } from './utils';
 import type { Transaction, WalletData } from './utils';
 
 export async function getSolanaWalletData(address: string): Promise<WalletData> {
-  const SOLANA_RPC = 'https://api.devnet.solana.com';
+  const SOLANA_RPC = 'https://api.mainnet-beta.solana.com';
 
   try {
     // 1. Fetch balance

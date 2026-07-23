@@ -4,7 +4,7 @@ import { safeFetch } from './utils';
 import type { Transaction, WalletData } from './utils';
 
 export async function getBitcoinWalletData(address: string): Promise<WalletData> {
-  const MEMPOOL_API = 'https://mempool.space/testnet/api';
+  const MEMPOOL_API = 'https://mempool.space/api';
 
   try {
     // 1. Fetch balance (funded_txo_sum - spent_txo_sum)

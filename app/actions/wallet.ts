@@ -4,7 +4,7 @@ import { safeFetch } from './utils';
 import type { Transaction, WalletData } from './utils';
 
 export async function getWalletData(address: string): Promise<WalletData> {
-  const ETHERSCAN_API = 'https://api-sepolia.etherscan.io/api';
+  const ETHERSCAN_API = 'https://api.etherscan.io/api';
   const API_KEY = process.env.ETHERSCAN_API_KEY || '';
   
   try {

@@ -38,7 +38,7 @@ export function BuyCryptoButton({ crypto, className = '' }: BuyCryptoButtonProps
         return;
       }
 
-      await fundWallet(finalAddress);
+      await fundWallet({ address: finalAddress });
     } catch (error) {
       console.error('Erreur lors du lancement de l\'achat :', error);
     } finally {

@@ -47,7 +47,8 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
     chain === 'bitcoin' ? bitcoinWalletAddress  :
     walletAddress;
 
-  const displayAmount = amount && Number(amount) >= 30 ? amount : '50';
+  const isUnderMin = amount ? Number(amount) < 30 : false;
+  const displayAmount = amount && Number(amount) >= 30 ? amount : '30';
 
   const handleBuy = async () => {
     setIsLoading(true);
@@ -121,6 +122,15 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
 
   return (
     <div className={`w-full flex flex-col gap-4 ${className}`}>
+      {isUnderMin && (
+        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-xl p-3 text-xs text-left flex items-start gap-2">
+          <span className="text-sm">⚠️</span>
+          <span>
+            <strong>Montant minimum d'achat : 30 €</strong>. Votre montant a été automatiquement ajusté au seuil minimum.
+          </span>
+        </div>
+      )}
+
       {/* Récapitulatif de l'achat */}
       <div className="bg-[#252844] border border-white/10 rounded-2xl p-5 text-left space-y-3">
         <div className="flex items-center justify-between text-sm">

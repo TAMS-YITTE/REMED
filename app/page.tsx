@@ -213,6 +213,11 @@ export default function Home() {
                       <span className="font-bold">EUR</span>
                     </div>
                   </div>
+                  {Number(eurAmount) > 0 && Number(eurAmount) < 30 && (
+                    <p className="text-[11px] text-amber-400 mt-2 text-left flex items-center gap-1 font-medium">
+                      <span>⚠️</span> Montant minimum d'achat recommandé : 30 €
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex justify-center -my-2 relative z-10">

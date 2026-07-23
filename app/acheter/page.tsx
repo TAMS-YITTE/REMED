@@ -11,9 +11,10 @@ import Link from 'next/link';
 function AcheterContent() {
   const searchParams = useSearchParams();
   const crypto = searchParams.get('crypto') || 'eth';
+  const amount = searchParams.get('amount') || undefined;
 
   return (
-    <div className="w-full max-w-md mx-auto py-10 px-4 sm:px-0 text-center">
+    <div className="w-full max-w-lg mx-auto py-8 px-4 sm:px-0 text-center">
       <div className="flex justify-center mb-6">
         <Link href="/portefeuille" className="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white transition-colors">
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,21 +24,15 @@ function AcheterContent() {
         </Link>
       </div>
 
-      <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-8 shadow-2xl">
-        <div className="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect width="20" height="14" x="2" y="5" rx="2" />
-            <line x1="2" x2="22" y1="10" y2="10" />
-          </svg>
-        </div>
+      <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-          Acheter de la crypto
+          Acheter du {crypto.toUpperCase()}
         </h1>
-        <p className="text-gray-400 text-sm mb-8">
-          Achetez des {crypto.toUpperCase()} de manière sécurisée en carte bancaire ou virement via notre partenaire Privy.
+        <p className="text-gray-400 text-sm mb-6">
+          Paiement sécurisé par carte bancaire ou virement bancaire SEPA.
         </p>
         
-        <BuyCryptoButton crypto={crypto} className="w-full" />
+        <BuyCryptoButton crypto={crypto} amount={amount} className="w-full" />
         
         <div className="mt-6 pt-6 border-t border-white/10">
           <p className="text-xs text-gray-500 leading-relaxed">

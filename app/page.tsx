@@ -351,7 +351,7 @@ export default function Home() {
               </div>
 
               <Link 
-                href={`/acheter?crypto=${selectedCryptoId}`}
+                href={`/acheter?crypto=${selectedCryptoId}&amount=${eurAmount}`}
                 className="btn-shimmer w-full mt-6 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5 shadow-lg"
               >
                 {t('sim.buy')}

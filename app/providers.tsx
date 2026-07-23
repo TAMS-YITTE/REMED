@@ -138,11 +138,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             },
             noPromptOnSignature: true,
           } as any,
-          fundingMethodConfig: {
-            fiatOnRamp: {
-              useSandbox: false,
-            },
-          },
+
         }}
       >
         <RealAuthProvider>{children}</RealAuthProvider>

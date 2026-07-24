@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { getChainFamily } from '@/lib/cryptoChains';
-import { Loader2, ShieldCheck, ArrowRight, Wallet, CreditCard } from 'lucide-react';
+import { Loader2, ShieldCheck, ArrowRight, Wallet } from 'lucide-react';
 
 const MOONPAY_CURRENCY_CODE: Record<string, string> = {
   btc:  'btc',
@@ -229,7 +229,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
       </button>
 
-      {/* Paiement Stripe par carte (BTC, ETH, SOL, USDC uniquement) */}
+      {/* Paiement Stripe (BTC, ETH, SOL, USDC uniquement) */}
       {canPayWithStripe && (
         <button
           onClick={handleStripe}
@@ -239,9 +239,9 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
           {stripeLoading ? (
             <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
-            <CreditCard className="w-5 h-5 text-indigo-300" />
+            <ShieldCheck className="w-5 h-5 text-emerald-400" />
           )}
-          <span>Payer par carte via Stripe</span>
+          <span>Payer {displayAmount} € avec Stripe</span>
         </button>
       )}
 

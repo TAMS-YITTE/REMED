@@ -20,9 +20,9 @@ export default function MentionsLegalesPage() {
             <h2 className="text-xl font-semibold text-white mb-3">1. Éditeur du site</h2>
             <p>
               Le site <strong className="text-white">remedly.fr</strong> est édité par la société <strong className="text-white">YITTE</strong>,<br />
-              SASU au capital de 1 000 euros,<br />
+              SARL (Société à associé unique) au capital de 2 000,00 euros,<br />
               Immatriculée au Registre du Commerce et des Sociétés de Meaux sous le numéro <strong className="text-white">919 805 028</strong>.<br />
-              Siège social : 65B Rue Alexandre Bickart, 77500 Chelles.<br />
+              Siège social : 65 bis rue Alexandre Bickart, 77500 Chelles, France.<br />
               Contact : <a href="mailto:contact@remedly.fr" className="text-indigo-400 hover:underline">contact@remedly.fr</a>
             </p>
           </section>
@@ -30,7 +30,7 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">2. Directeur de la publication</h2>
             <p>
-              Le Directeur de la publication est <strong className="text-white">Tamsir Sock</strong>, en sa qualité de Président.
+              Le Directeur de la publication est <strong className="text-white">Tamsir SOCK</strong>, en sa qualité de Gérant.
             </p>
           </section>
 

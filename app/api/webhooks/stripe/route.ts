@@ -8,6 +8,83 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PU
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+async function resolveUserId(privyId?: string | null): Promise<string | null> {
+  if (!privyId) return null;
+  const { data: user } = await supabase
+    .from('users')
+    .select('id')
+    .eq('privy_id', privyId)
+    .maybeSingle();
+  return user?.id ?? null;
+}
+
+// --- Onramp crypto : enregistre un achat abouti dans `transactions` ---------
+async function handleOnrampCompleted(session: any): Promise<{ ok: boolean }> {
+  const details = session.transaction_details || {};
+  const userId = await resolveUserId(session.metadata?.privy_id);
+
+  // Idempotence : Stripe peut renvoyer le même event plusieurs fois.
+  const { data: existing } = await supabase
+    .from('transactions')
+    .select('id')
+    .eq('provider_reference_id', session.id)
+    .maybeSingle();
+
+  if (existing) return { ok: true };
+
+  const { error } = await supabase.from('transactions').insert([
+    {
+      user_id: userId,
+      provider: 'stripe',
+      fiat_amount: details.source_amount,
+      fiat_currency: (details.source_currency || 'eur').toUpperCase(),
+      crypto_amount: details.destination_amount,
+      crypto_currency: (details.destination_currency || '').toUpperCase(),
+      wallet_address: details.wallet_address,
+      status: 'completed',
+      provider_reference_id: session.id,
+    },
+  ]);
+
+  if (error) {
+    console.error('Stripe webhook: échec insertion transaction', error);
+    return { ok: false };
+  }
+  return { ok: true };
+}
+
+// --- Abonnement Remedly Pro : reflète l'état Stripe dans `subscriptions` -----
+async function upsertSubscription(sub: Stripe.Subscription): Promise<{ ok: boolean }> {
+  const privyId = (sub.metadata?.privy_id as string) || null;
+  const userId = await resolveUserId(privyId);
+
+  // `current_period_end` peut être absent selon l'event : on récupère la valeur
+  // de façon défensive (l'API la place au niveau de l'abonnement).
+  const periodEnd = (sub as any).current_period_end
+    ? new Date((sub as any).current_period_end * 1000).toISOString()
+    : null;
+
+  const { error } = await supabase.from('subscriptions').upsert(
+    {
+      user_id: userId,
+      privy_id: privyId,
+      stripe_customer_id: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id,
+      stripe_subscription_id: sub.id,
+      status: sub.status,
+      current_period_end: periodEnd,
+      cancel_at_period_end: sub.cancel_at_period_end ?? false,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'stripe_subscription_id' }
+  );
+
+  if (error) {
+    console.error('Stripe webhook: échec upsert subscription', error);
+    return { ok: false };
+  }
+  return { ok: true };
+}
+
 export async function POST(request: Request) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -33,60 +110,45 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
   }
 
-  // On ne réagit qu'à la fin réelle de la livraison des cryptos.
-  // L'onramp crypto est en beta : son type d'event n'est pas encore dans
-  // l'union typée du SDK Stripe, d'où la comparaison via une string.
+  // On renvoie 500 sur tout échec d'écriture pour forcer Stripe à rejouer
+  // l'event, au lieu de le perdre en silence.
   const eventType: string = event.type;
-  if (eventType === 'crypto.onramp_session.updated') {
-    const session = (event.data as any).object as any;
 
-    if (session.status === 'fulfillment_complete') {
-      const details = session.transaction_details || {};
-      const privyId = session.metadata?.privy_id;
-
-      let userId: string | null = null;
-      if (privyId) {
-        const { data: user } = await supabase
-          .from('users')
-          .select('id')
-          .eq('privy_id', privyId)
-          .single();
-        if (user) userId = user.id;
-      }
-
-      // Idempotence : Stripe peut renvoyer le même event plusieurs fois.
-      // On n'insère pas deux fois la même session.
-      const { data: existing } = await supabase
-        .from('transactions')
-        .select('id')
-        .eq('provider_reference_id', session.id)
-        .maybeSingle();
-
-      if (!existing) {
-        const { error: insertError } = await supabase.from('transactions').insert([
-          {
-            user_id: userId,
-            provider: 'stripe',
-            fiat_amount: details.source_amount,
-            fiat_currency: (details.source_currency || 'eur').toUpperCase(),
-            crypto_amount: details.destination_amount,
-            crypto_currency: (details.destination_currency || '').toUpperCase(),
-            wallet_address: details.wallet_address,
-            status: 'completed',
-            provider_reference_id: session.id,
-          },
-        ]);
-
-        if (insertError) {
-          // On NE renvoie PAS 200 en cas d'échec d'écriture : sinon Stripe
-          // considère l'event livré et ne le rejoue jamais, et l'achat
-          // disparaît silencieusement du suivi (déjà le défaut du webhook
-          // MoonPay). Le 500 force Stripe à réessayer.
-          console.error('Stripe webhook: échec insertion transaction', insertError);
-          return NextResponse.json({ error: 'Database error' }, { status: 500 });
-        }
+  try {
+    // Onramp crypto (type d'event pas encore dans l'union typée du SDK beta).
+    if (eventType === 'crypto.onramp_session.updated') {
+      const session = (event.data as any).object as any;
+      if (session.status === 'fulfillment_complete') {
+        const { ok } = await handleOnrampCompleted(session);
+        if (!ok) return NextResponse.json({ error: 'Database error' }, { status: 500 });
       }
     }
+
+    // Abonnement : nouvelle souscription confirmée au checkout.
+    else if (eventType === 'checkout.session.completed') {
+      const session = event.data.object as Stripe.Checkout.Session;
+      if (session.mode === 'subscription' && session.subscription) {
+        const subId = typeof session.subscription === 'string' ? session.subscription : session.subscription.id;
+        const sub = await stripe.subscriptions.retrieve(subId);
+        // Le privy_id vit sur la souscription ; on le complète depuis la session
+        // au cas où (client_reference_id).
+        if (!sub.metadata?.privy_id && session.client_reference_id) {
+          sub.metadata = { ...sub.metadata, privy_id: session.client_reference_id };
+        }
+        const { ok } = await upsertSubscription(sub);
+        if (!ok) return NextResponse.json({ error: 'Database error' }, { status: 500 });
+      }
+    }
+
+    // Abonnement : renouvellement, changement d'état, résiliation.
+    else if (eventType === 'customer.subscription.updated' || eventType === 'customer.subscription.deleted') {
+      const sub = event.data.object as Stripe.Subscription;
+      const { ok } = await upsertSubscription(sub);
+      if (!ok) return NextResponse.json({ error: 'Database error' }, { status: 500 });
+    }
+  } catch (err) {
+    console.error('Stripe webhook: erreur de traitement', err);
+    return NextResponse.json({ error: 'Processing error' }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

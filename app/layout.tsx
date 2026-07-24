@@ -8,6 +8,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.remedly.fr'),
+  alternates: {
+    canonical: '/',
+  },
   title: "Remedly — La crypto, simplement.",
   description: "Achetez Bitcoin, Ethereum, Solana et plus encore en quelques minutes. Sans jargon, sans prise de tête. La plateforme idéale pour débuter en cryptomonnaies.",
   keywords: ["crypto", "acheter bitcoin", "ethereum", "portefeuille crypto", "débutant", "achat crypto france"],

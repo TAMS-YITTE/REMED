@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, Suspense } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -103,6 +104,12 @@ function ProPageContent() {
                 ? `Abonnement actif jusqu'au ${new Date(status.currentPeriodEnd).toLocaleDateString('fr-FR')}${status.cancelAtPeriodEnd ? ' (résiliation programmée)' : ''}.`
                 : 'Votre abonnement est actif.'}
             </p>
+            <Link
+              href="/rapport-fiscal"
+              className="inline-flex items-center gap-2 mt-4 bg-[#2d3152] hover:bg-[#363b63] border border-white/15 text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
+              <FileText className="w-4 h-4" /> Accéder à mon relevé fiscal
+            </Link>
           </div>
         ) : (
           <div className="bg-[#2d3152] border border-white/10 rounded-2xl p-6 mb-8">

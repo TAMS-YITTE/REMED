@@ -100,7 +100,7 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
         const txConfig = {
           to: address,
           value: hexAmount,
-          chainId: 11155111,
+          chainId: 1, // Ethereum mainnet — cohérent avec les soldes affichés
         };
         
         const txReceipt = await sendTransaction(txConfig);
@@ -147,8 +147,8 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
                 onChange={(e) => setChain(e.target.value as any)}
                 className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
-                <option value="ethereum">Ethereum (Testnet)</option>
-                <option value="solana">Solana (Devnet)</option>
+                <option value="ethereum">Ethereum</option>
+                <option value="solana">Solana</option>
               </select>
             </div>
 

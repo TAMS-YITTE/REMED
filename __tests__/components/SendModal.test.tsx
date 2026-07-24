@@ -108,7 +108,7 @@ describe('SendModal', () => {
     expect(mockSendTransaction).toHaveBeenCalledWith({
       to: '0x1234567890123456789012345678901234567890',
       value: '0x6f05b59d3b20000',
-      chainId: 11155111,
+      chainId: 1,
     });
   });
 });

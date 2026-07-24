@@ -52,8 +52,8 @@ risque).
   demande via `@privy-io/react-auth/extended-chains`)
 - Parcours d'achat `/acheter` avec sélection ETH/SOL/BTC, widgets Transak
   et MoonPay avec bascule si l'un est bloqué
-- Portefeuille `/portefeuille` : soldes réels (Sepolia/devnet/testnet,
-  **pas mainnet**), conversion en euros (CoinGecko), donut de répartition,
+- Portefeuille `/portefeuille` : soldes réels **sur mainnet** (bascule faite
+  le 2026-07-23), conversion en euros (CoinGecko), donut de répartition,
   historique de transactions unifié, envoi de fonds (`Send`) derrière un
   kill switch `NEXT_PUBLIC_ENABLE_SEND` (désactivé par défaut)
 - Homepage refaite (mode sombre, simulateur d'achat multi-crypto avec prix
@@ -68,9 +68,10 @@ Bitcoin (`user.linkedAccounts.find(a => a.type === 'wallet' && a.chainType
 === 'bitcoin-taproot')`) est une déduction faite depuis la documentation
 Privy, jamais vérifiée contre un vrai objet `user` en session réelle.
 
-**Mainnet bloqué** en attendant la validation des dossiers chez Transak et
-MoonPay (en cours côté fondateur au 2026-07-17 — ne pas basculer dessus
-sans confirmation explicite).
+**Mainnet activé le 2026-07-23** (RPC Bitcoin/Solana/Ethereum), avec une clé
+MoonPay `pk_live` dans `.env.local`. La bascule a été faite côté fondateur ;
+elle n'a jamais été confirmée par un achat réel de bout en bout. Tant que ce
+test n'a pas eu lieu, considérer le parcours d'achat comme non vérifié.
 
 ## Bugs déjà rencontrés et corrigés (pour ne pas les refaire)
 
@@ -92,12 +93,13 @@ sans confirmation explicite).
 
 1. Faire un vrai test d'achat de bout en bout (vrai compte, pas mock) sur
    les 3 chaînes dès que possible — c'est le trou noir de tout le projet.
-2. Vérifier qu'une clé API Etherscan est configurée en prod (rate-limit
-   silencieux sinon).
+2. Créer une clé Etherscan V2 et la mettre en prod (`ETHERSCAN_API_KEY`) :
+   sans elle, l'historique des transactions ETH reste vide. Les soldes, eux,
+   ne dépendent plus d'Etherscan (RPC public depuis le 2026-07-24).
 3. Ajouter un monitoring d'erreurs (Sentry ou équivalent) — le crash 500 de
    `/portefeuille` est resté invisible jusqu'à une vérification manuelle.
-4. Suivre l'avancement de la validation Transak/MoonPay avant tout
-   basculement mainnet.
+4. Faire valider par un avocat la note juridique du dossier MoonPay
+   (positionnement apporteur d'affaires).
 
 ## Où trouver plus de détails
 

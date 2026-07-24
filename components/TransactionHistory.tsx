@@ -31,9 +31,9 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
 
   const getExplorerUrl = (tx: Transaction) => {
     switch (tx.chain) {
-      case 'ethereum': return `https://sepolia.etherscan.io/tx/${tx.hash}`;
-      case 'solana': return `https://solscan.io/tx/${tx.hash}?cluster=devnet`;
-      case 'bitcoin': return `https://mempool.space/testnet/tx/${tx.hash}`;
+      case 'ethereum': return `https://etherscan.io/tx/${tx.hash}`;
+      case 'solana': return `https://solscan.io/tx/${tx.hash}`;
+      case 'bitcoin': return `https://mempool.space/tx/${tx.hash}`;
       default: return '#';
     }
   };

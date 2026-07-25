@@ -148,7 +148,7 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
                 className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="ethereum">Ethereum</option>
-                <option value="solana">Solana</option>
+                <option value="solana" disabled>Solana (bientôt)</option>
               </select>
             </div>
 
@@ -260,10 +260,19 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
               </div>
             </div>
 
+            <div className="mb-4 flex items-start gap-2 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg p-3 text-xs">
+              <span className="text-sm shrink-0">⚠️</span>
+              <span>
+                <strong>Transaction irréversible.</strong> Vérifiez l'adresse et le réseau : un envoi
+                vers une mauvaise adresse ou un réseau incompatible est <strong>définitivement perdu</strong>.
+                Remedly ne peut ni annuler ni rembourser un envoi.
+              </span>
+            </div>
+
             {error && <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</div>}
 
             <div className="flex gap-3">
-              <button 
+              <button
                 onClick={() => setStep(1)}
                 disabled={isSending}
                 className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"

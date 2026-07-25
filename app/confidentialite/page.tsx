@@ -30,7 +30,8 @@ export default function ConfidentialitePage() {
             </p>
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li><strong className="text-white">Privy</strong> : gestion de l'authentification et du portefeuille cryptographique (wallet).</li>
-              <li><strong className="text-white">MoonPay</strong> : lors d'un achat, ces partenaires collectent directement vos informations de paiement et pièces d'identité (KYC). Remedly n'a pas accès à vos informations bancaires ni à vos documents d'identité.</li>
+              <li><strong className="text-white">Supabase</strong> : hébergement sécurisé des données de l'application et de l'historique utilisateur dans l'Union Européenne.</li>
+              <li><strong className="text-white">MoonPay / Stripe</strong> : lors d'un achat, ces partenaires agréés collectent directement vos informations de paiement et pièces d'identité (KYC). Remedly n'a pas accès à vos informations bancaires ni à vos documents d'identité.</li>
               <li><strong className="text-white">PostHog</strong> : outil d'analyse d'audience anonymisée pour améliorer notre interface.</li>
             </ul>
           </section>

@@ -56,8 +56,8 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
     walletAddress;
 
   const isUnderMin = amount ? Number(amount) < 30 : false;
-  const displayAmount = amount && Number(amount) >= 30 ? amount : '30';
-  const canPayWithStripe = STRIPE_SUPPORTED.has(crypto.toLowerCase());
+  const enableStripeOnramp = process.env.NEXT_PUBLIC_ENABLE_STRIPE_ONRAMP === 'true';
+  const canPayWithStripe = enableStripeOnramp && STRIPE_SUPPORTED.has(crypto.toLowerCase());
 
   // Résout l'adresse de réception pour la chaîne courante, en créant le wallet
   // Bitcoin à la demande si besoin. Partagée entre MoonPay et Stripe.

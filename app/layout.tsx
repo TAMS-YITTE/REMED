@@ -22,11 +22,20 @@ export const metadata: Metadata = {
     siteName: "Remedly",
     locale: "fr_FR",
     type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Remedly — La crypto, simplement",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Remedly — La crypto, simplement.",
     description: "Achetez vos premières cryptos en quelques clics.",
+    images: ["/og-image.jpg"],
   },
 };
 

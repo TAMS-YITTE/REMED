@@ -13,6 +13,7 @@
     "@privy-io/react-auth": "^3.35.0",
     "@sentry/nextjs": "^10.66.0",
     "@supabase/supabase-js": "^2.110.7",
+    "@vercel/analytics": "^2.0.1",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.24.0",
     "next": "16.2.10",

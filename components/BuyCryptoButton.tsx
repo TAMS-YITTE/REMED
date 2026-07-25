@@ -112,6 +112,12 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         showWalletAddressForm: 'false',
       });
 
+      // Rattache l'achat au compte : le webhook MoonPay lit externalCustomerId
+      // pour retrouver l'utilisateur (privy_id) et remplir sa colonne user_id.
+      // Sans ça, la transaction est enregistrée avec user_id null et n'apparaît
+      // dans l'historique d'aucun utilisateur.
+      if (user?.id) params.set('externalCustomerId', user.id);
+
       openCentered(`https://buy.moonpay.com?${params.toString()}`, 'moonpay_checkout');
     } catch (error) {
       console.error("Erreur lors du lancement de l'achat :", error);

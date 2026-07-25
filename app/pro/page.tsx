@@ -8,7 +8,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { AuthButton } from '@/components/AuthButton';
-import { Check, Sparkles, Loader2, FileText, BellRing, LineChart } from 'lucide-react';
+import { Check, Sparkles, Loader2, FileText, BellRing, LineChart, Settings } from 'lucide-react';
 
 // Les 3 piliers de Remedly Pro. Honnêteté obligatoire (CLAUDE.md §2) : tant
 // qu'ils ne sont pas construits, ils sont présentés comme "à venir", jamais
@@ -36,9 +36,32 @@ function ProPageContent() {
   const { loading: subLoading, isPro, status } = useSubscription();
   const searchParams = useSearchParams();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
   const [error, setError] = useState('');
 
   const canceled = searchParams.get('canceled') === '1';
+
+  const handlePortal = async () => {
+    setError('');
+    setPortalLoading(true);
+    try {
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ privyId: user?.id }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.url) {
+        setError(data?.error || "Impossible d'ouvrir la gestion de l'abonnement.");
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setError("Erreur réseau lors de l'ouverture de la gestion de l'abonnement.");
+    } finally {
+      setPortalLoading(false);
+    }
+  };
 
   const handleSubscribe = async () => {
     setError('');
@@ -104,12 +127,22 @@ function ProPageContent() {
                 ? `Abonnement actif jusqu'au ${new Date(status.currentPeriodEnd).toLocaleDateString('fr-FR')}${status.cancelAtPeriodEnd ? ' (résiliation programmée)' : ''}.`
                 : 'Votre abonnement est actif.'}
             </p>
-            <Link
-              href="/rapport-fiscal"
-              className="inline-flex items-center gap-2 mt-4 bg-[#2d3152] hover:bg-[#363b63] border border-white/15 text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
-            >
-              <FileText className="w-4 h-4" /> Accéder à mon relevé fiscal
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
+              <Link
+                href="/rapport-fiscal"
+                className="inline-flex items-center gap-2 bg-[#2d3152] hover:bg-[#363b63] border border-white/15 text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
+                <FileText className="w-4 h-4" /> Mon relevé fiscal
+              </Link>
+              <button
+                onClick={handlePortal}
+                disabled={portalLoading}
+                className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 border border-white/15 text-sm font-semibold py-2 px-4 rounded-lg transition-colors disabled:opacity-70"
+              >
+                {portalLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
+                Gérer mon abonnement
+              </button>
+            </div>
           </div>
         ) : (
           <div className="bg-[#2d3152] border border-white/10 rounded-2xl p-6 mb-8">

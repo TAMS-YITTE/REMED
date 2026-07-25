@@ -56,6 +56,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
     walletAddress;
 
   const isUnderMin = amount ? Number(amount) < 30 : false;
+  const displayAmount = amount && Number(amount) >= 30 ? amount : '30';
   const enableStripeOnramp = process.env.NEXT_PUBLIC_ENABLE_STRIPE_ONRAMP === 'true';
   const canPayWithStripe = enableStripeOnramp && STRIPE_SUPPORTED.has(crypto.toLowerCase());
 

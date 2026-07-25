@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { getSavedWallets, saveWallet } from '@/app/actions/database';
+import { ERC20_TOKENS, getErc20Token, parseUnits, encodeErc20Transfer } from '@/lib/erc20Tokens';
 
 interface SendModalProps {
   isOpen: boolean;
@@ -9,14 +10,20 @@ interface SendModalProps {
     eth: string;
     sol: string;
   };
+  erc20Balances?: Record<string, string>;
 }
 
-export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
+// Actifs envoyables : ETH natif + les ERC-20 mainnet. Tous EVM (chainId 1),
+// même format d'adresse 0x. SOL/BTC restent désactivés (signatures d'autres
+// chaînes, non implémentées/testées).
+const SENDABLE_ASSETS = ['ETH', ...ERC20_TOKENS.map((t) => t.symbol)];
+
+export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModalProps) {
   const { sendTransaction, user } = useAuth();
   const privyId = user?.id;
 
   const [step, setStep] = useState<1 | 2>(1);
-  const [chain, setChain] = useState<'ethereum' | 'solana'>('ethereum');
+  const [asset, setAsset] = useState('ETH');
   const [address, setAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
@@ -28,6 +35,9 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
   const [walletLabel, setWalletLabel] = useState('');
 
   const isSendEnabled = process.env.NEXT_PUBLIC_ENABLE_SEND === 'true';
+
+  const token = getErc20Token(asset); // undefined pour ETH natif
+  const currentBalance = asset === 'ETH' ? (balances.eth || '0') : (erc20Balances?.[asset] || '0');
 
   useEffect(() => {
     if (isOpen && privyId) {
@@ -61,25 +71,20 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
       return;
     }
 
-    if (chain === 'ethereum' && !/^0x[a-fA-F0-9]{40}$/.test(address)) {
+    // Tous les actifs envoyables sont EVM : adresse 0x attendue.
+    if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
       setError("L'adresse Ethereum n'est pas valide.");
       return;
     }
-    if (chain === 'solana' && address.length < 32) {
-      setError("L'adresse Solana n'est pas valide.");
-      return;
-    }
 
-    const currentBalance = chain === 'ethereum' ? balances.eth : balances.sol;
     if (Number(amount) > Number(currentBalance)) {
       setError('Solde insuffisant.');
       return;
     }
 
-    // Save wallet to address book if requested
     if (isSavingWallet && walletLabel && privyId) {
       try {
-        await saveWallet(privyId, address, chain, walletLabel);
+        await saveWallet(privyId, address, 'ethereum', walletLabel);
       } catch (err) {
         console.error('Failed to save wallet:', err);
       }
@@ -88,44 +93,43 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
     setStep(2);
   };
 
+  const resetAndClose = () => {
+    onClose();
+    setStep(1);
+    setAddress('');
+    setAmount('');
+    setIsSavingWallet(false);
+    setWalletLabel('');
+  };
+
   const handleSend = async () => {
     setIsSending(true);
     setError('');
 
     try {
-      if (chain === 'ethereum') {
-        const weiAmount = BigInt(Math.floor(Number(amount) * 1e18));
-        const hexAmount = '0x' + weiAmount.toString(16);
-
-        const txConfig = {
-          to: address,
-          value: hexAmount,
-          chainId: 1, // Ethereum mainnet — cohérent avec les soldes affichés
-        };
-
-        const txReceipt = await sendTransaction(txConfig);
-        console.log('Transaction envoyée :', txReceipt);
-
-        onClose();
-        setStep(1);
-        setAddress('');
-        setAmount('');
-        setIsSavingWallet(false);
-        setWalletLabel('');
+      let txConfig;
+      if (asset === 'ETH') {
+        // Envoi natif ETH (chemin validé en réel).
+        const value = '0x' + parseUnits(amount, 18).toString(16);
+        txConfig = { to: address, value, chainId: 1 };
+      } else if (token) {
+        // Envoi ERC-20 : appel transfer(destinataire, montant) du contrat.
+        const data = encodeErc20Transfer(address, parseUnits(amount, token.decimals));
+        txConfig = { to: token.contract, value: '0x0', data, chainId: 1 };
       } else {
-        setError("L'envoi Solana est en cours d'intégration.");
+        setError("Actif non pris en charge pour l'envoi.");
+        return;
       }
+
+      const txReceipt = await sendTransaction(txConfig);
+      console.log('Transaction envoyée :', txReceipt);
+      resetAndClose();
     } catch (e: any) {
       console.error(e);
       setError(e.message || "Erreur lors de l'envoi de la transaction.");
     } finally {
       setIsSending(false);
     }
-  };
-
-  const handleSelectSavedWallet = (savedAddr: string, savedChain: string) => {
-    setAddress(savedAddr);
-    setChain(savedChain as 'ethereum' | 'solana');
   };
 
   return (
@@ -141,15 +145,21 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
         {step === 1 ? (
           <div className="p-6">
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-1">Réseau</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Actif</label>
               <select
-                value={chain}
-                onChange={(e) => setChain(e.target.value as any)}
+                value={asset}
+                onChange={(e) => setAsset(e.target.value)}
                 className="w-full bg-[#1a1c2e] border border-white/15 text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
-                <option value="ethereum">Ethereum</option>
-                <option value="solana" disabled>Solana (bientôt)</option>
+                {SENDABLE_ASSETS.map((sym) => (
+                  <option key={sym} value={sym}>
+                    {sym === 'ETH' ? 'Ethereum (ETH)' : sym}
+                  </option>
+                ))}
+                <option value="SOL" disabled>Solana (bientôt)</option>
+                <option value="BTC" disabled>Bitcoin (bientôt)</option>
               </select>
+              <p className="text-[11px] text-gray-500 mt-1">Réseau Ethereum. Envoyez uniquement vers une adresse Ethereum (0x…).</p>
             </div>
 
             <div className="mb-4">
@@ -159,10 +169,7 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
                   <select
                     className="text-xs bg-[#1a1c2e] border border-white/15 rounded p-1 text-indigo-300 outline-none"
                     onChange={(e) => {
-                      if(e.target.value) {
-                        const w = savedWallets.find(sw => sw.address === e.target.value);
-                        if(w) handleSelectSavedWallet(w.address, w.network);
-                      }
+                      if(e.target.value) setAddress(e.target.value);
                     }}
                   >
                     <option value="">Carnet d'adresses...</option>
@@ -208,7 +215,7 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
               <div className="flex justify-between items-end mb-1">
                 <label className="block text-sm font-medium text-gray-300">Montant</label>
                 <span className="text-xs text-gray-400">
-                  Solde: {chain === 'ethereum' ? balances.eth || '0' : balances.sol || '0'} {chain === 'ethereum' ? 'ETH' : 'SOL'}
+                  Solde: {currentBalance} {asset}
                 </span>
               </div>
               <div className="relative">
@@ -220,7 +227,7 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
                   className="w-full bg-[#1a1c2e] border border-white/15 text-white placeholder-gray-500 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <span className="text-gray-400 font-medium text-sm uppercase">{chain === 'ethereum' ? 'ETH' : 'SOL'}</span>
+                  <span className="text-gray-400 font-medium text-sm uppercase">{asset}</span>
                 </div>
               </div>
             </div>
@@ -239,13 +246,13 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
             <div className="bg-[#2d3152] p-4 rounded-xl border border-white/10 mb-6">
               <p className="text-center text-sm text-gray-400 mb-1">Vous allez envoyer</p>
               <p className="text-center text-3xl font-bold text-white mb-6">
-                {amount} <span className="text-xl text-gray-400 uppercase">{chain === 'ethereum' ? 'ETH' : 'SOL'}</span>
+                {amount} <span className="text-xl text-gray-400 uppercase">{asset}</span>
               </p>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">De (Réseau)</span>
-                  <span className="font-medium text-white capitalize">{chain}</span>
+                  <span className="text-gray-400">Réseau</span>
+                  <span className="font-medium text-white">Ethereum</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Vers</span>
@@ -254,8 +261,8 @@ export function SendModal({ isOpen, onClose, balances }: SendModalProps) {
                   </span>
                 </div>
                 <div className="flex justify-between pt-3 border-t border-white/10">
-                  <span className="text-gray-400">Frais réseau estimés</span>
-                  <span className="font-medium text-white">~ 0.0001 {chain === 'ethereum' ? 'ETH' : 'SOL'}</span>
+                  <span className="text-gray-400">Frais réseau</span>
+                  <span className="font-medium text-white">payés en ETH</span>
                 </div>
               </div>
             </div>

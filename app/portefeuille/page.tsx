@@ -298,10 +298,11 @@ export default function PortefeuillePage() {
             </div>
           </div>
 
-        <SendModal 
-          isOpen={isSendModalOpen} 
-          onClose={() => setIsSendModalOpen(false)} 
-          balances={{ eth: ethData?.balanceEth || '0', sol: solData?.balanceSol || '0' }} 
+        <SendModal
+          isOpen={isSendModalOpen}
+          onClose={() => setIsSendModalOpen(false)}
+          balances={{ eth: ethData?.balanceEth || '0', sol: solData?.balanceSol || '0' }}
+          erc20Balances={erc20Balances}
         />
       </main>
       <Footer />

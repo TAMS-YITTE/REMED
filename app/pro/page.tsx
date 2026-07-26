@@ -17,17 +17,20 @@ const FEATURES = [
   {
     icon: FileText,
     title: 'Aide à la déclaration fiscale',
-    desc: "Suivi de vos achats, calcul des plus-values (formulaire 2086) et export PDF. Ne remplace pas un conseil fiscal professionnel.",
+    desc: "Suivi de vos achats, prix de revient et plus-value latente, export PDF. Ne remplace pas un conseil fiscal professionnel.",
+    status: 'available' as const,
   },
   {
     icon: BellRing,
     title: 'Alertes de prix par email',
     desc: 'Définissez des seuils et soyez prévenu par email dès qu\'ils sont atteints.',
+    status: 'available' as const,
   },
   {
     icon: LineChart,
     title: 'Analyses avancées',
     desc: 'Graphiques 1 mois / 6 mois / 1 an et suivi de votre plus-value latente.',
+    status: 'soon' as const,
   },
 ];
 
@@ -134,6 +137,12 @@ function ProPageContent() {
               >
                 <FileText className="w-4 h-4" /> Mon relevé fiscal
               </Link>
+              <Link
+                href="/alertes"
+                className="inline-flex items-center gap-2 bg-[#2d3152] hover:bg-[#363b63] border border-white/15 text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
+                <BellRing className="w-4 h-4" /> Mes alertes
+              </Link>
               <button
                 onClick={handlePortal}
                 disabled={portalLoading}
@@ -155,9 +164,15 @@ function ProPageContent() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold">{f.title}</span>
-                      <span className="text-[10px] uppercase tracking-wide bg-white/10 text-gray-300 px-1.5 py-0.5 rounded">
-                        Bientôt
-                      </span>
+                      {f.status === 'available' ? (
+                        <span className="text-[10px] uppercase tracking-wide bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded">
+                          Disponible
+                        </span>
+                      ) : (
+                        <span className="text-[10px] uppercase tracking-wide bg-white/10 text-gray-300 px-1.5 py-0.5 rounded">
+                          Bientôt
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-gray-400 mt-0.5">{f.desc}</p>
                   </div>

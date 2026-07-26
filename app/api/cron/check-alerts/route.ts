@@ -70,13 +70,16 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({
+  const diag = {
     checked: alerts?.length || 0,
     alertsError: alertsError?.message || null,
     btcPrice: prices['btc'] ?? null,
     resendConfigured: !!resend,
+    usingServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     triggered: triggered.length,
     sent,
     sendErrors,
-  });
+  };
+  console.log('CRON check-alerts DIAG', JSON.stringify(diag));
+  return NextResponse.json(diag);
 }

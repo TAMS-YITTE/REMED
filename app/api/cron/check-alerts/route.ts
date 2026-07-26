@@ -29,12 +29,13 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Prices unavailable' }, { status: 502 });
   }
 
-  const { data: alerts } = await supabase
+  const { data: alerts, error: alertsError } = await supabase
     .from('price_alerts')
     .select('id, crypto, direction, target_price, email, active')
     .eq('active', true);
 
   const triggered = selectTriggeredAlerts((alerts as PriceAlertRow[]) || [], prices);
+  const sendErrors: string[] = [];
 
   let sent = 0;
   for (const { alert, price } of triggered) {
@@ -63,10 +64,19 @@ export async function GET(request: Request) {
         .update({ active: false, triggered_at: new Date().toISOString() })
         .eq('id', alert.id);
       sent++;
-    } catch (err) {
+    } catch (err: any) {
       console.error(`Alerte ${alert.id} : échec envoi email`, err);
+      sendErrors.push(err?.message || String(err));
     }
   }
 
-  return NextResponse.json({ checked: alerts?.length || 0, triggered: triggered.length, sent });
+  return NextResponse.json({
+    checked: alerts?.length || 0,
+    alertsError: alertsError?.message || null,
+    btcPrice: prices['btc'] ?? null,
+    resendConfigured: !!resend,
+    triggered: triggered.length,
+    sent,
+    sendErrors,
+  });
 }

@@ -30,7 +30,7 @@ const FEATURES = [
     icon: LineChart,
     title: 'Analyses avancées',
     desc: 'Graphiques 1 mois / 6 mois / 1 an et suivi de votre plus-value latente.',
-    status: 'soon' as const,
+    status: 'available' as const,
   },
 ];
 
@@ -142,6 +142,12 @@ function ProPageContent() {
                 className="inline-flex items-center gap-2 bg-[#2d3152] hover:bg-[#363b63] border border-white/15 text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
               >
                 <BellRing className="w-4 h-4" /> Mes alertes
+              </Link>
+              <Link
+                href="/analyses"
+                className="inline-flex items-center gap-2 bg-[#2d3152] hover:bg-[#363b63] border border-white/15 text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+              >
+                <LineChart className="w-4 h-4" /> Mes analyses
               </Link>
               <button
                 onClick={handlePortal}

@@ -18,6 +18,23 @@ function fmtEur(n: number) {
 // Cron Vercel : vérifie les alertes de prix et envoie les emails déclenchés.
 // Sécurisé par CRON_SECRET (Vercel envoie Authorization: Bearer <CRON_SECRET>).
 export async function GET(request: Request) {
+  // Mode diagnostic LECTURE SEULE (aucun email, aucune écriture) — temporaire.
+  if (new URL(request.url).searchParams.get('probe') === '1') {
+    const p = await getCryptoPrices();
+    const { data: al, error: e } = await supabase
+      .from('price_alerts')
+      .select('id, crypto, direction, target_price, active')
+      .eq('active', true);
+    return NextResponse.json({
+      usingServiceRole: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      resendConfigured: !!resend,
+      btcPrice: p?.['btc'] ?? null,
+      activeAlerts: al?.length ?? 0,
+      alertsError: e?.message ?? null,
+      sample: al?.slice(0, 3) ?? [],
+    });
+  }
+
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = request.headers.get('authorization');
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {

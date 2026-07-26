@@ -44,7 +44,9 @@ export async function GET(request: Request) {
 
     try {
       if (resend) {
-        await resend.emails.send({
+        // Resend ne throw PAS : il renvoie { data, error }. On lève nous-mêmes
+        // l'erreur pour NE PAS désactiver l'alerte quand l'envoi a échoué.
+        const { error: sendErr } = await resend.emails.send({
           from: EMAIL_FROM,
           to: alert.email,
           subject: `Alerte prix ${sym} — seuil atteint`,
@@ -57,6 +59,7 @@ export async function GET(request: Request) {
               <p style="color:#888;font-size:12px">Ceci n'est pas un conseil en investissement.</p>
             </div>`,
         });
+        if (sendErr) throw new Error((sendErr as any).message || JSON.stringify(sendErr));
       }
       // On désactive l'alerte pour ne pas ré-emailer en boucle à chaque cron.
       await supabase

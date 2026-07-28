@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Remedly — La crypto, simplement.",
     description: "Achetez Bitcoin, Ethereum et plus encore en quelques minutes. Sans jargon, sans prise de tête.",
-    url: "https://remedly.fr",
+    url: "https://www.remedly.fr",
     siteName: "Remedly",
     locale: "fr_FR",
     type: "website",

@@ -39,6 +39,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
     createBitcoinWallet,
   } = useAuth();
 
+  const [customAmount, setCustomAmount] = useState(amount || '30');
   const [isLoading, setIsLoading] = useState(false);
   const [stripeLoading, setStripeLoading] = useState(false);
   const [payError, setPayError] = useState('');
@@ -55,8 +56,9 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
     chain === 'bitcoin' ? bitcoinWalletAddress  :
     walletAddress;
 
-  const isUnderMin = amount ? Number(amount) < 30 : false;
-  const displayAmount = amount && Number(amount) >= 30 ? amount : '30';
+  const numAmount = Number(customAmount) || 0;
+  const isUnderMin = numAmount < 30;
+  const displayAmount = numAmount >= 30 ? customAmount : '30';
   const enableStripeOnramp = process.env.NEXT_PUBLIC_ENABLE_STRIPE_ONRAMP === 'true';
   const canPayWithStripe = enableStripeOnramp && STRIPE_SUPPORTED.has(crypto.toLowerCase());
 
@@ -195,23 +197,54 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         </div>
       )}
 
-      {/* Récapitulatif de l'achat */}
-      <div className="bg-[#252844] border border-white/10 rounded-2xl p-5 text-left space-y-3">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-400">Montant estimé</span>
-          <span className="font-bold text-white text-lg">{displayAmount} €</span>
+      {/* Récapitulatif de l'achat & Modification du montant */}
+      <div className="bg-[#252844] border border-white/10 rounded-2xl p-5 text-left space-y-4">
+        <div>
+          <label className="block text-xs font-medium text-gray-400 mb-1.5">Montant à investir (€)</label>
+          <div className="relative">
+            <input
+              type="number"
+              min="30"
+              value={customAmount}
+              onChange={(e) => setCustomAmount(e.target.value)}
+              className="w-full bg-[#1a1c2e] border border-indigo-500/40 focus:border-indigo-400 rounded-xl px-4 py-3 text-lg font-bold text-white outline-none transition-colors"
+              placeholder="30"
+            />
+            <span className="absolute right-4 top-3 text-gray-400 font-semibold text-base">€ EUR</span>
+          </div>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-400">Crypto sélectionnée</span>
-          <span className="font-semibold text-indigo-300 uppercase">{crypto}</span>
+
+        {/* Boutons de montants rapides */}
+        <div className="flex items-center gap-2">
+          {['30', '50', '100', '250', '500'].map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              onClick={() => setCustomAmount(preset)}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                customAmount === preset
+                  ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
+                  : 'bg-white/5 text-gray-300 border-white/10 hover:bg-white/10'
+              }`}
+            >
+              {preset} €
+            </button>
+          ))}
         </div>
-        <div className="flex items-center justify-between text-sm pt-2 border-t border-white/10">
-          <span className="text-gray-400 flex items-center gap-1">
-            <Wallet className="w-4 h-4 text-indigo-400" /> Adresse de réception
-          </span>
-          <span className="font-mono text-xs text-gray-300 truncate max-w-[150px]">
-            {activeWalletAddress ? `${activeWalletAddress.slice(0, 6)}...${activeWalletAddress.slice(-4)}` : 'Génération...'}
-          </span>
+
+        <div className="pt-2 border-t border-white/10 space-y-2 text-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-400">Crypto sélectionnée</span>
+            <span className="font-semibold text-indigo-300 uppercase">{crypto}</span>
+          </div>
+          <div className="flex items-center justify-between pt-1">
+            <span className="text-gray-400 flex items-center gap-1">
+              <Wallet className="w-4 h-4 text-indigo-400" /> Adresse de réception
+            </span>
+            <span className="font-mono text-xs text-gray-300 truncate max-w-[150px]">
+              {activeWalletAddress ? `${activeWalletAddress.slice(0, 6)}...${activeWalletAddress.slice(-4)}` : 'Génération...'}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -251,6 +284,16 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
           <span>Payer {displayAmount} € avec Stripe</span>
         </button>
       )}
+
+      {/* Lien Retour au simulateur */}
+      <div className="pt-2 text-center">
+        <a
+          href="/acheter"
+          className="inline-flex items-center text-xs text-indigo-300 hover:text-white underline transition-colors"
+        >
+          ← Modifier la crypto / Retour au simulateur
+        </a>
+      </div>
 
       <p className="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1">
         <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />

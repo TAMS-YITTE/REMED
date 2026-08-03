@@ -66,7 +66,9 @@ export function computeFiscalReport(
     (t) => Number(t.crypto_amount) > 0 && Number(t.fiat_amount) > 0
   );
 
-  if (valid.length === 0) {
+  const hasOnChainData = onChainQuantities && Object.values(onChainQuantities).some(val => val > 0);
+
+  if (valid.length === 0 && !hasOnChainData) {
     return { ...EMPTY_REPORT, generatedAt: new Date().toISOString() };
   }
 
@@ -105,6 +107,26 @@ export function computeFiscalReport(
       cryptoAmount,
       unitPrice: cryptoAmount > 0 ? fiatAmount / cryptoAmount : 0,
     });
+  }
+
+  if (onChainQuantities) {
+    for (const [sym, qtyVal] of Object.entries(onChainQuantities)) {
+      const symbol = sym.toLowerCase();
+      if (qtyVal > 0 && !bySymbol.has(symbol)) {
+        bySymbol.set(symbol, {
+          symbol,
+          totalInvested: 0,
+          totalQuantity: qtyVal,
+          avgUnitCost: 0,
+          currentPrice: null,
+          currentValue: null,
+          latentPL: null,
+          latentPLPercent: null,
+          lots: [],
+          externalFundsWarning: 'deposit',
+        });
+      }
+    }
   }
 
   let totalInvested = 0;

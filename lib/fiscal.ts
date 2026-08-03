@@ -21,7 +21,7 @@ export interface AcquisitionLot {
 export interface AssetSummary {
   symbol: string;
   totalInvested: number;   // EUR investi (prix de revient total)
-  totalQuantity: number;   // quantité acquise via Remedly ou CSV
+  totalQuantity: number;   // quantité actuellement détenue (on-chain ou acquise)
   avgUnitCost: number | null; // prix de revient moyen unitaire (null si prix inconnu)
   currentPrice: number | null;
   currentValue: number | null;
@@ -57,7 +57,7 @@ export const EMPTY_REPORT: FiscalReport = {
 // Tolérance sur la comparaison de quantités on-chain (arrondis, poussière).
 const QTY_TOLERANCE = 0.01; // 1 %
 
-// Construit le relevé à partir des ACQUISITIONS uniquement.
+// Construit le relevé à partir des ACQUISITIONS et des SOLDE ON-CHAIN.
 export function computeFiscalReport(
   purchases: PurchaseRow[],
   prices: Record<string, number> | null,
@@ -141,9 +141,16 @@ export function computeFiscalReport(
 
   for (const asset of bySymbol.values()) {
     const hasInvested = asset.totalInvested > 0;
+    const onChainQty = onChainQuantities ? onChainQuantities[asset.symbol] : undefined;
+
+    // Si le solde on-chain réel est disponible, la quantité actuellement détenue est le solde on-chain !
+    if (onChainQty != null && onChainQty > 0) {
+      asset.totalQuantity = onChainQty;
+    }
 
     if (hasInvested) {
-      asset.avgUnitCost = asset.totalQuantity > 0 ? asset.totalInvested / asset.totalQuantity : 0;
+      const acquiredQty = asset.lots.reduce((acc, l) => acc + l.cryptoAmount, 0) || asset.totalQuantity;
+      asset.avgUnitCost = acquiredQty > 0 ? asset.totalInvested / acquiredQty : 0;
       asset.costInconnu = false;
       totalInvested += asset.totalInvested;
       hasKnownInvestments = true;
@@ -173,7 +180,7 @@ export function computeFiscalReport(
 
     if (onChainQuantities && onChainQuantities[asset.symbol] != null) {
       const onChain = onChainQuantities[asset.symbol];
-      const acquired = asset.totalQuantity;
+      const acquired = asset.lots.reduce((acc, l) => acc + l.cryptoAmount, 0);
       if (acquired > 0 && onChain > acquired * (1 + QTY_TOLERANCE)) {
         asset.externalFundsWarning = 'deposit';
       } else if (acquired > 0 && onChain < acquired * (1 - QTY_TOLERANCE)) {

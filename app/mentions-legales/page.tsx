@@ -30,7 +30,7 @@ export default function MentionsLegalesPage() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-3">2. Directeur de la publication</h2>
             <p>
-              Le Directeur de la publication est <strong className="text-white">Tamsir SOCK</strong>, en sa qualité de Gérant.
+              Le Directeur de la publication est le <strong className="text-white">Gérant de YITTE</strong>.
             </p>
           </section>
 
@@ -54,7 +54,7 @@ export default function MentionsLegalesPage() {
             </p>
             <p className="mt-3">
               Les transactions (achats de cryptomonnaies) sont opérées exclusivement par nos partenaires réglementés
-              (MoonPay). Les portefeuilles non-hébergés (non-custodial wallets) sont fournis et sécurisés
+              (Stripe, MoonPay). Les portefeuilles non-hébergés (non-custodial wallets) sont fournis et sécurisés
               par l'infrastructure de Privy.
             </p>
           </section>

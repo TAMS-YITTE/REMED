@@ -3,9 +3,11 @@
 import { createClient } from '@supabase/supabase-js';
 
 const getAdminClient = () => {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) return null;
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    url,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock_key'
   );
 };
 
@@ -16,6 +18,8 @@ export async function syncUserWallets(
   if (!privyId) return;
 
   const supabase = getAdminClient();
+  if (!supabase) return;
+
   const { data: existingUser } = await supabase
     .from('users')
     .select('id, wallet_address, solana_wallet_address, bitcoin_wallet_address, email')
@@ -62,6 +66,8 @@ export async function updateWeeklyDigestPreference(
 ): Promise<{ ok: boolean }> {
   if (!privyId) return { ok: false };
   const supabase = getAdminClient();
+  if (!supabase) return { ok: false };
+
   const { error } = await supabase
     .from('users')
     .update({ weekly_digest: enabled })
@@ -71,6 +77,8 @@ export async function updateWeeklyDigestPreference(
 
 export async function getSavedWallets(privyId: string) {
   const supabase = getAdminClient();
+  if (!supabase) return [];
+
   const { data: user, error: userError } = await supabase
     .from('users')
     .select('id')
@@ -97,6 +105,8 @@ export async function getSavedWallets(privyId: string) {
 
 export async function saveWallet(privyId: string, address: string, network: string, label: string) {
   const supabase = getAdminClient();
+  if (!supabase) return null;
+
   let { data: user } = await supabase
     .from('users')
     .select('id')
@@ -130,20 +140,31 @@ export async function saveWallet(privyId: string, address: string, network: stri
 
 export async function getPurchases(privyId: string, walletAddress?: string) {
   const supabase = getAdminClient();
+  if (!supabase) return [];
+
   const { data: user } = await supabase
     .from('users')
-    .select('id')
+    .select('id, wallet_address, solana_wallet_address, bitcoin_wallet_address')
     .eq('privy_id', privyId)
-    .single();
+    .maybeSingle();
+
+  const addresses = Array.from(new Set([
+    walletAddress,
+    user?.wallet_address,
+    user?.solana_wallet_address,
+    user?.bitcoin_wallet_address,
+  ].filter(Boolean))) as string[];
 
   let query = supabase.from('transactions').select('*');
 
-  if (user && walletAddress) {
-    query = query.or(`user_id.eq.${user.id},wallet_address.eq.${walletAddress}`);
+  if (user && addresses.length > 0) {
+    const addrFilters = addresses.map((a) => `wallet_address.eq.${a}`).join(',');
+    query = query.or(`user_id.eq.${user.id},${addrFilters}`);
   } else if (user) {
     query = query.eq('user_id', user.id);
-  } else if (walletAddress) {
-    query = query.eq('wallet_address', walletAddress);
+  } else if (addresses.length > 0) {
+    const addrFilters = addresses.map((a) => `wallet_address.eq.${a}`).join(',');
+    query = query.or(addrFilters);
   } else {
     return [];
   }

@@ -309,17 +309,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         </button>
       )}
 
-      {/* Lien Retour au catalogue de cryptos avec Next.js Link */}
-      <div className="pt-1 text-center">
-        <Link
-          href="/acheter"
-          className="inline-flex items-center text-xs text-indigo-300 hover:text-white font-medium underline transition-colors"
-        >
-          ← Voir tout le catalogue des cryptos / Simulateur
-        </Link>
-      </div>
-
-      <p className="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1">
+      <p className="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1 mt-1">
         <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
         Paiement sécurisé via nos partenaires réglementés. Crypto livrée directement sur votre portefeuille.
       </p>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage, Language, Currency } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

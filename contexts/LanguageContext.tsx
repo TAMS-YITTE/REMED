@@ -207,17 +207,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>('fr');
   const [currency, setCurrencyState] = useState<Currency>('EUR');
   const [eurToUsdRate, setEurToUsdRate] = useState<number>(1.08); // fallback
-  const [mounted, setMounted] = useState(false);
-
   // Load from localStorage on mount
   useEffect(() => {
     try {
-      const savedLang = localStorage.getItem(STORAGE_KEY_LANG) as Language | null;
-      if (savedLang === 'fr' || savedLang === 'en') setLanguageState(savedLang);
-      const savedCur = localStorage.getItem(STORAGE_KEY_CURRENCY) as Currency | null;
-      if (savedCur === 'EUR' || savedCur === 'USD') setCurrencyState(savedCur);
-    } catch {}
-    setMounted(true);
+      const savedLang = localStorage.getItem(STORAGE_KEY_LANG);
+      if (savedLang === 'fr' || savedLang === 'en') setLanguageState(savedLang as Language);
+      const savedCur = localStorage.getItem(STORAGE_KEY_CURRENCY);
+      if (savedCur === 'EUR' || savedCur === 'USD') setCurrencyState(savedCur as Currency);
+    } catch {
+      // ignore localStorage errors
+    }
   }, []);
 
   // Fetch EUR/USD live rate from CoinGecko (same API as crypto prices)

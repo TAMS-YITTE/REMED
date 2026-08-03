@@ -3,6 +3,7 @@
 // app/actions/fiscal.ts se charge de lire Supabase puis délègue ici.
 
 export interface PurchaseRow {
+  id?: string;
   provider: string | null;
   fiat_amount: number | string;
   crypto_amount: number | string;
@@ -11,6 +12,7 @@ export interface PurchaseRow {
 }
 
 export interface AcquisitionLot {
+  id?: string;
   date: string;
   provider: string;
   fiatAmount: number;
@@ -103,6 +105,7 @@ export function computeFiscalReport(
     entry.totalInvested += fiatAmount;
     entry.totalQuantity += cryptoAmount;
     entry.lots.push({
+      id: t.id,
       date: t.created_at,
       provider: t.provider || 'inconnu',
       fiatAmount,
@@ -143,7 +146,6 @@ export function computeFiscalReport(
     const hasInvested = asset.totalInvested > 0;
     const onChainQty = onChainQuantities ? onChainQuantities[asset.symbol] : undefined;
 
-    // Si le solde on-chain réel est disponible, la quantité actuellement détenue est le solde on-chain !
     if (onChainQty != null && onChainQty > 0) {
       asset.totalQuantity = onChainQty;
     }

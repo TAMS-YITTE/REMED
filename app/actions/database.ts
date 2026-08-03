@@ -248,3 +248,40 @@ export async function saveManualPurchase(
 
   return { ok: true };
 }
+
+export async function deleteTransaction(
+  privyId: string,
+  txId?: string,
+  symbol?: string,
+  fiatAmount?: number
+): Promise<{ ok: boolean; error?: string }> {
+  if (!privyId) return { ok: false, error: 'Non authentifié' };
+  const supabase = getAdminClient();
+  if (!supabase) return { ok: false, error: 'Erreur BDD' };
+
+  const { data: user } = await supabase
+    .from('users')
+    .select('id')
+    .eq('privy_id', privyId)
+    .maybeSingle();
+
+  if (!user) return { ok: false, error: 'Utilisateur introuvable' };
+
+  let query = supabase.from('transactions').delete().eq('user_id', user.id);
+
+  if (txId) {
+    query = query.eq('id', txId);
+  } else if (symbol && fiatAmount) {
+    query = query.eq('crypto_currency', symbol.toUpperCase()).eq('fiat_amount', fiatAmount);
+  } else {
+    return { ok: false, error: 'Paramètres insuffisants' };
+  }
+
+  const { error } = await query;
+  if (error) {
+    console.error('Erreur suppression transaction:', error);
+    return { ok: false, error: error.message };
+  }
+
+  return { ok: true };
+}

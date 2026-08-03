@@ -9,7 +9,7 @@ import { Footer } from '@/components/Footer';
 import { AuthButton } from '@/components/AuthButton';
 import { getFiscalReport } from '@/app/actions/fiscal';
 import { getCryptoPrices } from '@/app/actions/prices';
-import { saveManualPurchase } from '@/app/actions/database';
+import { saveManualPurchase, deleteTransaction } from '@/app/actions/database';
 import type { FiscalReport } from '@/lib/fiscal';
 import { computeFiscalReport, type PurchaseRow } from '@/lib/fiscal';
 import { parseTransactionCsv, type CsvTransaction } from '@/lib/csvParser';
@@ -17,7 +17,7 @@ import { computeChronological2086, type TradeTransaction, LEGAL_DISCLAIMER_2086 
 import { getWalletData, getErc20Balances } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
-import { Loader2, Printer, Sparkles, AlertTriangle, Upload, Plus } from 'lucide-react';
+import { Loader2, Printer, Sparkles, AlertTriangle, Upload, Plus, Trash2 } from 'lucide-react';
 
 const eur = (n: number) =>
   n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
@@ -161,6 +161,21 @@ export default function RapportFiscalPage() {
       console.error("Erreur sauvegarde achat manuel :", e);
     } finally {
       setSavingManual(false);
+    }
+  };
+
+  const handleDeleteLot = async (lotId?: string, symbol?: string, fiatAmount?: number) => {
+    if (!user?.id) return;
+    if (confirm(`Voulez-vous vraiment supprimer cet achat de ${fiatAmount ? fiatAmount + ' €' : 'l\'historique'} ?`)) {
+      setLoading(true);
+      try {
+        await deleteTransaction(user.id, lotId, symbol, fiatAmount);
+        await loadReport();
+      } catch (e) {
+        console.error("Erreur suppression transaction:", e);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -390,6 +405,7 @@ export default function RapportFiscalPage() {
                             <th className="py-1.5 font-medium text-right">Montant Fiat</th>
                             <th className="py-1.5 font-medium text-right">Quantité</th>
                             <th className="py-1.5 font-medium text-right">Prix Unitaire</th>
+                            <th className="py-1.5 font-medium text-right print:hidden">Action</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -400,6 +416,15 @@ export default function RapportFiscalPage() {
                               <td className="py-1.5 text-right font-medium">{eur(lot.fiatAmount)}</td>
                               <td className="py-1.5 text-right font-mono">{qty(lot.cryptoAmount)}</td>
                               <td className="py-1.5 text-right font-medium">{eur(lot.unitPrice)}</td>
+                              <td className="py-1.5 text-right print:hidden">
+                                <button
+                                  onClick={() => handleDeleteLot(lot.id, a.symbol, lot.fiatAmount)}
+                                  className="p-1 text-gray-400 hover:text-red-400 transition-colors inline-flex items-center"
+                                  title="Supprimer cet achat"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>

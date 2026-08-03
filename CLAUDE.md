@@ -64,11 +64,8 @@ réel confirmé de bout en bout (voir section 3).
   a été codé par déduction depuis la documentation Privy, jamais confirmé
   contre un vrai objet `user`. Faire ce test avant toute nouvelle feature
   qui dépend du wallet.
-- Le mainnet reste bloqué en attendant la validation des dossiers chez
-  Transak et MoonPay — ne pas basculer dessus sans confirmation explicite.
-- Vérifier qu'une clé API Etherscan (ou équivalent pour les futurs appels
-  Solana/Bitcoin) est bien configurée avant tout trafic réel, pour éviter
-  le rate-limiting silencieux déjà identifié.
+- **MoonPay est validé (OK) et actif en Mainnet**. L'intégration BANXA est définitivement abandonnée.
+- **Test d'achat réel :** Faire un test d'achat réel sur ETH, SOL ou BTC pour confirmer l'insertion de ligne dans la table `transactions`.
 
 ## 4. Hygiène technique à ne pas oublier
 

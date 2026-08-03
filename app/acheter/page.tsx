@@ -29,30 +29,36 @@ function AcheterContent() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Colonne Gauche : Guide Virement Sans Frais */}
-        <div className="lg:col-span-7 xl:col-span-8 space-y-6">
-          <BankTransferGuideCard />
-        </div>
-
-        {/* Colonne Droite : Pavé d'Achat */}
-        <div className="lg:col-span-5 xl:col-span-4 sticky top-24">
-          <div className="bg-[#2E3152] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl">
-            <h1 className="text-2xl font-bold tracking-tight text-white mb-2">
-              Acheter du <span className="text-indigo-400 uppercase">{crypto}</span>
-            </h1>
-            <p className="text-gray-400 text-xs mb-6">
-              Paiement sécurisé par carte bancaire ou virement bancaire SEPA.
+        {/* COLONNE PRINCIPALE 1 : PAVÉ D'ACHAT (PRÉDOMINANT - 60% DE LARGEUR) */}
+        <div className="lg:col-span-7 xl:col-span-7">
+          <div className="bg-[#2E3152] border-2 border-indigo-500/50 rounded-3xl p-6 sm:p-8 shadow-[0_10px_40px_rgba(99,102,241,0.25)] relative overflow-hidden">
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-3xl font-extrabold tracking-tight text-white">
+                Acheter du <span className="text-indigo-400 uppercase">{crypto}</span>
+              </h1>
+              <span className="flex h-3 w-3 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+            </div>
+            <p className="text-gray-300 text-sm mb-6">
+              Sélectionnez votre actif et votre montant. Achat instantané et sécurisé par carte ou virement.
             </p>
             
             <BuyCryptoButton crypto={crypto} amount={amount} className="w-full" />
             
             <div className="mt-6 pt-6 border-t border-white/10">
-              <p className="text-xs text-gray-500 leading-relaxed text-center">
+              <p className="text-xs text-gray-400 leading-relaxed text-center">
                 Les services d'achat et de transfert sont opérés par nos partenaires réglementés (Stripe, MoonPay). 
                 Remedly est une interface non-hébergée (non-custodial).
               </p>
             </div>
           </div>
+        </div>
+
+        {/* COLONNE SECONDAIRE 2 : GUIDE VIREMENT SANS FRAIS (40% DE LARGEUR) */}
+        <div className="lg:col-span-5 xl:col-span-5">
+          <BankTransferGuideCard />
         </div>
       </div>
     </div>

@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cryptoList } from '@/lib/cryptoList';
 
-// Mappage des informations basiques pour le SEO (clés = ids courts de lib/cryptoList.ts)
 const cryptoMap: Record<string, { name: string; symbol: string; description: string }> = {
   btc: { name: 'Bitcoin', symbol: 'BTC', description: 'Achetez du Bitcoin (BTC) facilement, en toute sécurité et avec des frais réduits sur Remedly. Profitez de l\'actif crypto le plus populaire.' },
   eth: { name: 'Ethereum', symbol: 'ETH', description: 'Investissez dans Ethereum (ETH) sur Remedly. Rejoignez le réseau de contrats intelligents le plus utilisé au monde.' },
@@ -19,7 +18,6 @@ const cryptoMap: Record<string, { name: string; symbol: string; description: str
   pol: { name: 'Polygon', symbol: 'POL', description: 'Achetez du Polygon (POL) sur Remedly, un réseau conçu pour rendre Ethereum plus rapide et moins cher à utiliser.' },
   shib: { name: 'Shiba Inu', symbol: 'SHIB', description: 'Achetez du Shiba Inu (SHIB) sur Remedly. Attention : un memecoin très populaire mais hautement spéculatif.' },
   uni: { name: 'Uniswap', symbol: 'UNI', description: 'Achetez de l\'Uniswap (UNI) sur Remedly, le jeton du plus grand échange décentralisé de cryptomonnaies.' },
-  // Par défaut
   default: { name: 'Cryptomonnaie', symbol: 'CRYPTO', description: 'Achetez vos cryptomonnaies préférées simplement et de façon sécurisée sur Remedly.' }
 };
 
@@ -80,15 +78,14 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Colonne Graphique & Guide Virement Sans Frais */}
-          <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-8">
+          {/* COLONNE GAUCHE : GRAPHIQUE & INFOS */}
+          <div className="lg:col-span-7 xl:col-span-7 flex flex-col gap-8">
             <CryptoChart
               cryptoId={id}
               cryptoName={cryptoInfo.name}
               cryptoSymbol={cryptoInfo.symbol}
             />
             
-            {/* GUIDE SANS FRAIS EN FACE DE LA CARTE D'ACHAT */}
             <BankTransferGuideCard />
 
             <div className="glass-panel rounded-2xl p-6 md:p-8">
@@ -107,11 +104,11 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
             </div>
           </div>
 
-          {/* Colonne Achat */}
-          <div className="lg:col-span-5 xl:col-span-4 sticky top-24">
-            <div className="glass-panel rounded-3xl p-6 shadow-2xl border-t border-white/20">
-              <h3 className="text-xl font-bold mb-6 flex items-center justify-between">
-                Investir maintenant
+          {/* COLONNE DROITE : MODULE D'ACHAT HÉROS (PROMINENT - BORDURE LUMINEUSE) */}
+          <div className="lg:col-span-5 xl:col-span-5 sticky top-24">
+            <div className="bg-[#2E3152] border-2 border-indigo-500/50 rounded-3xl p-6 shadow-[0_10px_40px_rgba(99,102,241,0.25)]">
+              <h3 className="text-xl font-extrabold mb-6 flex items-center justify-between">
+                <span>Investir en <span className="text-indigo-400 uppercase">{cryptoInfo.name}</span></span>
                 <span className="flex h-3 w-3 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>

@@ -19,6 +19,17 @@ function MockAuthProvider({ children }: { children: React.ReactNode }) {
     if (saved === 'true') setMockAuth(true);
   }, []);
 
+  useEffect(() => {
+    if (mockAuth) {
+      syncUserWallets('mock_user_123', {
+        eth: '0xMockWalletAddress1234567890abcdef1234567',
+        sol: 'MockSoLWa11etAddress1111111111111111111111',
+        btc: 'bc1qmockwalletaddress1234567890abcdef123',
+        email: 'test@remedly.fr',
+      }).catch(console.error);
+    }
+  }, [mockAuth]);
+
   const login = () => {
     setMockAuth(true);
     localStorage.setItem('mockAuth', 'true');

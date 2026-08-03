@@ -3,6 +3,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { BuyCryptoButton } from '@/components/BuyCryptoButton';
 import { CryptoChart } from '@/components/CryptoChart';
+import { BankTransferGuideCard } from '@/components/BankTransferGuideCard';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cryptoList } from '@/lib/cryptoList';
@@ -79,7 +80,7 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Colonne Graphique & Infos SEO */}
+          {/* Colonne Graphique & Guide Virement Sans Frais */}
           <div className="lg:col-span-7 xl:col-span-8 flex flex-col gap-8">
             <CryptoChart
               cryptoId={id}
@@ -87,6 +88,9 @@ export default async function AcheterCryptoPage({ params }: { params: Promise<{ 
               cryptoSymbol={cryptoInfo.symbol}
             />
             
+            {/* GUIDE SANS FRAIS EN FACE DE LA CARTE D'ACHAT */}
+            <BankTransferGuideCard />
+
             <div className="glass-panel rounded-2xl p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-4">Pourquoi acheter du {cryptoInfo.name} ?</h2>
               <div className="space-y-4 text-gray-300">

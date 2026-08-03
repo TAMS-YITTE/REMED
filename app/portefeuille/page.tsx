@@ -12,6 +12,7 @@ import { WalletBalance } from '@/components/WalletBalance';
 import { TransactionHistory } from '@/components/TransactionHistory';
 import { PortfolioDonut } from '@/components/PortfolioDonut';
 import { SendModal } from '@/components/SendModal';
+import { Navbar } from '@/components/Navbar';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -158,22 +159,7 @@ export default function PortefeuillePage() {
 
   return (
     <div className="min-h-screen bg-[#252844] text-white">
-      {/* NAVIGATION */}
-      <nav className="flex items-center justify-between px-6 py-4 md:px-8 md:py-5 border-b border-white/10 sticky top-0 bg-[#252844]/80 backdrop-blur-xl z-50">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="text-xl font-bold tracking-tighter text-white no-underline">
-            rem<span className="text-indigo-400">e</span>dly
-          </Link>
-          <div className="hidden md:flex gap-6">
-            <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Accueil</Link>
-            <Link href="/apprendre" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Apprendre</Link>
-            <Link href="/acheter" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Acheter</Link>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <AuthButton />
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-8">

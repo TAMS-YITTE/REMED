@@ -25,9 +25,10 @@ export function Navbar() {
               </span>
             </div>
           </Link>
-          <div className="hidden md:flex gap-6">
+          <div className="hidden md:flex gap-6 items-center">
             <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.home')}</Link>
             <Link href="/acheter" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.buy')}</Link>
+            <Link href="/rapport-fiscal" className="text-sm font-medium text-indigo-300 hover:text-indigo-200 transition-colors">Relevé fiscal</Link>
             <Link href="/pro" className="text-sm font-semibold text-purple-300 hover:text-purple-200 transition-colors flex items-center gap-1 bg-purple-500/20 border border-purple-500/30 px-2.5 py-0.5 rounded-full">
               <span>Remedly Pro</span>
               <span className="text-xs">⚡</span>
@@ -93,6 +94,7 @@ export function Navbar() {
             <div className="flex flex-col gap-2 p-6 overflow-y-auto flex-1">
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.home')}</Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/acheter" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.buy')}</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/rapport-fiscal" className="px-4 py-4 text-base font-medium text-indigo-300 hover:text-indigo-200 hover:bg-white/5 rounded-xl transition-colors">Relevé fiscal</Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/pro" className="px-4 py-4 text-base font-semibold text-purple-300 hover:text-purple-200 hover:bg-purple-500/10 rounded-xl transition-colors flex items-center justify-between">
                 <span>Remedly Pro ⚡</span>
                 <span className="text-xs bg-purple-500/30 px-2 py-0.5 rounded-full text-purple-200">4,99 €/mois</span>

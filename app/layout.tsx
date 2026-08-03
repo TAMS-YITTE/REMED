@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { PwaInstaller } from "@/components/PwaInstaller";
+import { Analytics } from '@vercel/analytics/react';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -9,6 +11,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.remedly.fr'),
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    title: 'Remedly',
+    statusBarStyle: 'black-translucent',
+  },
+  themeColor: '#6366f1',
   alternates: {
     canonical: '/',
   },
@@ -39,8 +48,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { Analytics } from '@vercel/analytics/react';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,8 +55,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className="h-full antialiased" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-full flex flex-col bg-white text-gray-900`} suppressHydrationWarning>
+      <body className={`${inter.className} min-h-full flex flex-col bg-[#252844] text-white`} suppressHydrationWarning>
         <Providers>{children}</Providers>
+        <PwaInstaller />
         <Analytics />
       </body>
     </html>

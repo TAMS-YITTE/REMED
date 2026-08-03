@@ -75,6 +75,10 @@ export default function Home() {
       a: "Oui. Nous utilisons la technologie 'Embedded Wallet' (fournie par Privy). Vos portefeuilles sont 100% non-custodial, ce qui signifie que vous seul y avez accès. Nous ne détenons jamais vos cryptos ni vos clés privées."
     },
     {
+      q: "Comment acheter par virement sans aucun frais de carte ?",
+      a: "Pour éviter les frais de carte (2 à 4 %), cliquez sur 'Payer avec MoonPay' puis sur le menu déroulant des moyens de paiement et choisissez 'MoonPay Balance'. Cliquez sur 'Top up', puis sur la roue crantée (⚙️) ➔ Payment methods ➔ Add new ➔ Easy Bank Transfers. Sélectionnez votre banque (BoursoBank, BNP Paribas, Caisse d'Épargne...) et validez votre virement instantané sans aucun frais de carte !"
+    },
+    {
       q: "Combien de temps prend un achat ?",
       a: "Avec l'Apple Pay ou la carte bancaire, l'achat est instantané. Avec le virement bancaire classique, cela peut prendre de 1 à 3 jours ouvrés selon votre banque."
     },

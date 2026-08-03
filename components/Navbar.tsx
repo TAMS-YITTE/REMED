@@ -8,7 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { currency, setCurrency, t } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <>
@@ -38,29 +38,6 @@ export function Navbar() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {/* Currency Toggle (langue fixée en français) */}
-          <div className="hidden sm:flex items-center gap-1.5 bg-[#2E3152] rounded-xl p-1 border border-white/10">
-            <button
-              onClick={() => setCurrency('EUR')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
-                currency === 'EUR'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              €
-            </button>
-            <button
-              onClick={() => setCurrency('USD')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
-                currency === 'USD'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              $
-            </button>
-          </div>
           <div className="hidden sm:block">
             <AuthButton />
           </div>
@@ -124,15 +101,6 @@ export function Navbar() {
               </Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.blog')}</Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre/quiz" className="px-4 py-4 text-base font-medium text-indigo-400 hover:text-indigo-300 hover:bg-white/5 rounded-xl transition-colors">{t('nav.quiz')}</Link>
-              
-              {/* Mobile Currency (langue fixée en français) */}
-              <div className="border-t border-white/10 pt-4 mt-2">
-                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 block">Devise</span>
-                <div className="flex gap-2 mb-4">
-                  <button onClick={() => setCurrency('EUR')} className={`flex-1 py-2.5 text-sm font-semibold rounded-xl border transition-all ${currency === 'EUR' ? 'bg-emerald-500 border-emerald-400 text-white' : 'border-white/20 text-gray-400 hover:text-white'}`}>€ EUR</button>
-                  <button onClick={() => setCurrency('USD')} className={`flex-1 py-2.5 text-sm font-semibold rounded-xl border transition-all ${currency === 'USD' ? 'bg-emerald-500 border-emerald-400 text-white' : 'border-white/20 text-gray-400 hover:text-white'}`}>$ USD</button>
-                </div>
-              </div>
               
               <div className="mt-auto pt-6">
                 <AuthButton />

@@ -7,6 +7,7 @@ import { useEffect, useState, createContext } from 'react';
 import posthog from 'posthog-js';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { isPrivyMock } from '@/lib/privyMode';
+import { syncUserWallets } from '@/app/actions/database';
 
 export const AuthContext = createContext<any>(null);
 
@@ -77,6 +78,18 @@ function RealAuthProvider({ children }: { children: React.ReactNode }) {
       createWallet({ chainType: 'bitcoin-taproot' }).catch(console.error);
     }
   }, [ready, authenticated, user, bitcoinWalletAddress, createWallet]);
+
+  useEffect(() => {
+    if (ready && authenticated && user?.id) {
+      const email = user.email?.address as string | undefined;
+      syncUserWallets(user.id, {
+        eth: walletAddress,
+        sol: solanaWalletAddress,
+        btc: bitcoinWalletAddress,
+        email,
+      }).catch(console.error);
+    }
+  }, [ready, authenticated, user?.id, user?.email?.address, walletAddress, solanaWalletAddress, bitcoinWalletAddress]);
 
   const value = {
     ready,

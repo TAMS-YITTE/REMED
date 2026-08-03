@@ -9,20 +9,78 @@ const getAdminClient = () => {
   );
 };
 
+export async function syncUserWallets(
+  privyId: string,
+  addresses: { eth?: string; sol?: string; btc?: string; email?: string }
+): Promise<void> {
+  if (!privyId) return;
+
+  const supabase = getAdminClient();
+  const { data: existingUser } = await supabase
+    .from('users')
+    .select('id, wallet_address, solana_wallet_address, bitcoin_wallet_address, email')
+    .eq('privy_id', privyId)
+    .maybeSingle();
+
+  const updateFields: Record<string, any> = {};
+
+  if (addresses.eth && addresses.eth !== existingUser?.wallet_address) {
+    updateFields.wallet_address = addresses.eth;
+  }
+  if (addresses.sol && addresses.sol !== existingUser?.solana_wallet_address) {
+    updateFields.solana_wallet_address = addresses.sol;
+  }
+  if (addresses.btc && addresses.btc !== existingUser?.bitcoin_wallet_address) {
+    updateFields.bitcoin_wallet_address = addresses.btc;
+  }
+  if (addresses.email && addresses.email !== existingUser?.email) {
+    updateFields.email = addresses.email;
+  }
+
+  if (Object.keys(updateFields).length === 0 && existingUser) {
+    return;
+  }
+
+  if (existingUser) {
+    await supabase.from('users').update(updateFields).eq('id', existingUser.id);
+  } else {
+    await supabase.from('users').insert([
+      {
+        privy_id: privyId,
+        wallet_address: addresses.eth || null,
+        solana_wallet_address: addresses.sol || null,
+        bitcoin_wallet_address: addresses.btc || null,
+        email: addresses.email || null,
+      },
+    ]);
+  }
+}
+
+export async function updateWeeklyDigestPreference(
+  privyId: string,
+  enabled: boolean
+): Promise<{ ok: boolean }> {
+  if (!privyId) return { ok: false };
+  const supabase = getAdminClient();
+  const { error } = await supabase
+    .from('users')
+    .update({ weekly_digest: enabled })
+    .eq('privy_id', privyId);
+  return { ok: !error };
+}
+
 export async function getSavedWallets(privyId: string) {
   const supabase = getAdminClient();
-  // 1. Trouver l'utilisateur
   const { data: user, error: userError } = await supabase
     .from('users')
     .select('id')
     .eq('privy_id', privyId)
     .single();
-    
+
   if (userError || !user) {
     return [];
   }
 
-  // 2. Trouver ses portefeuilles
   const { data: wallets, error } = await supabase
     .from('saved_wallets')
     .select('*')
@@ -39,7 +97,6 @@ export async function getSavedWallets(privyId: string) {
 
 export async function saveWallet(privyId: string, address: string, network: string, label: string) {
   const supabase = getAdminClient();
-  // 1. Trouver ou créer l'utilisateur
   let { data: user } = await supabase
     .from('users')
     .select('id')
@@ -52,14 +109,13 @@ export async function saveWallet(privyId: string, address: string, network: stri
       .insert([{ privy_id: privyId }])
       .select()
       .single();
-      
+
     if (createError) throw createError;
     user = newUser;
   }
 
   if (!user) return null;
 
-  // 2. Sauvegarder le portefeuille
   const { data, error } = await supabase
     .from('saved_wallets')
     .insert([

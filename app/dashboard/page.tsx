@@ -6,6 +6,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { AuthButton } from '@/components/AuthButton';
 import { MfaSection } from '@/components/MfaSection';
+import { WeeklyDigestToggle } from '@/components/WeeklyDigestToggle';
 import { isPrivyMock } from '@/lib/privyMode';
 import { getPurchases } from '@/app/actions/database';
 import Link from 'next/link';
@@ -51,6 +52,8 @@ export default function DashboardPage() {
             <span className="text-sm text-white">{email || 'Non disponible'}</span>
           </div>
         </section>
+
+        <WeeklyDigestToggle />
 
         {!isPrivyMock() && <MfaSection />}
 

@@ -13,6 +13,7 @@ import { cryptoList } from '@/lib/cryptoList';
 import { getFiscalReport } from '@/app/actions/fiscal';
 import { getCryptoPrices } from '@/app/actions/prices';
 import { getPortfolioSnapshots, type PortfolioSnapshot } from '@/app/actions/snapshots';
+import { PortfolioHistoryChart } from '@/components/PortfolioHistoryChart';
 import { getWalletData, getErc20Balances } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
@@ -207,32 +208,8 @@ export default function AnalysesPage() {
               </div>
             )}
 
-            {/* HISTORIQUE DE VALEUR DU PORTEFEUILLE (SNAPSHOTS QUOTIDIENS) */}
-            <div className="bg-[#2d3152] border border-white/10 rounded-2xl p-6 shadow-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-white text-lg flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-indigo-400" /> Évolution du Portefeuille dans le Temps
-                </h3>
-                <span className="text-xs text-gray-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
-                  1 snapshot / jour (Cron Pro)
-                </span>
-              </div>
-
-              {snapshots.length === 0 ? (
-                <div className="bg-[#21243b] p-6 rounded-xl border border-white/5 text-center text-xs text-gray-400">
-                  Le premier snapshot quotidien de votre portefeuille sera enregistré lors du prochain passage du cron.
-                </div>
-              ) : (
-                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-                  {snapshots.map((sn) => (
-                    <div key={sn.id || sn.snapshot_date} className="flex items-center justify-between bg-[#21243b] p-3 rounded-xl border border-white/5 text-xs">
-                      <span className="font-medium text-gray-300">{sn.snapshot_date}</span>
-                      <span className="font-bold text-indigo-300">{eur(sn.total_value_eur)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* HISTORIQUE ET COURBE TEMPORELLE DU PORTEFEUILLE */}
+            <PortfolioHistoryChart snapshots={snapshots} />
 
             {/* GRAPHIQUE INTERACTIF */}
             <div className="bg-[#2d3152] border border-white/10 rounded-2xl p-6 shadow-xl">

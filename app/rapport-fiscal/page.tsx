@@ -12,6 +12,7 @@ import { getCryptoPrices } from '@/app/actions/prices';
 import type { FiscalReport } from '@/lib/fiscal';
 import { computeFiscalReport, type PurchaseRow } from '@/lib/fiscal';
 import { parseTransactionCsv, type CsvTransaction } from '@/lib/csvParser';
+import { computeChronological2086, type TradeTransaction, LEGAL_DISCLAIMER_2086 } from '@/lib/fiscal2086';
 import { getWalletData, getErc20Balances } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
@@ -336,6 +337,93 @@ export default function RapportFiscalPage() {
                 </div>
               ))}
             </div>
+
+            {/* SYNTHÈSE PLUS-VALUE RÉALISÉE (FORMULAIRE 2086) SI CESSIONS CSV EXISTENT */}
+            {(() => {
+              const allTrades: TradeTransaction[] = csvImports.map((c) => ({
+                date: c.date,
+                type: c.type,
+                symbol: c.symbol,
+                quantity: c.quantity,
+                fiatAmount: c.fiatAmount,
+              }));
+              const rep2086 = computeChronological2086(allTrades);
+              if (rep2086.cessions.length === 0) return null;
+
+              return (
+                <div className="bg-[#2d3152] print:bg-white border border-indigo-500/30 print:border-gray-300 rounded-2xl p-6 mb-10 shadow-lg">
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10 print:border-gray-200">
+                    <div>
+                      <h2 className="text-xl font-bold text-white print:text-gray-900 flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-indigo-400" /> Bilan des Plus-Values Réalisées (Formulaire 2086)
+                      </h2>
+                      <p className="text-xs text-gray-400 print:text-gray-600 mt-1">
+                        Calcul selon la formule officielle de l'Art. 150 VH bis du CGI : PV = P − (M × P / V)
+                      </p>
+                    </div>
+                    {rep2086.isExemptUnder305Eur ? (
+                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Exonéré (Cessions ≤ 305 €)
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        Imposable Flat Tax 30%
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div className="bg-[#21243b] print:bg-gray-100 p-4 rounded-xl">
+                      <p className="text-xs text-gray-400 print:text-gray-600">Total Cessions de l'Année (P)</p>
+                      <p className="text-xl font-bold text-white print:text-gray-900">{eur(rep2086.totalSaleAmountEur)}</p>
+                    </div>
+                    <div className="bg-[#21243b] print:bg-gray-100 p-4 rounded-xl">
+                      <p className="text-xs text-gray-400 print:text-gray-600">Plus-Value Nette Réalisée</p>
+                      <p className={`text-xl font-bold ${rep2086.totalNetRealizedGainEur >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {rep2086.totalNetRealizedGainEur >= 0 ? '+' : ''}{eur(rep2086.totalNetRealizedGainEur)}
+                      </p>
+                    </div>
+                    <div className="bg-[#21243b] print:bg-gray-100 p-4 rounded-xl">
+                      <p className="text-xs text-gray-400 print:text-gray-600">Estimation Flat Tax (30%)</p>
+                      <p className="text-xl font-bold text-indigo-300 print:text-indigo-700">{eur(rep2086.estimatedFlatTax30Percent)}</p>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs text-left print:text-black">
+                      <thead className="text-gray-400 print:text-gray-700 border-b border-white/10 print:border-gray-300">
+                        <tr>
+                          <th className="py-2">Date Cession</th>
+                          <th className="py-2">Actif</th>
+                          <th className="py-2 text-right">Qté Vendue</th>
+                          <th className="py-2 text-right">Prix Cession (P)</th>
+                          <th className="py-2 text-right">Prix Reviend Déd. (F)</th>
+                          <th className="py-2 text-right">PV Réalisée</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rep2086.cessions.map((c, i) => (
+                          <tr key={i} className="border-t border-white/5 print:border-gray-200">
+                            <td className="py-2">{date(c.date)}</td>
+                            <td className="py-2 font-bold uppercase">{c.symbol}</td>
+                            <td className="py-2 text-right font-mono">{qty(c.cryptoSoldQuantity)}</td>
+                            <td className="py-2 text-right font-medium">{eur(c.salePriceEur)}</td>
+                            <td className="py-2 text-right text-gray-400 print:text-gray-600">{eur(c.fractionAcquisitionCostEur)}</td>
+                            <td className={`py-2 text-right font-bold ${c.realizedCapitalGainEur >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                              {c.realizedCapitalGainEur >= 0 ? '+' : ''}{eur(c.realizedCapitalGainEur)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <p className="text-[11px] text-gray-400 mt-4 italic bg-white/5 p-3 rounded-lg border border-white/5">
+                    {LEGAL_DISCLAIMER_2086}
+                  </p>
+                </div>
+              );
+            })()}
           </>
         )}
 

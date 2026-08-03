@@ -11,12 +11,87 @@ const getAdminClient = () =>
     process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+// Synchronise automatiquement les achats passés depuis l'API MoonPay pour toutes les adresses wallet de l'utilisateur.
+export async function syncMoonPayTransactionsForUser(privyId: string): Promise<number> {
+  if (!privyId) return 0;
+  const apiKey = process.env.NEXT_PUBLIC_MOONPAY_KEY || process.env.MOONPAY_SECRET_KEY;
+  if (!apiKey) return 0;
+
+  const supabase = getAdminClient();
+  const { data: user } = await supabase
+    .from('users')
+    .select('id, wallet_address, solana_wallet_address, bitcoin_wallet_address')
+    .eq('privy_id', privyId)
+    .maybeSingle();
+
+  if (!user) return 0;
+
+  const addresses = [
+    user.wallet_address,
+    user.solana_wallet_address,
+    user.bitcoin_wallet_address,
+  ].filter(Boolean) as string[];
+
+  let totalSynced = 0;
+
+  for (const address of addresses) {
+    try {
+      const res = await fetch(`https://api.moonpay.com/v1/transactions?apiKey=${apiKey}&walletAddress=${address}`);
+      if (!res.ok) continue;
+      const moonpayTxs = await res.json();
+      if (!Array.isArray(moonpayTxs)) continue;
+
+      for (const tx of moonpayTxs) {
+        if (tx.status === 'completed' && tx.id) {
+          const providerRefId = String(tx.id);
+          const { data: existing } = await supabase
+            .from('transactions')
+            .select('id')
+            .eq('provider_reference_id', providerRefId)
+            .maybeSingle();
+
+          if (!existing) {
+            const fiatAmount = tx.baseCurrencyAmount || tx.fiatAmount || 0;
+            const fiatCurrency = (tx.baseCurrency?.code || 'EUR').toUpperCase();
+            const cryptoAmount = tx.quoteCurrencyAmount || tx.cryptoAmount || 0;
+            const cryptoCurrency = (tx.currency?.code || tx.cryptoCurrency || 'ETH').toUpperCase();
+            const createdAt = tx.createdAt || new Date().toISOString();
+
+            await supabase.from('transactions').insert([
+              {
+                user_id: user.id,
+                provider: 'moonpay',
+                fiat_amount: fiatAmount,
+                fiat_currency: fiatCurrency,
+                crypto_amount: cryptoAmount,
+                crypto_currency: cryptoCurrency,
+                wallet_address: address,
+                status: 'completed',
+                provider_reference_id: providerRefId,
+                created_at: createdAt,
+              },
+            ]);
+            totalSynced++;
+          }
+        }
+      }
+    } catch (e) {
+      console.error(`MoonPay sync error for ${address}:`, e);
+    }
+  }
+
+  return totalSynced;
+}
+
 // Lit les achats de l'utilisateur (par user_id OU par adresses de wallet) avec déduplication stricte.
 export async function getFiscalReport(
   privyId?: string | null,
   onChainQuantities?: Record<string, number>
 ): Promise<FiscalReport> {
   if (!privyId) return EMPTY_REPORT;
+
+  // Tentative de rattrapage automatique des transactions passées sur l'API MoonPay
+  await syncMoonPayTransactionsForUser(privyId).catch(console.error);
 
   const supabase = getAdminClient();
 

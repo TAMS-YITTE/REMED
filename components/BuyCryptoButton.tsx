@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { getChainFamily } from '@/lib/cryptoChains';
-import { Loader2, ShieldCheck, ArrowRight, Wallet } from 'lucide-react';
+import { Loader2, ShieldCheck, ArrowRight, Wallet, RefreshCw } from 'lucide-react';
+import { cryptoList } from '@/lib/cryptoList';
 
 const MOONPAY_CURRENCY_CODE: Record<string, string> = {
   btc:  'btc',
@@ -17,9 +20,6 @@ const MOONPAY_CURRENCY_CODE: Record<string, string> = {
   uni:  'uni',
 };
 
-// Cryptos que Stripe onramp sert aux acheteurs France/EU (voir la liste
-// autorisée côté serveur dans app/api/stripe/onramp/route.ts). Pour les
-// autres, seul MoonPay est proposé.
 const STRIPE_SUPPORTED = new Set(['btc', 'eth', 'sol', 'usdc']);
 
 interface BuyCryptoButtonProps {
@@ -29,6 +29,7 @@ interface BuyCryptoButtonProps {
 }
 
 export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoButtonProps) {
+  const router = useRouter();
   const {
     authenticated,
     login,
@@ -39,13 +40,14 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
     createBitcoinWallet,
   } = useAuth();
 
+  const [selectedCrypto, setSelectedCrypto] = useState(crypto.toLowerCase());
   const [customAmount, setCustomAmount] = useState(amount || '30');
   const [isLoading, setIsLoading] = useState(false);
   const [stripeLoading, setStripeLoading] = useState(false);
   const [payError, setPayError] = useState('');
 
-  const chain        = getChainFamily(crypto);
-  const currencyCode = MOONPAY_CURRENCY_CODE[crypto.toLowerCase()] ?? crypto.toLowerCase();
+  const chain        = getChainFamily(selectedCrypto);
+  const currencyCode = MOONPAY_CURRENCY_CODE[selectedCrypto] ?? selectedCrypto;
   const apiKey =
     process.env.NEXT_PUBLIC_MOONPAY_API_KEY ||
     process.env.NEXT_PUBLIC_MOONPAY_KEY ||
@@ -60,7 +62,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
   const isUnderMin = numAmount < 30;
   const displayAmount = numAmount >= 30 ? customAmount : '30';
   const enableStripeOnramp = process.env.NEXT_PUBLIC_ENABLE_STRIPE_ONRAMP === 'true';
-  const canPayWithStripe = enableStripeOnramp && STRIPE_SUPPORTED.has(crypto.toLowerCase());
+  const canPayWithStripe = enableStripeOnramp && STRIPE_SUPPORTED.has(selectedCrypto);
 
   // Résout l'adresse de réception pour la chaîne courante, en créant le wallet
   // Bitcoin à la demande si besoin. Partagée entre MoonPay et Stripe.
@@ -148,7 +150,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          crypto: crypto.toLowerCase(),
+          crypto: selectedCrypto,
           amount: displayAmount,
           walletAddress: finalAddress,
           privyId: user?.id,
@@ -168,6 +170,11 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
     } finally {
       setStripeLoading(false);
     }
+  };
+
+  const handleCryptoChange = (newSym: string) => {
+    setSelectedCrypto(newSym);
+    router.push(`/acheter/${newSym}?amount=${displayAmount}`);
   };
 
   if (!authenticated) {
@@ -197,8 +204,28 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         </div>
       )}
 
-      {/* Récapitulatif de l'achat & Modification du montant */}
-      <div className="bg-[#252844] border border-white/10 rounded-2xl p-5 text-left space-y-4">
+      {/* Récapitulatif & Modificateurs */}
+      <div className="bg-[#252844] border border-white/10 rounded-2xl p-5 text-left space-y-4 shadow-xl">
+        {/* Sélecteur de Crypto */}
+        <div>
+          <label className="block text-xs font-medium text-gray-400 mb-1.5 flex items-center justify-between">
+            <span>Cryptomonnaie sélectionnée</span>
+            <span className="text-[10px] text-indigo-300 flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Changer l'actif</span>
+          </label>
+          <select
+            value={selectedCrypto}
+            onChange={(e) => handleCryptoChange(e.target.value)}
+            className="w-full bg-[#1a1c2e] border border-indigo-500/40 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm font-bold text-white outline-none cursor-pointer uppercase transition-colors"
+          >
+            {cryptoList.filter(c => c.supported).map((c) => (
+              <option key={c.id} value={c.id} className="bg-[#1a1c2e] text-white py-2">
+                {c.name} ({c.symbol})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Montant à investir */}
         <div>
           <label className="block text-xs font-medium text-gray-400 mb-1.5">Montant à investir (€)</label>
           <div className="relative">
@@ -214,7 +241,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
           </div>
         </div>
 
-        {/* Boutons de montants rapides */}
+        {/* Presets rapides */}
         <div className="flex items-center gap-2">
           {['30', '50', '100', '250', '500'].map((preset) => (
             <button
@@ -233,10 +260,6 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         </div>
 
         <div className="pt-2 border-t border-white/10 space-y-2 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-400">Crypto sélectionnée</span>
-            <span className="font-semibold text-indigo-300 uppercase">{crypto}</span>
-          </div>
           <div className="flex items-center justify-between pt-1">
             <span className="text-gray-400 flex items-center gap-1">
               <Wallet className="w-4 h-4 text-indigo-400" /> Adresse de réception
@@ -254,7 +277,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         </div>
       )}
 
-      {/* Paiement MoonPay (disponible pour toutes les cryptos) */}
+      {/* Paiement MoonPay */}
       <button
         onClick={handleBuy}
         disabled={isLoading || stripeLoading}
@@ -269,7 +292,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
       </button>
 
-      {/* Paiement Stripe (BTC, ETH, SOL, USDC uniquement) */}
+      {/* Paiement Stripe */}
       {canPayWithStripe && (
         <button
           onClick={handleStripe}
@@ -285,14 +308,14 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         </button>
       )}
 
-      {/* Lien Retour au simulateur */}
+      {/* Lien Retour au catalogue de cryptos avec Next.js Link */}
       <div className="pt-2 text-center">
-        <a
+        <Link
           href="/acheter"
-          className="inline-flex items-center text-xs text-indigo-300 hover:text-white underline transition-colors"
+          className="inline-flex items-center text-xs text-indigo-300 hover:text-white font-medium underline transition-colors"
         >
-          ← Modifier la crypto / Retour au simulateur
-        </a>
+          ← Voir tout le catalogue des cryptos / Simulateur
+        </Link>
       </div>
 
       <p className="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1">

@@ -18,11 +18,11 @@ import { getWalletData, getErc20Balances } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
 import type { FiscalReport } from '@/lib/fiscal';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { LineChart, Sparkles, Loader2, TrendingUp, ShieldCheck, BarChart2, Calendar } from 'lucide-react';
 
 const SUPPORTED = cryptoList.filter((c) => c.supported);
 const nameOf = (sym: string) => SUPPORTED.find((c) => c.id === sym.toLowerCase())?.name || sym.toUpperCase();
-const eur = (n: number) => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
 
 async function gatherOnChainQuantities(
   ethAddr?: string,
@@ -55,6 +55,8 @@ async function gatherOnChainQuantities(
 export default function AnalysesPage() {
   const { isReady, authenticated, user, walletAddress, solanaWalletAddress, bitcoinWalletAddress } = useAuth();
   const { loading: subLoading, isPro } = useSubscription();
+  // Montants affichés dans la devise choisie (EUR par défaut, USD via le taux live).
+  const { formatAmount: eur } = useLanguage();
   const [report, setReport] = useState<FiscalReport | null>(null);
   const [snapshots, setSnapshots] = useState<PortfolioSnapshot[]>([]);
   const [loading, setLoading] = useState(false);

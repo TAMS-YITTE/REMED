@@ -200,18 +200,17 @@ const LanguageContext = createContext<LanguageContextType>({
   t: (key: string) => key,
 });
 
-const STORAGE_KEY_LANG = 'remedly_language';
 const STORAGE_KEY_CURRENCY = 'remedly_currency';
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('fr');
+  const [language] = useState<Language>('fr');
   const [currency, setCurrencyState] = useState<Currency>('EUR');
   const [eurToUsdRate, setEurToUsdRate] = useState<number>(1.08); // fallback
   // Load from localStorage on mount
   useEffect(() => {
     try {
-      const savedLang = localStorage.getItem(STORAGE_KEY_LANG);
-      if (savedLang === 'fr' || savedLang === 'en') setLanguageState(savedLang as Language);
+      // Langue forcée en français (l'anglais n'est pas maintenu). Seule la
+      // devise reste réglable indépendamment.
       const savedCur = localStorage.getItem(STORAGE_KEY_CURRENCY);
       if (savedCur === 'EUR' || savedCur === 'USD') setCurrencyState(savedCur as Currency);
     } catch {
@@ -241,22 +240,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return () => { cancelled = true; clearInterval(interval); };
   }, []);
 
-  const setLanguage = useCallback((lang: Language) => {
-    setLanguageState(lang);
-    try { localStorage.setItem(STORAGE_KEY_LANG, lang); } catch {}
-    // Auto-switch currency: FR → EUR, EN → USD
-    const cur = lang === 'fr' ? 'EUR' : 'USD';
-    setCurrencyState(cur);
-    try { localStorage.setItem(STORAGE_KEY_CURRENCY, cur); } catch {}
-  }, []);
+  // Langue forcée en français : setLanguage est conservé pour compatibilité
+  // d'API mais n'a plus d'effet (le site reste FR).
+  const setLanguage = useCallback((_lang: Language) => {}, []);
 
+  // Devise indépendante de la langue (plus d'auto-switch).
   const setCurrency = useCallback((cur: Currency) => {
     setCurrencyState(cur);
     try { localStorage.setItem(STORAGE_KEY_CURRENCY, cur); } catch {}
-    // Auto-switch language when currency changes manually
-    const lang = cur === 'EUR' ? 'fr' : 'en';
-    setLanguageState(lang);
-    try { localStorage.setItem(STORAGE_KEY_LANG, lang); } catch {}
   }, []);
 
   const currencySymbol = currency === 'EUR' ? '€' : '$';

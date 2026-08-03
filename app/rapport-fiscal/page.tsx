@@ -348,7 +348,21 @@ export default function RapportFiscalPage() {
                             </button>
                           </>
                         ) : (
-                          <span className="font-semibold text-white print:text-gray-900">{eur(a.totalInvested)}</span>
+                          <>
+                            <span className="font-semibold text-white print:text-gray-900">{eur(a.totalInvested)}</span>
+                            <button
+                              onClick={() => {
+                                const lotSum = a.lots.reduce((acc, l) => acc + l.cryptoAmount, 0);
+                                const diff = Math.max(0, a.totalQuantity - lotSum);
+                                setModalAsset({ symbol: a.symbol, quantity: diff > 0.000001 ? diff : a.totalQuantity });
+                                setFiatAmountInput('');
+                              }}
+                              className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 underline flex items-center gap-0.5 print:hidden ml-1"
+                              title="Ajouter un lot d'achat manquant (ex: achat de 30 €)"
+                            >
+                              <Plus className="w-3 h-3" /> Ajouter un achat
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>

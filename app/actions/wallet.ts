@@ -67,28 +67,29 @@ export async function getWalletData(address: string): Promise<WalletData> {
 
     const balanceEth = fromHex(balanceHex, 18).toFixed(4);
 
-    const API_KEY = process.env.ETHERSCAN_API_KEY || '';
     let transactions: Transaction[] = [];
 
-    if (!API_KEY) {
-      console.warn("ETHERSCAN_API_KEY absente : l'historique des transactions ETH sera vide.");
-    } else {
-      const txData = await safeFetch<any>(
-        `${ETHERSCAN_API}?chainid=1&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=5&sort=desc&apikey=${API_KEY}`,
-        { next: { revalidate: 10 } },
-        null
-      );
+    // Utilise Blockscout API (gratuit et sans clé requis) avec fallback Etherscan
+    const API_KEY = process.env.ETHERSCAN_API_KEY || '';
+    const apiUrl = API_KEY 
+      ? `${ETHERSCAN_API}?chainid=1&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=${API_KEY}`
+      : `https://eth.blockscout.com/api?module=account&action=txlist&address=${address}&sort=desc&offset=10`;
 
-      if (txData?.status === "1" && Array.isArray(txData?.result)) {
-        transactions = txData.result.map((tx: any) => ({
-          hash: tx.hash,
-          from: tx.from,
-          to: tx.to,
-          value: tx.value,
-          timeStamp: tx.timeStamp,
-          chain: 'ethereum'
-        }));
-      }
+    const txData = await safeFetch<any>(
+      apiUrl,
+      { next: { revalidate: 10 } },
+      null
+    );
+
+    if (txData?.status === "1" && Array.isArray(txData?.result)) {
+      transactions = txData.result.map((tx: any) => ({
+        hash: tx.hash,
+        from: tx.from,
+        to: tx.to,
+        value: tx.value,
+        timeStamp: tx.timeStamp,
+        chain: 'ethereum'
+      }));
     }
 
     return { balanceEth, transactions };

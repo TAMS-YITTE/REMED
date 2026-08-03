@@ -11,7 +11,7 @@ const getAdminClient = () =>
     process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-// Lit les achats de l'utilisateur (par user_id OU par adresses de wallet) puis délègue le calcul.
+// Lit les achats de l'utilisateur (par user_id OU par adresses de wallet) avec déduplication stricte.
 export async function getFiscalReport(
   privyId?: string | null,
   onChainQuantities?: Record<string, number>
@@ -36,7 +36,7 @@ export async function getFiscalReport(
 
   let query = supabase
     .from('transactions')
-    .select('provider, fiat_amount, crypto_amount, crypto_currency, status, created_at');
+    .select('id, provider, fiat_amount, crypto_amount, crypto_currency, status, provider_reference_id, created_at');
 
   if (addresses.length > 0) {
     const addrFilters = addresses.map((a) => `wallet_address.eq.${a}`).join(',');
@@ -49,7 +49,24 @@ export async function getFiscalReport(
 
   const validTxs = (txs || []).filter((t: any) => !t.status || t.status === 'completed' || t.status === 'success');
 
+  // Déduplication stricte : si provider_reference_id ou id identique, ou même date/montant/quantité
+  const seenKeys = new Set<string>();
+  const deduplicatedTxs: PurchaseRow[] = [];
+
+  for (const t of validTxs) {
+    const key = t.provider_reference_id
+      ? `ref_${t.provider_reference_id}`
+      : t.id
+      ? `id_${t.id}`
+      : `content_${t.created_at}_${t.crypto_currency}_${t.crypto_amount}_${t.fiat_amount}`;
+
+    if (!seenKeys.has(key)) {
+      seenKeys.add(key);
+      deduplicatedTxs.push(t as PurchaseRow);
+    }
+  }
+
   const prices = await getCryptoPrices();
 
-  return computeFiscalReport(validTxs as PurchaseRow[], prices, onChainQuantities);
+  return computeFiscalReport(deduplicatedTxs, prices, onChainQuantities);
 }

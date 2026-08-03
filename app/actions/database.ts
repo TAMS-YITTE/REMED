@@ -176,5 +176,19 @@ export async function getPurchases(privyId: string, walletAddress?: string) {
     return [];
   }
 
-  return txs || [];
+  const seenKeys = new Set<string>();
+  const deduplicated: any[] = [];
+  for (const t of txs || []) {
+    const key = t.provider_reference_id
+      ? `ref_${t.provider_reference_id}`
+      : t.id
+      ? `id_${t.id}`
+      : `content_${t.created_at}_${t.crypto_currency}_${t.crypto_amount}_${t.fiat_amount}`;
+    if (!seenKeys.has(key)) {
+      seenKeys.add(key);
+      deduplicated.push(t);
+    }
+  }
+
+  return deduplicated;
 }

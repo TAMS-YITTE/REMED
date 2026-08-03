@@ -7,9 +7,6 @@ const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PU
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Verifie la signature MoonPay (header Moonpay-Signature-V2 : "t=<timestamp>,s=<signature>").
-// Algorithme confirme via la doc officielle dev.moonpay.com/reference/reference-webhooks-signature :
-// HMAC-SHA256(webhookSecret, `${timestamp}.${rawBody}`), encode en hexadecimal.
 function verifyMoonPaySignature(rawBody: string, signatureHeader: string, secret: string): boolean {
   const parts = Object.fromEntries(
     signatureHeader.split(',').map((p) => {
@@ -34,14 +31,12 @@ function verifyMoonPaySignature(rawBody: string, signatureHeader: string, secret
 
 export async function POST(request: Request) {
   try {
-    // Le corps brut (avant parsing JSON) est indispensable pour verifier la
-    // signature - toute transformation (whitespace, ordre des champs) la casse.
     const rawBody = await request.text();
     const signatureHeader = request.headers.get('moonpay-signature-v2');
     const webhookSecret = process.env.MOONPAY_WEBHOOK_KEY;
 
     if (!webhookSecret) {
-      console.error('MoonPay Webhook: MOONPAY_WEBHOOK_KEY non configuree.');
+      console.error('MoonPay Webhook: MOONPAY_WEBHOOK_KEY non configurée.');
       return NextResponse.json({ status: 'error', message: 'Webhook not configured' }, { status: 500 });
     }
 
@@ -52,20 +47,31 @@ export async function POST(request: Request) {
 
     const payload = JSON.parse(rawBody);
 
-    // MoonPay Webhook Types: transaction_created, transaction_updated
     if (payload.type === 'transaction_updated' && payload.data.status === 'completed') {
       const orderData = payload.data;
+      const providerRefId = orderData.id;
+
+      // Idempotence : Ne jamais insérer la même transaction MoonPay deux fois
+      const { data: existing } = await supabase
+        .from('transactions')
+        .select('id')
+        .eq('provider_reference_id', providerRefId)
+        .maybeSingle();
+
+      if (existing) {
+        return NextResponse.json({ status: 'success', message: 'Already recorded' });
+      }
 
       const fiatAmount = orderData.baseCurrencyAmount;
       const fiatCurrency = orderData.baseCurrency?.code?.toUpperCase() || 'EUR';
       const cryptoAmount = orderData.quoteCurrencyAmount;
       const cryptoCurrency = orderData.currency?.code?.toUpperCase() || 'ETH';
       const walletAddress = orderData.walletAddress;
-      const externalCustomerId = orderData.externalCustomerId; // Optionnel : à passer au widget si on veut matcher
+      const externalCustomerId = orderData.externalCustomerId;
 
       let userId = null;
       if (externalCustomerId) {
-        const { data: user } = await supabase.from('users').select('id').eq('privy_id', externalCustomerId).single();
+        const { data: user } = await supabase.from('users').select('id').eq('privy_id', externalCustomerId).maybeSingle();
         if (user) userId = user.id;
       }
 
@@ -79,7 +85,7 @@ export async function POST(request: Request) {
           crypto_currency: cryptoCurrency,
           wallet_address: walletAddress,
           status: 'completed',
-          provider_reference_id: orderData.id,
+          provider_reference_id: providerRefId,
         }
       ]);
     }

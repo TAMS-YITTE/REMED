@@ -9,6 +9,10 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  themeColor: '#6366f1',
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.remedly.fr'),
   manifest: '/manifest.json',
@@ -17,7 +21,6 @@ export const metadata: Metadata = {
     title: 'Remedly',
     statusBarStyle: 'black-translucent',
   },
-  themeColor: '#6366f1',
   alternates: {
     canonical: '/',
   },

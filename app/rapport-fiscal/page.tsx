@@ -9,6 +9,7 @@ import { Footer } from '@/components/Footer';
 import { AuthButton } from '@/components/AuthButton';
 import { getFiscalReport } from '@/app/actions/fiscal';
 import { getCryptoPrices } from '@/app/actions/prices';
+import { saveManualPurchase } from '@/app/actions/database';
 import type { FiscalReport } from '@/lib/fiscal';
 import { computeFiscalReport, type PurchaseRow } from '@/lib/fiscal';
 import { parseTransactionCsv, type CsvTransaction } from '@/lib/csvParser';
@@ -16,7 +17,7 @@ import { computeChronological2086, type TradeTransaction, LEGAL_DISCLAIMER_2086 
 import { getWalletData, getErc20Balances } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
-import { Loader2, Printer, Sparkles, AlertTriangle, ArrowDownRight, ArrowUpRight, Upload, FileSpreadsheet, CheckCircle2 } from 'lucide-react';
+import { Loader2, Printer, Sparkles, AlertTriangle, Upload, Plus } from 'lucide-react';
 
 const eur = (n: number) =>
   n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 });
@@ -61,6 +62,12 @@ export default function RapportFiscalPage() {
   const [remedlyTrades, setRemedlyTrades] = useState<TradeTransaction[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Modal de saisie manuelle du prix d'achat
+  const [modalAsset, setModalAsset] = useState<{ symbol: string; quantity: number } | null>(null);
+  const [fiatAmountInput, setFiatAmountInput] = useState<string>('');
+  const [providerInput, setProviderInput] = useState<string>('moonpay');
+  const [savingManual, setSavingManual] = useState(false);
+
   const loadReport = async () => {
     if (!user?.id) return;
     setLoading(true);
@@ -72,9 +79,6 @@ export default function RapportFiscalPage() {
 
       const baseReport = await getFiscalReport(user.id, quantities);
 
-      // Achats on-ramp Remedly reconstruits depuis les lots : indispensables pour
-      // M (prix total d'acquisition) du calcul 2086 — sinon M est sous-évalué et
-      // les plus-values surévaluées.
       const remedlyBuys: TradeTransaction[] = baseReport.assets.flatMap((a) =>
         a.lots.map((lot) => ({
           date: lot.date,
@@ -96,8 +100,6 @@ export default function RapportFiscalPage() {
             created_at: lot.date,
           }))
         );
-        // Seuls les ACHATS comptent comme acquisitions pour le prix de revient ;
-        // les ventes CSV sont traitées par le moteur 2086, pas ici.
         const csvBuys: PurchaseRow[] = csvImports
           .filter((c) => c.type === 'buy')
           .map((c) => ({
@@ -108,7 +110,6 @@ export default function RapportFiscalPage() {
             created_at: c.date,
           }));
 
-        // Fusion Remedly + CSV (au lieu de remplacer le rapport par le seul CSV).
         const mergedReport = computeFiscalReport([...remedlyRows, ...csvBuys], prices || null, quantities);
         setReport(mergedReport);
       } else {
@@ -144,6 +145,23 @@ export default function RapportFiscalPage() {
       }
     };
     reader.readAsText(file);
+  };
+
+  const handleSaveManual = async () => {
+    if (!modalAsset || !user?.id || !fiatAmountInput) return;
+    const num = parseFloat(fiatAmountInput.replace(',', '.'));
+    if (isNaN(num) || num <= 0) return;
+    setSavingManual(true);
+    try {
+      await saveManualPurchase(user.id, modalAsset.symbol, num, modalAsset.quantity, new Date().toISOString(), providerInput);
+      setModalAsset(null);
+      setFiatAmountInput('');
+      await loadReport();
+    } catch (e) {
+      console.error("Erreur sauvegarde achat manuel :", e);
+    } finally {
+      setSavingManual(false);
+    }
   };
 
   if (!isReady) {
@@ -313,15 +331,26 @@ export default function RapportFiscalPage() {
                     </div>
                     <div>
                       <p className="text-xs text-gray-400 print:text-gray-600">Montant Investi</p>
-                      <p className="font-semibold text-white print:text-gray-900">
+                      <div className="flex items-center gap-2 mt-0.5">
                         {a.costInconnu ? (
-                          <span className="text-xs text-amber-300 font-normal bg-amber-500/20 px-2 py-0.5 rounded print:bg-gray-200 print:text-gray-800">
-                            Inconnu (Dépôt)
-                          </span>
+                          <>
+                            <span className="text-xs text-amber-300 font-normal bg-amber-500/20 px-2 py-0.5 rounded print:bg-gray-200 print:text-gray-800">
+                              Inconnu (Dépôt)
+                            </span>
+                            <button
+                              onClick={() => {
+                                setModalAsset({ symbol: a.symbol, quantity: a.totalQuantity });
+                                setFiatAmountInput('');
+                              }}
+                              className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 underline flex items-center gap-0.5 print:hidden"
+                            >
+                              <Plus className="w-3 h-3" /> Renseigner
+                            </button>
+                          </>
                         ) : (
-                          eur(a.totalInvested)
+                          <span className="font-semibold text-white print:text-gray-900">{eur(a.totalInvested)}</span>
                         )}
-                      </p>
+                      </div>
                     </div>
                     <div>
                       <p className="text-xs text-gray-400 print:text-gray-600">PRU (Prix de Revient)</p>
@@ -369,8 +398,6 @@ export default function RapportFiscalPage() {
 
             {/* SYNTHÈSE PLUS-VALUE RÉALISÉE (FORMULAIRE 2086) SI CESSIONS CSV EXISTENT */}
             {(() => {
-              // M complet = achats Remedly (on-ramp) + transactions CSV, triés
-              // chronologiquement par le moteur.
               const allTrades: TradeTransaction[] = [
                 ...remedlyTrades,
                 ...csvImports.map((c) => ({
@@ -470,6 +497,64 @@ export default function RapportFiscalPage() {
               );
             })()}
           </>
+        )}
+
+        {/* MODAL DE SAISIE MANUELLE */}
+        {modalAsset && (
+          <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-[#2d3152] border border-white/15 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+              <h3 className="text-lg font-bold text-white mb-2">
+                Renseigner le montant d'achat ({modalAsset.symbol.toUpperCase()})
+              </h3>
+              <p className="text-xs text-gray-300 mb-4">
+                Indiquez le montant en Euros payé lors de l'acquisition de vos {qty(modalAsset.quantity)} {modalAsset.symbol.toUpperCase()} pour calculer votre prix de revient (PRU) et votre plus-value.
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1">Plateforme / Moyen de paiement</label>
+                  <select
+                    value={providerInput}
+                    onChange={(e) => setProviderInput(e.target.value)}
+                    className="w-full bg-[#21243b] border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="moonpay">MoonPay (Carte bancaire)</option>
+                    <option value="transak">Transak (Virement / CB)</option>
+                    <option value="binance">Binance</option>
+                    <option value="kraken">Kraken</option>
+                    <option value="coinbase">Coinbase</option>
+                    <option value="autre">Autre plateforme / Dépôt</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-300 mb-1">Montant total payé en Euros (€)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Ex: 25.00"
+                    value={fiatAmountInput}
+                    onChange={(e) => setFiatAmountInput(e.target.value)}
+                    className="w-full bg-[#21243b] border border-white/15 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-3 mt-6">
+                <button
+                  onClick={() => setModalAsset(null)}
+                  className="px-4 py-2 text-xs font-medium text-gray-400 hover:text-white"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleSaveManual}
+                  disabled={savingManual || !fiatAmountInput}
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all disabled:opacity-50 flex items-center gap-1.5 shadow-lg shadow-indigo-500/20"
+                >
+                  {savingManual && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  Valider et Enregistrer
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* DISCLAIMER & PÉRIMÈTRE FISCAL */}

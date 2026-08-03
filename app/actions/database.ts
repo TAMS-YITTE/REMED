@@ -192,3 +192,59 @@ export async function getPurchases(privyId: string, walletAddress?: string) {
 
   return deduplicated;
 }
+
+export async function saveManualPurchase(
+  privyId: string,
+  symbol: string,
+  fiatAmount: number,
+  cryptoQuantity: number,
+  purchaseDate?: string,
+  provider: string = 'moonpay'
+): Promise<{ ok: boolean; error?: string }> {
+  if (!privyId) return { ok: false, error: 'Non authentifié' };
+  const supabase = getAdminClient();
+  if (!supabase) return { ok: false, error: 'Erreur BDD' };
+
+  let { data: user } = await supabase
+    .from('users')
+    .select('id, wallet_address, solana_wallet_address, bitcoin_wallet_address')
+    .eq('privy_id', privyId)
+    .maybeSingle();
+
+  if (!user) {
+    const { data: newUser } = await supabase
+      .from('users')
+      .insert([{ privy_id: privyId }])
+      .select()
+      .single();
+    user = newUser;
+  }
+
+  if (!user) return { ok: false, error: 'Utilisateur introuvable' };
+
+  const symUpper = symbol.toUpperCase();
+  let walletAddr = user.wallet_address;
+  if (symUpper === 'SOL') walletAddr = user.solana_wallet_address || walletAddr;
+  if (symUpper === 'BTC') walletAddr = user.bitcoin_wallet_address || walletAddr;
+
+  const { error } = await supabase.from('transactions').insert([
+    {
+      user_id: user.id,
+      provider: provider,
+      fiat_amount: fiatAmount,
+      fiat_currency: 'EUR',
+      crypto_amount: cryptoQuantity,
+      crypto_currency: symUpper,
+      wallet_address: walletAddr,
+      status: 'completed',
+      created_at: purchaseDate || new Date().toISOString(),
+    },
+  ]);
+
+  if (error) {
+    console.error('Erreur sauvegarde achat manuel:', error);
+    return { ok: false, error: error.message };
+  }
+
+  return { ok: true };
+}

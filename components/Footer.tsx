@@ -1,7 +1,11 @@
+'use client';
+
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useLanguage();
 
   return (
     <footer className="bg-[#252844] border-t border-white/10 py-12 px-6">
@@ -15,27 +19,27 @@ export function Footer() {
                   rem<span className="text-indigo-400">e</span>dly
                 </span>
                 <span className="text-[10px] text-indigo-300/80 font-medium tracking-wider uppercase mt-1">
-                  Remède contre la complexité
+                  {t('slogan')}
                 </span>
               </div>
             </Link>
             <p className="text-sm text-gray-400 max-w-sm">
-              L'interface la plus simple pour accéder à l'écosystème crypto.
+              {t('footer.desc')}
             </p>
           </div>
           
           <div className="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-4 text-sm font-medium text-gray-300">
             <Link href="/mentions-legales" className="hover:text-indigo-400 transition-colors">
-              Mentions Légales
+              {t('footer.legal')}
             </Link>
             <Link href="/cgu" className="hover:text-indigo-400 transition-colors">
-              CGU
+              {t('footer.cgu')}
             </Link>
             <Link href="/confidentialite" className="hover:text-indigo-400 transition-colors">
-              Confidentialité
+              {t('footer.privacy')}
             </Link>
             <a href="mailto:contact@remedly.fr" className="hover:text-indigo-400 transition-colors">
-              Contact
+              {t('footer.contact')}
             </a>
           </div>
         </div>
@@ -47,7 +51,7 @@ export function Footer() {
         </div>
 
         <div className="text-center text-xs text-gray-500">
-          &copy; {currentYear} Remedly. Tous droits réservés.
+          &copy; {currentYear} Remedly. {t('footer.rights')}
         </div>
       </div>
     </footer>

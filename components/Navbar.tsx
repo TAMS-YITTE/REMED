@@ -4,11 +4,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage, Language } from '@/contexts/LanguageContext';
+import { useLanguage, Language, Currency } from '@/contexts/LanguageContext';
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, currency, setCurrency, t } = useLanguage();
 
   return (
     <>
@@ -21,23 +21,68 @@ export function Navbar() {
                 rem<span className="text-indigo-400">e</span>dly
               </span>
               <span className="text-[10px] text-indigo-300/80 font-medium tracking-wider uppercase mt-1">
-                Remède contre la complexité
+                {t('slogan')}
               </span>
             </div>
           </Link>
           <div className="hidden md:flex gap-6 items-center">
             <Link href="/" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.home')}</Link>
             <Link href="/acheter" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.buy')}</Link>
-            <Link href="/rapport-fiscal" className="text-sm font-medium text-indigo-300 hover:text-indigo-200 transition-colors">Relevé fiscal</Link>
+            <Link href="/rapport-fiscal" className="text-sm font-medium text-indigo-300 hover:text-indigo-200 transition-colors">{t('nav.fiscal')}</Link>
             <Link href="/pro" className="text-sm font-semibold text-purple-300 hover:text-purple-200 transition-colors flex items-center gap-1 bg-purple-500/20 border border-purple-500/30 px-2.5 py-0.5 rounded-full">
-              <span>Remedly Pro</span>
+              <span>{t('nav.pro')}</span>
               <span className="text-xs">⚡</span>
             </Link>
             <Link href="/apprendre" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">{t('nav.blog')}</Link>
             <Link href="/apprendre/quiz" className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors">{t('nav.quiz')}</Link>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {/* Language + Currency Toggle */}
+          <div className="hidden sm:flex items-center gap-1.5 bg-[#2E3152] rounded-xl p-1 border border-white/10">
+            <button
+              onClick={() => setLanguage('fr')}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                language === 'fr'
+                  ? 'bg-indigo-500 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              FR
+            </button>
+            <button
+              onClick={() => setLanguage('en')}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                language === 'en'
+                  ? 'bg-indigo-500 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              EN
+            </button>
+          </div>
+          <div className="hidden sm:flex items-center gap-1.5 bg-[#2E3152] rounded-xl p-1 border border-white/10">
+            <button
+              onClick={() => setCurrency('EUR')}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                currency === 'EUR'
+                  ? 'bg-emerald-500 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              €
+            </button>
+            <button
+              onClick={() => setCurrency('USD')}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                currency === 'USD'
+                  ? 'bg-emerald-500 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              $
+            </button>
+          </div>
           <div className="hidden sm:block">
             <AuthButton />
           </div>
@@ -81,7 +126,7 @@ export function Navbar() {
             className="md:hidden fixed top-0 right-0 bottom-0 w-[80%] max-w-sm bg-[#2E3152] border-l border-white/10 shadow-2xl z-50 flex flex-col"
           >
             <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <span className="text-lg font-bold text-white">Menu</span>
+              <span className="text-lg font-bold text-white">{t('menu.title')}</span>
               <button 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
@@ -94,13 +139,28 @@ export function Navbar() {
             <div className="flex flex-col gap-2 p-6 overflow-y-auto flex-1">
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.home')}</Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/acheter" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.buy')}</Link>
-              <Link onClick={() => setIsMobileMenuOpen(false)} href="/rapport-fiscal" className="px-4 py-4 text-base font-medium text-indigo-300 hover:text-indigo-200 hover:bg-white/5 rounded-xl transition-colors">Relevé fiscal</Link>
+              <Link onClick={() => setIsMobileMenuOpen(false)} href="/rapport-fiscal" className="px-4 py-4 text-base font-medium text-indigo-300 hover:text-indigo-200 hover:bg-white/5 rounded-xl transition-colors">{t('nav.fiscal')}</Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/pro" className="px-4 py-4 text-base font-semibold text-purple-300 hover:text-purple-200 hover:bg-purple-500/10 rounded-xl transition-colors flex items-center justify-between">
-                <span>Remedly Pro ⚡</span>
-                <span className="text-xs bg-purple-500/30 px-2 py-0.5 rounded-full text-purple-200">4,99 €/mois</span>
+                <span>{t('nav.pro')} ⚡</span>
+                <span className="text-xs bg-purple-500/30 px-2 py-0.5 rounded-full text-purple-200">{t('pro.price')}</span>
               </Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre" className="px-4 py-4 text-base font-medium text-gray-200 hover:text-white hover:bg-white/5 rounded-xl transition-colors">{t('nav.blog')}</Link>
               <Link onClick={() => setIsMobileMenuOpen(false)} href="/apprendre/quiz" className="px-4 py-4 text-base font-medium text-indigo-400 hover:text-indigo-300 hover:bg-white/5 rounded-xl transition-colors">{t('nav.quiz')}</Link>
+              
+              {/* Mobile Language + Currency */}
+              <div className="border-t border-white/10 pt-4 mt-2">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 block">Langue · Language</span>
+                <div className="flex gap-2 mb-4">
+                  <button onClick={() => setLanguage('fr')} className={`flex-1 py-2.5 text-sm font-semibold rounded-xl border transition-all ${language === 'fr' ? 'bg-indigo-500 border-indigo-400 text-white' : 'border-white/20 text-gray-400 hover:text-white'}`}>🇫🇷 Français</button>
+                  <button onClick={() => setLanguage('en')} className={`flex-1 py-2.5 text-sm font-semibold rounded-xl border transition-all ${language === 'en' ? 'bg-indigo-500 border-indigo-400 text-white' : 'border-white/20 text-gray-400 hover:text-white'}`}>🇬🇧 English</button>
+                </div>
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 block">Devise · Currency</span>
+                <div className="flex gap-2 mb-4">
+                  <button onClick={() => setCurrency('EUR')} className={`flex-1 py-2.5 text-sm font-semibold rounded-xl border transition-all ${currency === 'EUR' ? 'bg-emerald-500 border-emerald-400 text-white' : 'border-white/20 text-gray-400 hover:text-white'}`}>€ EUR</button>
+                  <button onClick={() => setCurrency('USD')} className={`flex-1 py-2.5 text-sm font-semibold rounded-xl border transition-all ${currency === 'USD' ? 'bg-emerald-500 border-emerald-400 text-white' : 'border-white/20 text-gray-400 hover:text-white'}`}>$ USD</button>
+                </div>
+              </div>
+              
               <div className="mt-auto pt-6">
                 <AuthButton />
               </div>

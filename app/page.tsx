@@ -15,7 +15,7 @@ import { cryptoList } from '@/lib/cryptoList';
 export default function Home() {
   const [eurAmount, setEurAmount] = useState<string>('100');
   const [prices, setPrices] = useState<CryptoPrices | null>(null);
-  const { t } = useLanguage();
+  const { t, language, currency, currencySymbol, formatAmount } = useLanguage();
   const [selectedCryptoId, setSelectedCryptoId] = useState<string>('eth');
   
   // Custom Select State
@@ -69,27 +69,13 @@ export default function Home() {
   const defaultList = [...favoriteCryptos, ...defaultBase];
   const listToDisplay = searchQuery ? filteredCryptos : defaultList;
 
+  // Use translated FAQ data
   const faqs = [
-    {
-      q: "Mes fonds sont-ils en sécurité ?",
-      a: "Oui. Nous utilisons la technologie 'Embedded Wallet' (fournie par Privy). Vos portefeuilles sont 100% non-custodial, ce qui signifie que vous seul y avez accès. Nous ne détenons jamais vos cryptos ni vos clés privées."
-    },
-    {
-      q: "Comment acheter par virement sans aucun frais de carte ?",
-      a: "Pour éviter les frais de carte (2 à 4 %), cliquez sur 'Payer avec MoonPay' puis sur le menu déroulant des moyens de paiement et choisissez 'MoonPay Balance'. Cliquez sur 'Top up', puis sur la roue crantée (⚙️) ➔ Payment methods ➔ Add new ➔ Easy Bank Transfers. Sélectionnez votre banque (BoursoBank, BNP Paribas, Caisse d'Épargne...) et validez votre virement instantané sans aucun frais de carte !"
-    },
-    {
-      q: "Combien de temps prend un achat ?",
-      a: "Avec l'Apple Pay ou la carte bancaire, l'achat est instantané. Avec le virement bancaire classique, cela peut prendre de 1 à 3 jours ouvrés selon votre banque."
-    },
-    {
-      q: "Quel est le montant minimum d'achat ?",
-      a: "Vous pouvez commencer à investir à partir de 30€ seulement. Idéal pour tester notre plateforme sans engagement."
-    },
-    {
-      q: "Comment récupérer mon compte si je change de téléphone ?",
-      a: "Votre compte est lié à votre adresse e-mail ou compte Google. Il n'y a aucune 'phrase de récupération' (seed phrase) complexe à mémoriser. Il vous suffit de vous reconnecter avec le même e-mail."
-    }
+    { q: t('faq.q1'), a: t('faq.a1') },
+    { q: t('faq.q2'), a: t('faq.a2') },
+    { q: t('faq.q3'), a: t('faq.a3') },
+    { q: t('faq.q4'), a: t('faq.a4') },
+    { q: t('faq.q5'), a: t('faq.a5') },
   ];
 
   const jsonLd = {
@@ -120,9 +106,8 @@ export default function Home() {
           {/* Partners */}
           <div className="flex items-center justify-center gap-8 opacity-70 hover:opacity-100 transition-opacity duration-300 flex-shrink-0">
             <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest hidden md:inline">
-              Sécurisé par
+              {t('info.securedBy')}
             </span>
-            {/* Using text logos with distinct styling as reliable fallbacks for logos */}
             <div className="flex items-center gap-6">
                <span className="text-lg font-black tracking-tighter text-white flex items-center gap-1">
                  <svg className="w-5 h-5 text-purple-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
@@ -149,22 +134,20 @@ export default function Home() {
 
       {/* HERO SECTION PREMIUM */}
       <section className="relative pt-12 pb-16 md:pt-16 md:pb-20 px-6 overflow-hidden">
-        {/* Abstract Background Elements */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-gradient-to-br from-indigo-100/40 via-purple-50/40 to-transparent rounded-[100%] blur-3xl -z-10 pointer-events-none"></div>
         <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-blue-50/50 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center mb-12">
-
           
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] tracking-tight text-white mb-6">
-            La crypto,<br />
+            {t('hero.title1')}<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
-              simplement.
+              {t('hero.title2')}
             </span>
           </h1>
           
           <p className="text-lg lg:text-xl text-gray-300 leading-relaxed max-w-2xl">
-            Achetez Bitcoin, Ethereum, Solana et plus encore en 3 clics. Sans phrase de récupération complexe, avec une sécurité bancaire.
+            {t('hero.subtitle')}
           </p>
         </div>
 
@@ -197,7 +180,7 @@ export default function Home() {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-white">{t('sim.title')}</h3>
                 <span className="flex items-center gap-1 text-xs font-semibold bg-green-50 text-green-700 px-2 py-1 rounded-md">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {prices ? 'Live' : 'Chargement...'}
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {prices ? t('sim.live') : t('sim.loading')}
                 </span>
               </div>
               
@@ -213,13 +196,13 @@ export default function Home() {
                       placeholder="0"
                     />
                     <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-1.5">
-                      <span className="text-xl">🇪🇺</span>
-                      <span className="font-bold">EUR</span>
+                      <span className="text-xl">{currency === 'EUR' ? '🇪🇺' : '🇺🇸'}</span>
+                      <span className="font-bold">{currency === 'EUR' ? 'EUR' : 'USD'}</span>
                     </div>
                   </div>
                   {Number(eurAmount) > 0 && Number(eurAmount) < 30 && (
                     <p className="text-[11px] text-amber-400 mt-2 text-left flex items-center gap-1 font-medium">
-                      <span>⚠️</span> Montant minimum d'achat recommandé : 30 €
+                      <span>⚠️</span> {t('sim.minAmount')} {currencySymbol}
                     </p>
                   )}
                 </div>
@@ -262,7 +245,7 @@ export default function Home() {
                             <div className="p-2 border-b border-white/10">
                               <input 
                                 type="text" 
-                                placeholder="Rechercher (ex: SOL, Ethereum)..." 
+                                placeholder={t('sim.search')} 
                                 className="w-full bg-[#252844] border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -273,7 +256,7 @@ export default function Home() {
                             <div className="max-h-60 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-200">
                               {!searchQuery && (
                                 <div className="px-3 py-1.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                                  {favorites.length > 0 ? 'Favoris & Top Cryptos' : 'Top Cryptos'}
+                                  {favorites.length > 0 ? t('sim.favorites') : t('sim.topCryptos')}
                                 </div>
                               )}
                               {listToDisplay.length > 0 ? (
@@ -307,11 +290,11 @@ export default function Home() {
                                       <span className="text-xs opacity-70 leading-tight">{c.name}</span>
                                     </div>
                                     {!c.supported ? (
-                                      <span className="ml-auto text-[10px] font-medium uppercase tracking-wide text-gray-500">Bientôt</span>
+                                      <span className="ml-auto text-[10px] font-medium uppercase tracking-wide text-gray-500">{t('sim.comingSoon')}</span>
                                     ) : (
                                       <div className="ml-auto flex items-center gap-3">
                                         {prices && prices[c.id] && (
-                                          <span className="text-xs font-medium opacity-60">€{prices[c.id]}</span>
+                                          <span className="text-xs font-medium opacity-60">{currencySymbol}{prices[c.id]}</span>
                                         )}
                                         <div 
                                           onClick={(e) => { e.stopPropagation(); toggleFavorite(c.id); }}
@@ -327,7 +310,7 @@ export default function Home() {
                                   ))}
                                 </motion.div>
                               ) : (
-                                <div className="text-center py-6 text-sm text-gray-500">Aucune crypto trouvée</div>
+                                <div className="text-center py-6 text-sm text-gray-500">{t('sim.noResults')}</div>
                               )}
                             </div>
                           </motion.div>
@@ -338,24 +321,24 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Encadrement des frais mis en avant */}
+              {/* Fee & Rate Box */}
               <div className="mt-6 bg-[#252844] rounded-xl p-4 text-sm border border-white/10">
                 <div className="flex justify-between text-gray-400 mb-2">
-                  <span>Taux estimé</span>
-                  <span className="font-medium">1 {selectedCrypto.name} = {currentPrice ? currentPrice.toFixed(2) : '...'} €</span>
+                  <span>{t('sim.rateEstimate')}</span>
+                  <span className="font-medium">1 {selectedCrypto.name} = {currentPrice ? formatAmount(currentPrice) : '...'}</span>
                 </div>
                 <div className="flex justify-between text-white font-semibold bg-[#2E3152] p-2 rounded-lg border border-white/10 shadow-sm">
-                  <span>Frais transparents (~1.99%)</span>
-                  <span>{feeAmount > 0 ? feeAmount.toFixed(2) : '0.00'} €</span>
+                  <span>{t('sim.feeLabel')}</span>
+                  <span>{feeAmount > 0 ? formatAmount(feeAmount) : formatAmount(0)}</span>
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-white/10">
-                <p className="text-center text-xs text-gray-400 mb-3 font-medium">Moyens de paiement acceptés</p>
+                <p className="text-center text-xs text-gray-400 mb-3 font-medium">{t('sim.paymentMethods')}</p>
                 <div className="flex justify-center items-center gap-4 opacity-80">
                   <span className="text-sm font-bold font-sans">Apple Pay</span>
                   <span className="text-sm font-bold font-sans italic">VISA</span>
-                  <span className="text-sm font-bold font-sans text-indigo-400 border-b-2 border-indigo-500/30">Virement (Recommandé)</span>
+                  <span className="text-sm font-bold font-sans text-indigo-400 border-b-2 border-indigo-500/30">{t('sim.transferRecommended')}</span>
                 </div>
               </div>
 
@@ -370,9 +353,7 @@ export default function Home() {
         </div>
       </section>
 
-
-
-      {/* BLOC SÉCURITÉ & WALLET MAGIQUE */}
+      {/* BLOC SECURITE & WALLET MAGIQUE */}
       <section className="py-20 px-6 max-w-5xl mx-auto">
         <div className="bg-gradient-to-br from-gray-900 to-indigo-950 rounded-[2rem] p-8 md:p-12 text-white relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl"></div>
@@ -380,33 +361,32 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-10 items-center relative z-10">
             <div>
               <div className="inline-block bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-wide">
-                Innovation Remedly
+                {t('innovation.badge')}
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Le portefeuille invisible,<br/>la sécurité absolue.</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{t('innovation.title')}</h2>
               <p className="text-indigo-100/80 text-lg leading-relaxed mb-6">
-                L'absence de "Seed Phrase" (les 24 mots complexes à mémoriser) est notre plus grande force. Votre portefeuille est 100% non-custodial et auto-hébergé : il n'appartient qu'à vous. 
+                {t('innovation.desc')}
               </p>
               <ul className="space-y-3 text-sm text-indigo-100/70 mb-8">
-                <li className="flex items-center gap-2"><svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Récupérable via un simple e-mail sécurisé</li>
-                <li className="flex items-center gap-2"><svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Nous n'avons jamais accès à vos fonds</li>
-                <li className="flex items-center gap-2"><svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> Protégé par une cryptographie de pointe (Privy)</li>
+                <li className="flex items-center gap-2"><svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> {t('innovation.point1')}</li>
+                <li className="flex items-center gap-2"><svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> {t('innovation.point2')}</li>
+                <li className="flex items-center gap-2"><svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg> {t('innovation.point3')}</li>
               </ul>
               <Link href="/apprendre/qu-est-ce-qu-un-wallet-non-custodial" className="text-indigo-300 font-semibold hover:text-white transition-colors flex items-center gap-1">
-                Comprendre notre technologie <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                {t('innovation.cta')} <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
               </Link>
             </div>
             
             <div className="flex justify-center">
-              {/* Représentation visuelle abstraite du wallet */}
               <div className="relative w-48 h-48 md:w-64 md:h-64">
                 <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-full animate-[spin_8s_linear_infinite] opacity-20 blur-xl"></div>
                 <div className="absolute inset-4 bg-gray-900 rounded-full border border-indigo-500/30 flex items-center justify-center shadow-inner">
                   <div className="text-center">
                     <div className="text-4xl mb-2">📩</div>
-                    <div className="text-xs text-indigo-300 font-medium uppercase tracking-wider">Votre E-mail</div>
+                    <div className="text-xs text-indigo-300 font-medium uppercase tracking-wider">{language === 'fr' ? 'Votre E-mail' : 'Your Email'}</div>
                     <div className="my-2 h-4 border-l-2 border-dashed border-indigo-500/50 mx-auto w-0"></div>
                     <div className="text-3xl">🔐</div>
-                    <div className="text-xs text-indigo-300 font-medium uppercase tracking-wider mt-1">Votre Coffre</div>
+                    <div className="text-xs text-indigo-300 font-medium uppercase tracking-wider mt-1">{language === 'fr' ? 'Votre Coffre' : 'Your Vault'}</div>
                   </div>
                 </div>
               </div>
@@ -418,35 +398,35 @@ export default function Home() {
       {/* FEATURES PREMIUM */}
       <section className="py-16 px-6 max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4">Acheter sans compromis</h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">Une expérience pensée pour être accessible à tous, tout en respectant les standards bancaires les plus stricts.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4">{t('features.title')}</h2>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">{t('features.subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-[#2E3152] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
             <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">🛡️</div>
-            <h3 className="text-xl font-bold text-white mb-3">Sécurité Bancaire</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{t('features.security')}</h3>
             <p className="text-gray-300 leading-relaxed text-sm mb-4">
-              Votre portefeuille non-custodial est créé automatiquement. Vous êtes le seul maître de vos fonds.
+              {t('features.securityDesc')}
             </p>
             <Link href="/apprendre/qu-est-ce-qu-un-wallet-non-custodial" className="inline-flex items-center text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
-              En savoir plus <span aria-hidden="true" className="ml-1">&rarr;</span>
+              {t('features.learnMore')} <span aria-hidden="true" className="ml-1">&rarr;</span>
             </Link>
           </div>
           
           <div className="bg-[#2E3152] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
             <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">⚡</div>
-            <h3 className="text-xl font-bold text-white mb-3">Instantané</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{t('features.instant')}</h3>
             <p className="text-gray-300 leading-relaxed text-sm">
-              Achetez par carte bancaire ou Apple Pay en moins de 2 minutes. Vos cryptos arrivent directement sur votre compte.
+              {t('features.instantDesc')}
             </p>
           </div>
 
           <div className="bg-[#2E3152] p-8 rounded-[20px] border border-white/10 shadow-[0_4px_20px_rgb(0,0,0,0.2)] hover:shadow-lg transition-shadow">
             <div className="w-14 h-14 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mb-6 border border-indigo-500/30">💶</div>
-            <h3 className="text-xl font-bold text-white mb-3">Frais Transparents</h3>
+            <h3 className="text-xl font-bold text-white mb-3">{t('features.fees')}</h3>
             <p className="text-gray-300 leading-relaxed text-sm">
-              Privilégiez le virement SEPA pour réduire considérablement vos frais par rapport à la carte bancaire. Pas de spread caché.
+              {t('features.feesDesc')}
             </p>
           </div>
         </div>
@@ -456,8 +436,8 @@ export default function Home() {
       <section className="py-20 px-6 border-t border-white/10">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">Questions fréquentes</h2>
-            <p className="text-gray-400">Tout ce que vous devez savoir avant de vous lancer.</p>
+            <h2 className="text-3xl font-bold text-white mb-4">{t('faq.title')}</h2>
+            <p className="text-gray-400">{t('faq.subtitle')}</p>
           </div>
 
           <div className="space-y-4">
@@ -495,20 +475,20 @@ export default function Home() {
 
           <div className="mt-10 text-center">
             <p className="text-gray-400 text-sm">
-              Vous avez d'autres questions ? <br/> Consultez notre <Link href="/apprendre" className="text-indigo-400 font-semibold hover:underline">Blog</Link> ou contactez notre support.
+              {t('faq.otherQuestions')} <br/> {t('faq.consult')} <Link href="/apprendre" className="text-indigo-400 font-semibold hover:underline">Blog</Link> {t('faq.orContact')}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Bandeau MiCA Premium (Pill) - Moved to bottom */}
+      {/* Bandeau MiCA Premium (Pill) */}
       <div className="flex justify-center py-8 px-4 relative z-20 border-t border-white/10 bg-[#252844]">
         <div className="inline-flex items-center gap-2.5 bg-[#2E3152]/80 backdrop-blur-md border border-white/10 shadow-sm px-4 py-2 rounded-full">
           <div className="flex items-center justify-center w-5 h-5 rounded-full bg-white/10 text-gray-300">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
           <span className="text-[11px] md:text-[12px] text-gray-300 font-medium tracking-wide">
-            L'investissement en crypto-actifs est risqué. Vous pouvez perdre votre capital.
+            {t('mica.disclaimer')}
           </span>
         </div>
       </div>
@@ -519,7 +499,7 @@ export default function Home() {
       {/* MOBILE STICKY CTA */}
       <div className="md:hidden fixed bottom-4 left-4 right-4 z-50">
         <Link href={`/acheter?crypto=${selectedCryptoId}`} className="block w-full bg-indigo-600 text-white text-center py-4 rounded-2xl font-bold shadow-[0_8px_30px_rgb(79,70,229,0.4)] active:scale-95 transition-transform">
-          Acheter des cryptos maintenant
+          {t('mobile.cta')}
         </Link>
       </div>
     </main>

@@ -22,6 +22,7 @@ export default function AlertesPage() {
   const [alerts, setAlerts] = useState<PriceAlert[]>([]);
   const [loading, setLoading] = useState(false);
   const [crypto, setCrypto] = useState('btc');
+  const [alertType, setAlertType] = useState<'threshold' | 'change_24h'>('threshold');
   const [direction, setDirection] = useState<'above' | 'below'>('above');
   const [target, setTarget] = useState('');
   const [saving, setSaving] = useState(false);
@@ -45,8 +46,8 @@ export default function AlertesPage() {
   const handleCreate = async () => {
     setError('');
     const price = Number(target);
-    if (!(price > 0)) {
-      setError('Entrez un seuil valide.');
+    if (isNaN(price) || price === 0) {
+      setError('Entrez une valeur valide (nombre supérieur ou inférieur à 0).');
       return;
     }
     if (!email) {
@@ -54,7 +55,7 @@ export default function AlertesPage() {
       return;
     }
     setSaving(true);
-    const res = await createPriceAlert(user!.id, email, crypto, direction, price);
+    const res = await createPriceAlert(user!.id, email, crypto, direction, price, alertType);
     setSaving(false);
     if (!res.ok) {
       setError(res.error || "Impossible de créer l'alerte.");
@@ -124,13 +125,13 @@ export default function AlertesPage() {
 
         {/* Création */}
         <div className="bg-[#2d3152] border border-white/10 rounded-2xl p-5 mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div>
               <label className="block text-xs text-gray-400 mb-1">Crypto</label>
               <select
                 value={crypto}
                 onChange={(e) => setCrypto(e.target.value)}
-                className="w-full bg-[#1a1c2e] border border-white/15 text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-[#1a1c2e] border border-white/15 text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
               >
                 {SUPPORTED.map((c) => (
                   <option key={c.id} value={c.id}>{c.name} ({c.symbol})</option>
@@ -138,24 +139,35 @@ export default function AlertesPage() {
               </select>
             </div>
             <div>
+              <label className="block text-xs text-gray-400 mb-1">Type d'Alerte</label>
+              <select
+                value={alertType}
+                onChange={(e) => setAlertType(e.target.value as 'threshold' | 'change_24h')}
+                className="w-full bg-[#1a1c2e] border border-white/15 text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
+              >
+                <option value="threshold">Prix Fixe (€)</option>
+                <option value="change_24h">Variation 24h (%)</option>
+              </select>
+            </div>
+            <div>
               <label className="block text-xs text-gray-400 mb-1">Condition</label>
               <select
                 value={direction}
                 onChange={(e) => setDirection(e.target.value as 'above' | 'below')}
-                className="w-full bg-[#1a1c2e] border border-white/15 text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-[#1a1c2e] border border-white/15 text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
               >
-                <option value="above">Monte au-dessus de</option>
-                <option value="below">Descend en-dessous de</option>
+                <option value="above">Au-dessus de</option>
+                <option value="below">En-dessous de</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Seuil (€)</label>
+              <label className="block text-xs text-gray-400 mb-1">Seuil ({alertType === 'change_24h' ? '%' : '€'})</label>
               <input
                 type="number"
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
-                placeholder="0.00"
-                className="w-full bg-[#1a1c2e] border border-white/15 text-white placeholder-gray-500 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder={alertType === 'change_24h' ? '-10 ou +5' : '0.00'}
+                className="w-full bg-[#1a1c2e] border border-white/15 text-white placeholder-gray-500 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 text-xs"
               />
             </div>
           </div>
@@ -165,13 +177,13 @@ export default function AlertesPage() {
           <button
             onClick={handleCreate}
             disabled={saving}
-            className="mt-4 w-full flex items-center justify-center gap-2 bg-[#534AB7] hover:opacity-90 text-white font-semibold py-2.5 rounded-lg transition-opacity disabled:opacity-70"
+            className="mt-4 w-full flex items-center justify-center gap-2 bg-[#534AB7] hover:opacity-90 text-white font-semibold py-2.5 rounded-lg transition-opacity disabled:opacity-70 text-sm"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
             Créer l'alerte
           </button>
           <p className="text-[11px] text-gray-500 mt-2">
-            Vous serez prévenu à {email || 'votre email'} dès que le seuil est atteint. Ceci n'est pas un conseil en investissement.
+            Vous serez prévenu à {email || 'votre email'} dès que le seuil est atteint.
           </p>
         </div>
 
@@ -186,8 +198,12 @@ export default function AlertesPage() {
               <div key={a.id} className="flex items-center justify-between bg-[#2d3152] border border-white/10 rounded-xl p-4">
                 <div className="text-sm">
                   <span className="font-semibold uppercase">{a.crypto}</span>{' '}
+                  <span className="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-md mr-2">
+                    {a.alert_type === 'change_24h' ? 'Variation 24h' : 'Prix Fixe'}
+                  </span>
                   <span className="text-gray-400">
-                    {a.direction === 'above' ? 'au-dessus de' : 'en-dessous de'} {eur(a.target_price)}
+                    {a.direction === 'above' ? 'au-dessus de' : 'en-dessous de'}{' '}
+                    {a.alert_type === 'change_24h' ? `${a.target_price} %` : eur(a.target_price)}
                   </span>
                   {!a.active && (
                     <span className="ml-2 text-[10px] uppercase bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded">déclenchée</span>

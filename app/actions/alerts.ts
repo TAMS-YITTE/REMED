@@ -10,11 +10,14 @@ const getAdminClient = () =>
     process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+export type AlertType = 'threshold' | 'change_24h';
+
 export interface PriceAlert {
   id: string;
   crypto: string;
   direction: AlertDirection;
   target_price: number;
+  alert_type?: AlertType;
   active: boolean;
   triggered_at: string | null;
   created_at: string;
@@ -33,7 +36,7 @@ export async function getPriceAlerts(privyId?: string | null): Promise<PriceAler
   const supabase = getAdminClient();
   const { data } = await supabase
     .from('price_alerts')
-    .select('id, crypto, direction, target_price, active, triggered_at, created_at')
+    .select('id, crypto, direction, target_price, alert_type, active, triggered_at, created_at')
     .eq('privy_id', privyId)
     .order('created_at', { ascending: false });
   return (data as PriceAlert[]) || [];
@@ -44,9 +47,9 @@ export async function createPriceAlert(
   email: string,
   crypto: string,
   direction: AlertDirection,
-  targetPrice: number
+  targetPrice: number,
+  alertType: AlertType = 'threshold'
 ): Promise<{ ok: boolean; error?: string }> {
-  // Gating Premium côté serveur — autorité, pas juste l'UI.
   if (!(await isPro(privyId))) {
     return { ok: false, error: 'Réservé aux abonnés Remedly Pro.' };
   }
@@ -56,8 +59,8 @@ export async function createPriceAlert(
   if (!crypto || (direction !== 'above' && direction !== 'below')) {
     return { ok: false, error: 'Paramètres invalides.' };
   }
-  if (!(targetPrice > 0)) {
-    return { ok: false, error: 'Le seuil doit être supérieur à 0.' };
+  if (isNaN(targetPrice) || targetPrice === 0) {
+    return { ok: false, error: 'Le seuil doit être un nombre valide.' };
   }
 
   const userId = await ensureUserId(privyId);
@@ -70,6 +73,7 @@ export async function createPriceAlert(
       crypto: crypto.toLowerCase(),
       direction,
       target_price: targetPrice,
+      alert_type: alertType,
       active: true,
     },
   ]);
@@ -83,7 +87,6 @@ export async function createPriceAlert(
 export async function deletePriceAlert(privyId: string, alertId: string): Promise<{ ok: boolean }> {
   if (!privyId || !alertId) return { ok: false };
   const supabase = getAdminClient();
-  // On restreint la suppression aux alertes de l'utilisateur.
   const { error } = await supabase.from('price_alerts').delete().eq('id', alertId).eq('privy_id', privyId);
   return { ok: !error };
 }

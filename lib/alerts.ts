@@ -1,39 +1,41 @@
-// Logique pure des alertes de prix (pas d'I/O) — testable en isolation.
+// Logique pure des alertes de prix et de variation (pas d'I/O) — testable en isolation.
 
 export type AlertDirection = 'above' | 'below';
+export type AlertType = 'threshold' | 'change_24h';
 
 export interface PriceAlertRow {
   id: string;
   crypto: string;          // symbole minuscule (btc, eth...)
   direction: AlertDirection;
-  target_price: number;    // seuil en EUR
+  target_price: number;    // seuil en EUR (si threshold) ou en % (si change_24h)
+  alert_type?: AlertType;
   email: string;
   active: boolean;
 }
 
-// Une alerte se déclenche quand le prix courant franchit le seuil dans le
-// sens choisi : 'above' → prix >= seuil, 'below' → prix <= seuil.
 export function isAlertTriggered(
-  alert: Pick<PriceAlertRow, 'direction' | 'target_price'>,
-  currentPrice: number
+  alert: Pick<PriceAlertRow, 'direction' | 'target_price' | 'alert_type'>,
+  currentValue: number
 ): boolean {
-  if (alert.direction === 'above') return currentPrice >= alert.target_price;
-  return currentPrice <= alert.target_price;
+  if (alert.direction === 'above') return currentValue >= alert.target_price;
+  return currentValue <= alert.target_price;
 }
 
-// Filtre les alertes actives dont le seuil est franchi, en associant le prix
-// courant. Ignore une alerte si le prix de sa crypto est indisponible.
 export function selectTriggeredAlerts(
   alerts: PriceAlertRow[],
-  prices: Record<string, number>
-): Array<{ alert: PriceAlertRow; price: number }> {
-  const out: Array<{ alert: PriceAlertRow; price: number }> = [];
+  marketData: Record<string, { price: number; change24h: number }>
+): Array<{ alert: PriceAlertRow; value: number }> {
+  const out: Array<{ alert: PriceAlertRow; value: number }> = [];
   for (const alert of alerts) {
     if (!alert.active) continue;
-    const price = prices[alert.crypto.toLowerCase()];
-    if (price == null) continue;
-    if (isAlertTriggered(alert, price)) {
-      out.push({ alert, price });
+    const item = marketData[alert.crypto.toLowerCase()];
+    if (!item) continue;
+
+    const is24h = alert.alert_type === 'change_24h';
+    const val = is24h ? item.change24h : item.price;
+
+    if (isAlertTriggered(alert, val)) {
+      out.push({ alert, value: val });
     }
   }
   return out;

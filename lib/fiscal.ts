@@ -21,14 +21,15 @@ export interface AcquisitionLot {
 export interface AssetSummary {
   symbol: string;
   totalInvested: number;   // EUR investi (prix de revient total)
-  totalQuantity: number;   // quantité acquise via Remedly
-  avgUnitCost: number;     // prix de revient moyen unitaire
+  totalQuantity: number;   // quantité acquise via Remedly ou CSV
+  avgUnitCost: number | null; // prix de revient moyen unitaire (null si prix inconnu)
   currentPrice: number | null;
   currentValue: number | null;
-  latentPL: number | null;      // plus-value latente (non réalisée)
+  latentPL: number | null;      // plus-value latente (null si prix inconnu)
   latentPLPercent: number | null;
   lots: AcquisitionLot[];
   externalFundsWarning: 'deposit' | 'outflow' | null;
+  costInconnu?: boolean;   // vrai si aucun prix d'acquisition n'est enregistré
 }
 
 export interface FiscalReport {
@@ -39,6 +40,7 @@ export interface FiscalReport {
   totalInvested: number;
   totalCurrentValue: number | null;
   totalLatentPL: number | null;
+  hasUnknownCosts?: boolean;
 }
 
 export const EMPTY_REPORT: FiscalReport = {
@@ -49,14 +51,13 @@ export const EMPTY_REPORT: FiscalReport = {
   totalInvested: 0,
   totalCurrentValue: null,
   totalLatentPL: null,
+  hasUnknownCosts: false,
 };
 
 // Tolérance sur la comparaison de quantités on-chain (arrondis, poussière).
 const QTY_TOLERANCE = 0.01; // 1 %
 
-// Construit le relevé à partir des ACQUISITIONS uniquement. Ne calcule aucune
-// plus-value réalisée (2086) : Remedly ne réalise pas de vente, il n'existe
-// donc aucune cession dans les données.
+// Construit le relevé à partir des ACQUISITIONS uniquement.
 export function computeFiscalReport(
   purchases: PurchaseRow[],
   prices: Record<string, number> | null,
@@ -87,13 +88,14 @@ export function computeFiscalReport(
         symbol,
         totalInvested: 0,
         totalQuantity: 0,
-        avgUnitCost: 0,
+        avgUnitCost: null,
         currentPrice: null,
         currentValue: null,
         latentPL: null,
         latentPLPercent: null,
         lots: [],
         externalFundsWarning: null,
+        costInconnu: false,
       };
       bySymbol.set(symbol, entry);
     }
@@ -117,13 +119,14 @@ export function computeFiscalReport(
           symbol,
           totalInvested: 0,
           totalQuantity: qtyVal,
-          avgUnitCost: 0,
+          avgUnitCost: null,
           currentPrice: null,
           currentValue: null,
           latentPL: null,
           latentPLPercent: null,
           lots: [],
           externalFundsWarning: 'deposit',
+          costInconnu: true,
         });
       }
     }
@@ -131,18 +134,39 @@ export function computeFiscalReport(
 
   let totalInvested = 0;
   let totalCurrentValue = 0;
+  let totalLatentPLSum = 0;
+  let hasKnownInvestments = false;
   let anyCurrentValue = false;
+  let hasUnknownCosts = false;
 
   for (const asset of bySymbol.values()) {
-    asset.avgUnitCost = asset.totalQuantity > 0 ? asset.totalInvested / asset.totalQuantity : 0;
-    totalInvested += asset.totalInvested;
+    const hasInvested = asset.totalInvested > 0;
+
+    if (hasInvested) {
+      asset.avgUnitCost = asset.totalQuantity > 0 ? asset.totalInvested / asset.totalQuantity : 0;
+      asset.costInconnu = false;
+      totalInvested += asset.totalInvested;
+      hasKnownInvestments = true;
+    } else {
+      asset.avgUnitCost = null;
+      asset.costInconnu = true;
+      hasUnknownCosts = true;
+    }
 
     const price = prices ? prices[asset.symbol] ?? null : null;
     if (price != null) {
       asset.currentPrice = price;
       asset.currentValue = asset.totalQuantity * price;
-      asset.latentPL = asset.currentValue - asset.totalInvested;
-      asset.latentPLPercent = asset.totalInvested > 0 ? asset.latentPL / asset.totalInvested : null;
+
+      if (hasInvested) {
+        asset.latentPL = asset.currentValue - asset.totalInvested;
+        asset.latentPLPercent = asset.latentPL / asset.totalInvested;
+        totalLatentPLSum += asset.latentPL;
+      } else {
+        asset.latentPL = null;
+        asset.latentPLPercent = null;
+      }
+
       totalCurrentValue += asset.currentValue;
       anyCurrentValue = true;
     }
@@ -150,15 +174,15 @@ export function computeFiscalReport(
     if (onChainQuantities && onChainQuantities[asset.symbol] != null) {
       const onChain = onChainQuantities[asset.symbol];
       const acquired = asset.totalQuantity;
-      if (onChain > acquired * (1 + QTY_TOLERANCE)) {
+      if (acquired > 0 && onChain > acquired * (1 + QTY_TOLERANCE)) {
         asset.externalFundsWarning = 'deposit';
-      } else if (onChain < acquired * (1 - QTY_TOLERANCE)) {
+      } else if (acquired > 0 && onChain < acquired * (1 - QTY_TOLERANCE)) {
         asset.externalFundsWarning = 'outflow';
       }
     }
   }
 
-  const assets = Array.from(bySymbol.values()).sort((a, b) => b.totalInvested - a.totalInvested);
+  const assets = Array.from(bySymbol.values()).sort((a, b) => (b.currentValue || 0) - (a.currentValue || 0));
 
   return {
     generatedAt: new Date().toISOString(),
@@ -167,6 +191,7 @@ export function computeFiscalReport(
     assets,
     totalInvested,
     totalCurrentValue: anyCurrentValue ? totalCurrentValue : null,
-    totalLatentPL: anyCurrentValue ? totalCurrentValue - totalInvested : null,
+    totalLatentPL: hasKnownInvestments && anyCurrentValue ? totalLatentPLSum : null,
+    hasUnknownCosts,
   };
 }

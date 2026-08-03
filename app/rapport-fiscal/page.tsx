@@ -104,12 +104,12 @@ export default function RapportFiscalPage() {
     reader.onload = (event) => {
       const text = event.target?.result as string;
       if (text) {
-        const parsed = parseTransactionCsv(text);
-        if (parsed.length > 0) {
-          setCsvImports(prev => [...prev, ...parsed]);
-          setCsvStatus(`✅ ${parsed.length} transaction(s) importée(s) avec succès !`);
+        const result = parseTransactionCsv(text);
+        if (result.transactions.length > 0) {
+          setCsvImports(prev => [...prev, ...result.transactions]);
+          setCsvStatus(`✅ ${result.transactions.length} transaction(s) importée(s) avec succès !${result.warnings.length > 0 ? ` (${result.warnings.length} avertissement(s))` : ''}`);
         } else {
-          setCsvStatus("⚠️ Aucun format de transaction reconnu dans le fichier CSV.");
+          setCsvStatus(`⚠️ ${result.warnings.join(' | ') || "Aucun format de transaction reconnu dans le fichier CSV."}`);
         }
       }
     };
@@ -283,11 +283,21 @@ export default function RapportFiscalPage() {
                     </div>
                     <div>
                       <p className="text-xs text-gray-400 print:text-gray-600">Montant Investi</p>
-                      <p className="font-semibold text-white print:text-gray-900">{eur(a.totalInvested)}</p>
+                      <p className="font-semibold text-white print:text-gray-900">
+                        {a.costInconnu ? (
+                          <span className="text-xs text-amber-300 font-normal bg-amber-500/20 px-2 py-0.5 rounded print:bg-gray-200 print:text-gray-800">
+                            Inconnu (Dépôt)
+                          </span>
+                        ) : (
+                          eur(a.totalInvested)
+                        )}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-400 print:text-gray-600">PRU (Prix de Revient)</p>
-                      <p className="font-semibold text-white print:text-gray-900">{a.avgUnitCost > 0 ? eur(a.avgUnitCost) : '0,00 €'}</p>
+                      <p className="font-semibold text-white print:text-gray-900">
+                        {a.costInconnu || !a.avgUnitCost ? '—' : eur(a.avgUnitCost)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-400 print:text-gray-600">Valeur Actuelle</p>

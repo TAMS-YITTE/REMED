@@ -12,11 +12,12 @@ import { FearAndGreedGauge } from '@/components/FearAndGreedGauge';
 import { cryptoList } from '@/lib/cryptoList';
 import { getFiscalReport } from '@/app/actions/fiscal';
 import { getCryptoPrices } from '@/app/actions/prices';
+import { getPortfolioSnapshots, type PortfolioSnapshot } from '@/app/actions/snapshots';
 import { getWalletData, getErc20Balances } from '@/app/actions/wallet';
 import { getSolanaWalletData } from '@/app/actions/solana';
 import { getBitcoinWalletData } from '@/app/actions/bitcoin';
 import type { FiscalReport } from '@/lib/fiscal';
-import { LineChart, Sparkles, Loader2, TrendingUp, ShieldCheck, BarChart2 } from 'lucide-react';
+import { LineChart, Sparkles, Loader2, TrendingUp, ShieldCheck, BarChart2, Calendar } from 'lucide-react';
 
 const SUPPORTED = cryptoList.filter((c) => c.supported);
 const nameOf = (sym: string) => SUPPORTED.find((c) => c.id === sym.toLowerCase())?.name || sym.toUpperCase();
@@ -54,6 +55,7 @@ export default function AnalysesPage() {
   const { isReady, authenticated, user, walletAddress, solanaWalletAddress, bitcoinWalletAddress } = useAuth();
   const { loading: subLoading, isPro } = useSubscription();
   const [report, setReport] = useState<FiscalReport | null>(null);
+  const [snapshots, setSnapshots] = useState<PortfolioSnapshot[]>([]);
   const [loading, setLoading] = useState(false);
   const [chartAsset, setChartAsset] = useState('btc');
 
@@ -64,9 +66,14 @@ export default function AnalysesPage() {
 
     (async () => {
       const quantities = await gatherOnChainQuantities(walletAddress, solanaWalletAddress, bitcoinWalletAddress);
-      const r = await getFiscalReport(user.id, quantities);
+      const [r, sn] = await Promise.all([
+        getFiscalReport(user.id, quantities),
+        getPortfolioSnapshots(user.id)
+      ]);
+
       if (!cancelled) {
         setReport(r);
+        setSnapshots(sn);
         if (r.hasData && r.assets[0]) setChartAsset(r.assets[0].symbol);
         setLoading(false);
       }
@@ -199,6 +206,33 @@ export default function AnalysesPage() {
                 </div>
               </div>
             )}
+
+            {/* HISTORIQUE DE VALEUR DU PORTEFEUILLE (SNAPSHOTS QUOTIDIENS) */}
+            <div className="bg-[#2d3152] border border-white/10 rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-white text-lg flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-indigo-400" /> Évolution du Portefeuille dans le Temps
+                </h3>
+                <span className="text-xs text-gray-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">
+                  1 snapshot / jour (Cron Pro)
+                </span>
+              </div>
+
+              {snapshots.length === 0 ? (
+                <div className="bg-[#21243b] p-6 rounded-xl border border-white/5 text-center text-xs text-gray-400">
+                  Le premier snapshot quotidien de votre portefeuille sera enregistré lors du prochain passage du cron.
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                  {snapshots.map((sn) => (
+                    <div key={sn.id || sn.snapshot_date} className="flex items-center justify-between bg-[#21243b] p-3 rounded-xl border border-white/5 text-xs">
+                      <span className="font-medium text-gray-300">{sn.snapshot_date}</span>
+                      <span className="font-bold text-indigo-300">{eur(sn.total_value_eur)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* GRAPHIQUE INTERACTIF */}
             <div className="bg-[#2d3152] border border-white/10 rounded-2xl p-6 shadow-xl">

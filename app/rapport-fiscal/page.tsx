@@ -58,6 +58,7 @@ export default function RapportFiscalPage() {
   const [loading, setLoading] = useState(false);
   const [csvImports, setCsvImports] = useState<CsvTransaction[]>([]);
   const [csvStatus, setCsvStatus] = useState<string>('');
+  const [remedlyTrades, setRemedlyTrades] = useState<TradeTransaction[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadReport = async () => {
@@ -71,16 +72,44 @@ export default function RapportFiscalPage() {
 
       const baseReport = await getFiscalReport(user.id, quantities);
 
+      // Achats on-ramp Remedly reconstruits depuis les lots : indispensables pour
+      // M (prix total d'acquisition) du calcul 2086 — sinon M est sous-évalué et
+      // les plus-values surévaluées.
+      const remedlyBuys: TradeTransaction[] = baseReport.assets.flatMap((a) =>
+        a.lots.map((lot) => ({
+          date: lot.date,
+          type: 'buy' as const,
+          symbol: a.symbol.toUpperCase(),
+          quantity: lot.cryptoAmount,
+          fiatAmount: lot.fiatAmount,
+        }))
+      );
+      setRemedlyTrades(remedlyBuys);
+
       if (csvImports.length > 0) {
-        const extraPurchases: PurchaseRow[] = csvImports.map(c => ({
-          provider: c.provider,
-          fiat_amount: c.fiatAmount,
-          crypto_amount: c.quantity,
-          crypto_currency: c.symbol,
-          created_at: c.date
-        }));
-        
-        const mergedReport = computeFiscalReport(extraPurchases, prices || null, quantities);
+        const remedlyRows: PurchaseRow[] = baseReport.assets.flatMap((a) =>
+          a.lots.map((lot) => ({
+            provider: lot.provider,
+            fiat_amount: lot.fiatAmount,
+            crypto_amount: lot.cryptoAmount,
+            crypto_currency: a.symbol,
+            created_at: lot.date,
+          }))
+        );
+        // Seuls les ACHATS comptent comme acquisitions pour le prix de revient ;
+        // les ventes CSV sont traitées par le moteur 2086, pas ici.
+        const csvBuys: PurchaseRow[] = csvImports
+          .filter((c) => c.type === 'buy')
+          .map((c) => ({
+            provider: c.provider,
+            fiat_amount: c.fiatAmount,
+            crypto_amount: c.quantity,
+            crypto_currency: c.symbol,
+            created_at: c.date,
+          }));
+
+        // Fusion Remedly + CSV (au lieu de remplacer le rapport par le seul CSV).
+        const mergedReport = computeFiscalReport([...remedlyRows, ...csvBuys], prices || null, quantities);
         setReport(mergedReport);
       } else {
         setReport(baseReport);
@@ -340,13 +369,18 @@ export default function RapportFiscalPage() {
 
             {/* SYNTHÈSE PLUS-VALUE RÉALISÉE (FORMULAIRE 2086) SI CESSIONS CSV EXISTENT */}
             {(() => {
-              const allTrades: TradeTransaction[] = csvImports.map((c) => ({
-                date: c.date,
-                type: c.type,
-                symbol: c.symbol,
-                quantity: c.quantity,
-                fiatAmount: c.fiatAmount,
-              }));
+              // M complet = achats Remedly (on-ramp) + transactions CSV, triés
+              // chronologiquement par le moteur.
+              const allTrades: TradeTransaction[] = [
+                ...remedlyTrades,
+                ...csvImports.map((c) => ({
+                  date: c.date,
+                  type: c.type,
+                  symbol: c.symbol,
+                  quantity: c.quantity,
+                  fiatAmount: c.fiatAmount,
+                })),
+              ];
               const rep2086 = computeChronological2086(allTrades);
               if (rep2086.cessions.length === 0) return null;
 
@@ -370,6 +404,17 @@ export default function RapportFiscalPage() {
                         Imposable Flat Tax 30%
                       </span>
                     )}
+                  </div>
+
+                  <div className="mb-5 flex items-start gap-2 bg-amber-500/10 print:bg-amber-50 border border-amber-500/30 text-amber-300 print:text-amber-800 rounded-lg p-3 text-xs">
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Estimation indicative à faire valider.</strong> Le calcul exact
+                      de la plus-value 2086 requiert la <strong>valeur totale de votre portefeuille
+                      au moment de chaque vente</strong> (V), qui n'est pas reconstituée
+                      automatiquement ici. Les montants ci-dessous sont donc une approximation —
+                      faites-les vérifier par un professionnel avant toute déclaration.
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">

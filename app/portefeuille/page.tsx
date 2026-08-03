@@ -41,9 +41,9 @@ export default function PortefeuillePage() {
 
   useEffect(() => {
     if (authenticated && user?.id) {
-      import('@/app/actions/database').then(m => m.getPurchases(user.id)).then(setPurchases);
+      import('@/app/actions/database').then(m => m.getPurchases(user.id, walletAddress || undefined)).then(setPurchases);
     }
-  }, [authenticated, user?.id]);
+  }, [authenticated, user?.id, walletAddress]);
 
   useEffect(() => {
     if (walletAddress) {
@@ -261,7 +261,7 @@ export default function PortefeuillePage() {
         </motion.div>
           {/* ACHATS FIAT (SUPABASE) */}
           <div className="mt-10">
-            <h3 className="text-lg font-semibold text-white mb-4">Historique d'achats (Carte Bancaire)</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Historique d'achats (On-Ramp)</h3>
             {purchases.length > 0 ? (
               <div className="space-y-3">
                 {purchases.map(p => (
@@ -280,7 +280,7 @@ export default function PortefeuillePage() {
             ) : (
               <div className="bg-[#2E3152] border border-white/10 rounded-2xl p-6 text-center">
                 <p className="text-sm text-gray-400">
-                  Vous n'avez pas encore acheté de cryptos par carte bancaire.
+                  Aucun achat On-Ramp enregistré pour le moment.
                 </p>
               </div>
             )}

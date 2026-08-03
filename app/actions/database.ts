@@ -72,7 +72,7 @@ export async function saveWallet(privyId: string, address: string, network: stri
   return data;
 }
 
-export async function getPurchases(privyId: string) {
+export async function getPurchases(privyId: string, walletAddress?: string) {
   const supabase = getAdminClient();
   const { data: user } = await supabase
     .from('users')
@@ -80,13 +80,19 @@ export async function getPurchases(privyId: string) {
     .eq('privy_id', privyId)
     .single();
 
-  if (!user) return [];
+  let query = supabase.from('transactions').select('*');
 
-  const { data: txs, error } = await supabase
-    .from('transactions')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false });
+  if (user && walletAddress) {
+    query = query.or(`user_id.eq.${user.id},wallet_address.eq.${walletAddress}`);
+  } else if (user) {
+    query = query.eq('user_id', user.id);
+  } else if (walletAddress) {
+    query = query.eq('wallet_address', walletAddress);
+  } else {
+    return [];
+  }
+
+  const { data: txs, error } = await query.order('created_at', { ascending: false });
 
   if (error) {
     console.error('Error fetching purchases:', error);

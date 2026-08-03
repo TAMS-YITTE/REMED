@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { getChainFamily } from '@/lib/cryptoChains';
-import { Loader2, ShieldCheck, ArrowRight, Wallet, RefreshCw } from 'lucide-react';
+import { Loader2, ShieldCheck, ArrowRight, Wallet, RefreshCw, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
 import { cryptoList } from '@/lib/cryptoList';
 
 const MOONPAY_CURRENCY_CODE: Record<string, string> = {
@@ -42,6 +42,7 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
 
   const [selectedCrypto, setSelectedCrypto] = useState(crypto.toLowerCase());
   const [customAmount, setCustomAmount] = useState(amount || '30');
+  const [showGuide, setShowGuide] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [stripeLoading, setStripeLoading] = useState(false);
   const [payError, setPayError] = useState('');
@@ -308,8 +309,64 @@ export function BuyCryptoButton({ crypto, amount, className = '' }: BuyCryptoBut
         </button>
       )}
 
+      {/* ACCORDÉON : GUIDE DE PAIEMENT SANS FRAIS DE CARTE */}
+      <div className="bg-[#1e2038] border border-indigo-500/30 rounded-2xl overflow-hidden text-left shadow-lg">
+        <button
+          type="button"
+          onClick={() => setShowGuide(!showGuide)}
+          className="w-full p-3.5 flex items-center justify-between text-xs font-semibold text-indigo-300 hover:text-white hover:bg-white/5 transition-colors"
+        >
+          <span className="flex items-center gap-2">
+            <HelpCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+            💡 Comment payer par virement sans aucun frais de carte ?
+          </span>
+          {showGuide ? <ChevronUp className="w-4 h-4 shrink-0" /> : <ChevronDown className="w-4 h-4 shrink-0" />}
+        </button>
+
+        {showGuide && (
+          <div className="p-4 pt-2 border-t border-white/10 text-xs text-gray-300 space-y-4">
+            <p className="text-gray-300 leading-relaxed">
+              Pour éviter les frais de carte bancaire, alimentez votre <strong>MoonPay Balance</strong> par virement bancaire sans frais :
+            </p>
+
+            {/* IMAGE DÉBUT : SELECTION MOONPAY BALANCE */}
+            <div className="rounded-xl overflow-hidden border border-white/10 bg-black/40 p-2 text-center">
+              <img
+                src="/guide-moonpay-balance.png"
+                alt="MoonPay Balance Top up"
+                className="mx-auto max-h-56 rounded-lg object-contain"
+              />
+              <p className="text-[10px] text-gray-400 mt-1.5 font-medium">
+                1. Choisissez <strong>MoonPay Balance</strong> et cliquez sur le bouton violet <strong>"Top up"</strong>
+              </p>
+            </div>
+
+            {/* ÉTAPES */}
+            <ol className="space-y-2 list-decimal pl-4 text-[11px] text-gray-300 leading-relaxed">
+              <li>Cliquez sur <strong>Payer avec MoonPay</strong> puis sur le menu déroulant du moyen de paiement.</li>
+              <li>Dans <strong>MoonPay Balance</strong>, cliquez sur le bouton violet <strong>Top up</strong>.</li>
+              <li>Cliquez sur la <strong>roue crantée ⚙️ (Settings)</strong> en haut à droite.</li>
+              <li>Allez dans <strong>Payment methods</strong> ➔ <strong>Add new</strong> ➔ sélectionnez <strong>Easy Bank Transfers</strong>.</li>
+              <li>Sélectionnez votre banque et validez le virement sans frais !</li>
+            </ol>
+
+            {/* IMAGE FIN : SELECTION BANQUE */}
+            <div className="rounded-xl overflow-hidden border border-white/10 bg-black/40 p-2 text-center">
+              <img
+                src="/guide-connect-bank.png"
+                alt="Sélection Banque Française"
+                className="mx-auto max-h-56 rounded-lg object-contain"
+              />
+              <p className="text-[10px] text-gray-400 mt-1.5 font-medium">
+                2. Choisissez votre banque (BoursoBank, BNP Paribas, Caisse d'Épargne...)
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Lien Retour au catalogue de cryptos avec Next.js Link */}
-      <div className="pt-2 text-center">
+      <div className="pt-1 text-center">
         <Link
           href="/acheter"
           className="inline-flex items-center text-xs text-indigo-300 hover:text-white font-medium underline transition-colors"

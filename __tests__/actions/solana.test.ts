@@ -81,6 +81,34 @@ describe('getSolanaWalletData - montant réel des transactions', () => {
     expect(data.transactions[0].direction).toBe('unknown');
   });
 
+  it('repasse en appels séparés quand le RPC refuse les batchs', async () => {
+    // publicnode : "Maximum number of 'getTransaction' calls in a batch
+    // request is 1" — la réponse est un objet d'erreur, pas un tableau.
+    const seen: string[] = [];
+    mockFetch((body) => {
+      if (Array.isArray(body)) {
+        return { error: { code: -32600, message: "Maximum number of 'getTransaction' calls in a batch request is 1" } };
+      }
+      if (body.method === 'getBalance') return { result: { value: 3_000_000_000 } };
+      if (body.method === 'getSignaturesForAddress') {
+        return { result: [signature('sig-a'), signature('sig-b')] };
+      }
+      if (body.method === 'getTransaction') {
+        const sig = body.params[0];
+        seen.push(sig);
+        const lamports = sig === 'sig-a' ? 1_000_000_000 : 2_000_000_000;
+        return txResult(1, [OTHER, ADDRESS], [0, 0], [0, lamports]);
+      }
+      return {};
+    });
+
+    const data = await getSolanaWalletData(ADDRESS);
+
+    expect(seen).toEqual(['sig-a', 'sig-b']);
+    expect(data.transactions.find((tx) => tx.hash === 'sig-a')?.value).toBe('1000000000');
+    expect(data.transactions.find((tx) => tx.hash === 'sig-b')?.value).toBe('2000000000');
+  });
+
   it('associe chaque montant à sa signature même si le RPC renvoie le batch désordonné', async () => {
     mockFetch((body) => {
       if (Array.isArray(body)) {

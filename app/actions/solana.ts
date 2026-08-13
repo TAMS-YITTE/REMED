@@ -18,9 +18,35 @@ type SignatureEntry = {
   err?: unknown;
 };
 
-// Variation de solde en lamports pour `address` sur chaque signature.
-// `null` = le RPC n'a pas répondu ou n'a pas renvoyé les soldes : on ne
-// fabrique surtout pas un 0, qui se lirait comme un vrai montant nul.
+function getTransactionCall(signature: string, id: number) {
+  return {
+    jsonrpc: '2.0',
+    id,
+    method: 'getTransaction',
+    params: [signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]
+  };
+}
+
+// Variation de solde en lamports pour `address` dans une réponse getTransaction.
+// `null` = la réponse ne porte pas l'information ; on ne fabrique surtout pas
+// un 0, qui se lirait comme un vrai montant nul.
+function lamportDelta(result: any, address: string): number | null {
+  const keys = result?.transaction?.message?.accountKeys;
+  const pre = result?.meta?.preBalances;
+  const post = result?.meta?.postBalances;
+  if (!Array.isArray(keys) || !Array.isArray(pre) || !Array.isArray(post)) return null;
+
+  // En encodage jsonParsed, accountKeys inclut aussi les adresses chargées
+  // via address lookup table : l'index correspond donc bien à celui des
+  // tableaux pre/postBalances.
+  const index = keys.findIndex(
+    (key: any) => (typeof key === 'string' ? key : key?.pubkey) === address
+  );
+  if (index < 0 || pre[index] === undefined || post[index] === undefined) return null;
+
+  return Number(post[index]) - Number(pre[index]);
+}
+
 async function fetchLamportDeltas(
   signatures: string[],
   address: string
@@ -28,39 +54,35 @@ async function fetchLamportDeltas(
   const deltas = new Map<string, number | null>(signatures.map((sig) => [sig, null]));
   if (signatures.length === 0) return deltas;
 
-  // Un seul aller-retour HTTP pour N appels (JSON-RPC batch).
-  const payload = signatures.map((signature, id) => ({
-    jsonrpc: '2.0',
-    id,
-    method: 'getTransaction',
-    params: [signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]
-  }));
-
+  // Chemin rapide : un seul aller-retour HTTP pour N appels (JSON-RPC batch).
   const res = await safeFetch<any>(SOLANA_RPC, {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(signatures.map(getTransactionCall))
   }, null);
 
-  if (!Array.isArray(res)) return deltas;
+  if (Array.isArray(res)) {
+    const byId = new Map<number, any>(res.map((entry: any) => [entry?.id, entry]));
+    signatures.forEach((signature, id) => {
+      deltas.set(signature, lamportDelta(byId.get(id)?.result, address));
+    });
+    return deltas;
+  }
 
-  const byId = new Map<number, any>(res.map((entry: any) => [entry?.id, entry]));
+  // Certains RPC refusent les batchs (publicnode : "Maximum number of
+  // 'getTransaction' calls in a batch request is 1"). Plutôt que de renvoyer
+  // des montants vides, on repasse en appels séparés — plus lents, mais
+  // l'historique est court.
+  const single = await Promise.all(
+    signatures.map((signature) =>
+      safeFetch<any>(SOLANA_RPC, {
+        method: 'POST',
+        body: JSON.stringify(getTransactionCall(signature, 1))
+      }, null)
+    )
+  );
 
-  signatures.forEach((signature, id) => {
-    const result = byId.get(id)?.result;
-    const keys = result?.transaction?.message?.accountKeys;
-    const pre = result?.meta?.preBalances;
-    const post = result?.meta?.postBalances;
-    if (!Array.isArray(keys) || !Array.isArray(pre) || !Array.isArray(post)) return;
-
-    // En encodage jsonParsed, accountKeys inclut aussi les adresses chargées
-    // via address lookup table : l'index correspond donc bien à celui des
-    // tableaux pre/postBalances.
-    const index = keys.findIndex(
-      (key: any) => (typeof key === 'string' ? key : key?.pubkey) === address
-    );
-    if (index < 0 || pre[index] === undefined || post[index] === undefined) return;
-
-    deltas.set(signature, Number(post[index]) - Number(pre[index]));
+  signatures.forEach((signature, i) => {
+    deltas.set(signature, lamportDelta(single[i]?.result, address));
   });
 
   return deltas;

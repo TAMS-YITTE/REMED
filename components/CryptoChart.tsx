@@ -5,6 +5,14 @@ import useSWR from 'swr';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { getMarketChart } from '@/app/actions/market';
 
+// Hauteurs figées du squelette de chargement. Un `Math.random()` dans le
+// rendu donnait des barres différentes côté serveur et côté client, donc
+// une erreur d'hydratation React à chaque chargement du graphique.
+const SKELETON_BAR_HEIGHTS = [
+  42, 68, 55, 81, 37, 74, 60, 92, 48, 66,
+  35, 79, 58, 87, 44, 71, 63, 52, 76, 40
+];
+
 interface CryptoChartProps {
   cryptoId: string;
   cryptoName: string;
@@ -82,8 +90,8 @@ export function CryptoChart({ cryptoId, cryptoName, cryptoSymbol, currentPrice }
         {isLoading && !data ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="animate-pulse flex gap-1 items-end h-32">
-              {[...Array(20)].map((_, i) => (
-                <div key={i} className="w-2 bg-indigo-500/20 rounded-t-sm" style={{ height: `${Math.random() * 100}%` }} />
+              {SKELETON_BAR_HEIGHTS.map((height, i) => (
+                <div key={i} className="w-2 bg-indigo-500/20 rounded-t-sm" style={{ height: `${height}%` }} />
               ))}
             </div>
           </div>

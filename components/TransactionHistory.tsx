@@ -50,32 +50,39 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
   return (
     <div className="divide-y divide-white/10">
       {transactions.map((tx) => {
-        // For ETH we know if it's incoming by comparing tx.to with walletAddress
-        // For BTC/SOL, our mock sets "Reçu" or "Envoyé" directly in `tx.from` or `tx.to` sometimes,
-        // or we just default to "Mouvement" if unclear.
-        // In our actions: 
-        // - ETH: from/to are actual addresses.
-        // - SOL: from="Solana Network" or "Erreur", to=address
-        // - BTC: from="Bitcoin Network", to=address (if incoming)
-        
-        let isIncoming = true;
-        if (tx.chain === 'ethereum' && walletAddress) {
-          isIncoming = tx.to.toLowerCase() === walletAddress.toLowerCase();
-        } else if (tx.chain === 'bitcoin' || tx.chain === 'solana') {
-          isIncoming = tx.from.includes('Network');
+        // Sens du mouvement : les actions qui savent le déterminer le posent
+        // dans `tx.direction` (SOL, via la variation de solde). Sinon on le
+        // déduit des adresses.
+        // - ETH: from/to sont de vraies adresses.
+        // - BTC: from="Bitcoin Network", to=address (si entrant)
+        let direction: NonNullable<Transaction['direction']>;
+        if (tx.direction) {
+          direction = tx.direction;
+        } else if (tx.chain === 'ethereum' && walletAddress) {
+          direction = tx.to.toLowerCase() === walletAddress.toLowerCase() ? 'in' : 'out';
+        } else {
+          direction = tx.from.includes('Network') ? 'in' : 'out';
         }
 
-        const sign = isIncoming ? '+' : '-';
-        const color = isIncoming ? 'text-green-400' : 'text-gray-300';
+        const isIncoming = direction === 'in';
+        const isNeutral = direction === 'none' || direction === 'unknown';
+
+        const sign = isNeutral ? '' : isIncoming ? '+' : '-';
+        const color = isNeutral ? 'text-gray-400' : isIncoming ? 'text-green-400' : 'text-gray-300';
         const bgColor = isIncoming ? 'bg-green-500/20' : 'bg-white/10';
-        const icon = isIncoming ? '↓' : '↑';
-        
-        let valueDisplay = '';
-        if (tx.chain === 'ethereum') {
+        const icon = isNeutral ? '•' : isIncoming ? '↓' : '↑';
+        const label = isNeutral ? 'Mouvement' : isIncoming ? 'Reçu' : 'Envoyé';
+
+        // Un montant qu'on n'a pas pu lire n'est pas un montant nul :
+        // on le dit, plutôt que d'afficher "0".
+        let valueDisplay: string;
+        if (tx.value === null) {
+          valueDisplay = 'Montant indisponible';
+        } else if (tx.chain === 'ethereum') {
           valueDisplay = `${(Number(tx.value) / 10**18).toFixed(4)} ETH`;
         } else if (tx.chain === 'solana') {
-          valueDisplay = `${tx.value} SOL`; // Our solana.ts mock returns '0' currently
-        } else if (tx.chain === 'bitcoin') {
+          valueDisplay = `${(Number(tx.value) / 10**9).toFixed(6)} SOL`;
+        } else {
           valueDisplay = `${(Number(tx.value) / 10**8).toFixed(5)} BTC`;
         }
 
@@ -88,11 +95,16 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
               <div>
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-white">
-                    {isIncoming ? 'Reçu' : 'Envoyé'}
+                    {label}
                   </p>
                   <span className="text-[10px] bg-white/10 text-gray-300 px-1.5 py-0.5 rounded uppercase font-medium">
                     {getChainIcon(tx.chain)} {tx.chain}
                   </span>
+                  {tx.failed && (
+                    <span className="text-[10px] bg-red-500/20 text-red-300 px-1.5 py-0.5 rounded uppercase font-medium">
+                      Échouée
+                    </span>
+                  )}
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">
                   {new Date(parseInt(tx.timeStamp) * 1000).toLocaleString('fr-FR')}

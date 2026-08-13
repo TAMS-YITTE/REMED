@@ -3,9 +3,70 @@
 import { safeFetch } from './utils';
 import type { Transaction, WalletData } from './utils';
 
-export async function getSolanaWalletData(address: string): Promise<WalletData> {
-  const SOLANA_RPC = 'https://api.mainnet-beta.solana.com';
+// getSignaturesForAddress ne renvoie que des signatures, jamais de montant :
+// c'est pour ça que chaque ligne de l'historique SOL affichait "+0 SOL".
+// Le montant réel se lit sur getTransaction, en comparant preBalances et
+// postBalances à l'index de l'adresse dans accountKeys.
+// Le RPC public est fortement limité en débit ; SOLANA_RPC_URL permet de
+// pointer vers un fournisseur dédié sans toucher au code.
+const SOLANA_RPC = process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com';
+const HISTORY_LIMIT = 5;
 
+type SignatureEntry = {
+  signature: string;
+  blockTime?: number | null;
+  err?: unknown;
+};
+
+// Variation de solde en lamports pour `address` sur chaque signature.
+// `null` = le RPC n'a pas répondu ou n'a pas renvoyé les soldes : on ne
+// fabrique surtout pas un 0, qui se lirait comme un vrai montant nul.
+async function fetchLamportDeltas(
+  signatures: string[],
+  address: string
+): Promise<Map<string, number | null>> {
+  const deltas = new Map<string, number | null>(signatures.map((sig) => [sig, null]));
+  if (signatures.length === 0) return deltas;
+
+  // Un seul aller-retour HTTP pour N appels (JSON-RPC batch).
+  const payload = signatures.map((signature, id) => ({
+    jsonrpc: '2.0',
+    id,
+    method: 'getTransaction',
+    params: [signature, { encoding: 'jsonParsed', maxSupportedTransactionVersion: 0 }]
+  }));
+
+  const res = await safeFetch<any>(SOLANA_RPC, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }, null);
+
+  if (!Array.isArray(res)) return deltas;
+
+  const byId = new Map<number, any>(res.map((entry: any) => [entry?.id, entry]));
+
+  signatures.forEach((signature, id) => {
+    const result = byId.get(id)?.result;
+    const keys = result?.transaction?.message?.accountKeys;
+    const pre = result?.meta?.preBalances;
+    const post = result?.meta?.postBalances;
+    if (!Array.isArray(keys) || !Array.isArray(pre) || !Array.isArray(post)) return;
+
+    // En encodage jsonParsed, accountKeys inclut aussi les adresses chargées
+    // via address lookup table : l'index correspond donc bien à celui des
+    // tableaux pre/postBalances.
+    const index = keys.findIndex(
+      (key: any) => (typeof key === 'string' ? key : key?.pubkey) === address
+    );
+    if (index < 0 || pre[index] === undefined || post[index] === undefined) return;
+
+    deltas.set(signature, Number(post[index]) - Number(pre[index]));
+  });
+
+  return deltas;
+}
+
+export async function getSolanaWalletData(address: string): Promise<WalletData> {
   try {
     // 1. Fetch balance
     const balanceReq = {
@@ -33,7 +94,7 @@ export async function getSolanaWalletData(address: string): Promise<WalletData> 
       method: 'getSignaturesForAddress',
       params: [
         address,
-        { limit: 5 }
+        { limit: HISTORY_LIMIT }
       ]
     };
 
@@ -42,17 +103,32 @@ export async function getSolanaWalletData(address: string): Promise<WalletData> 
       body: JSON.stringify(txReq)
     }, null);
 
-    let transactions: Transaction[] = [];
-    if (Array.isArray(txRes?.result)) {
-      transactions = txRes.result.map((tx: any) => ({
+    const signatures: SignatureEntry[] = Array.isArray(txRes?.result) ? txRes.result : [];
+
+    // 3. Montant réel de chaque transaction
+    const deltas = await fetchLamportDeltas(signatures.map((tx) => tx.signature), address);
+
+    const transactions: Transaction[] = signatures.map((tx) => {
+      const delta = deltas.get(tx.signature) ?? null;
+
+      let direction: Transaction['direction'] = 'unknown';
+      if (delta !== null) {
+        direction = delta > 0 ? 'in' : delta < 0 ? 'out' : 'none';
+      }
+
+      return {
         hash: tx.signature,
-        from: tx.err ? 'Erreur' : 'Solana Network',
-        to: address,
-        value: '0',
+        from: direction === 'in' ? 'Solana Network' : address,
+        to: direction === 'out' ? 'Solana Network' : address,
+        // Lamports, comme l'ETH est en wei et le BTC en satoshis :
+        // la conversion se fait à l'affichage.
+        value: delta === null ? null : Math.abs(delta).toString(),
         timeStamp: tx.blockTime ? tx.blockTime.toString() : '0',
-        chain: 'solana'
-      }));
-    }
+        chain: 'solana',
+        direction,
+        failed: Boolean(tx.err)
+      };
+    });
 
     return { balanceSol, transactions };
   } catch (error) {

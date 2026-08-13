@@ -2,9 +2,16 @@ export interface Transaction {
   hash: string;
   from: string;
   to: string;
-  value: string;
+  // Montant en plus petite unité (wei / lamports / satoshis).
+  // `null` quand l'indexeur n'a pas su le fournir : on affiche alors
+  // "Montant indisponible", jamais un 0 qui se lirait comme un vrai montant.
+  value: string | null;
   timeStamp: string;
   chain: 'ethereum' | 'solana' | 'bitcoin';
+  // Renseigné quand la chaîne permet de le déterminer sûrement.
+  // 'none' = aucun mouvement natif (frais payés par un tiers, jeton SPL).
+  direction?: 'in' | 'out' | 'none' | 'unknown';
+  failed?: boolean;
 }
 
 export interface WalletData {

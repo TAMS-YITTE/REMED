@@ -15,7 +15,7 @@ import { cryptoList } from '@/lib/cryptoList';
 export default function Home() {
   const [eurAmount, setEurAmount] = useState<string>('100');
   const [prices, setPrices] = useState<CryptoPrices | null>(null);
-  const { t, language, currency, currencySymbol, formatAmount } = useLanguage();
+  const { t, language, currencySymbol, formatAmount } = useLanguage();
   const [selectedCryptoId, setSelectedCryptoId] = useState<string>('eth');
   
   // Custom Select State
@@ -196,8 +196,8 @@ export default function Home() {
                       placeholder="0"
                     />
                     <div className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-1.5">
-                      <span className="text-xl">{currency === 'EUR' ? '🇪🇺' : '🇺🇸'}</span>
-                      <span className="font-bold">{currency === 'EUR' ? 'EUR' : 'USD'}</span>
+                      <span className="text-xl">🇪🇺</span>
+                      <span className="font-bold">EUR</span>
                     </div>
                   </div>
                   {Number(eurAmount) > 0 && Number(eurAmount) < 30 && (
@@ -294,7 +294,7 @@ export default function Home() {
                                     ) : (
                                       <div className="ml-auto flex items-center gap-3">
                                         {prices && prices[c.id] && (
-                                          <span className="text-xs font-medium opacity-60">{currencySymbol}{prices[c.id]}</span>
+                                          <span className="text-xs font-medium opacity-60">{formatAmount(prices[c.id])}</span>
                                         )}
                                         <div 
                                           onClick={(e) => { e.stopPropagation(); toggleFavorite(c.id); }}

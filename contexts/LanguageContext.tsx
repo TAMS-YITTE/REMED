@@ -1,9 +1,8 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
 
 export type Language = 'fr' | 'en';
-export type Currency = 'EUR' | 'USD';
 
 type Dictionary = Record<string, string>;
 
@@ -178,92 +177,46 @@ const dictionaries: Record<Language, Dictionary> = {
   }
 };
 
+// L'euro est la seule devise de l'application : les paiements (MoonPay et
+// Stripe partent en `eur`), le seuil de 30 €, les prix CoinGecko et la
+// fiscalité française le sont tous. Un mode USD a existé, avec un
+// sélecteur dans la Navbar ; le sélecteur a été retiré mais le mode est
+// resté actif via localStorage, sans moyen d'en sortir — et il affichait
+// des montants faux (montant saisi traité en euros sous une étiquette USD,
+// taux et frais convertis en dollars). Le chemin USD est donc supprimé.
+const CURRENCY_SYMBOL = '€';
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  currency: Currency;
-  setCurrency: (cur: Currency) => void;
   currencySymbol: string;
-  convertAmount: (eurAmount: number) => number;
   formatAmount: (eurAmount: number) => string;
   t: (key: string, params?: Record<string, string | number>) => string;
+}
+
+// Même formatage que le reste de l'application (portefeuille, alertes,
+// relevé fiscal, graphiques), pour qu'un même montant s'écrive pareil
+// partout.
+function formatEur(amount: number): string {
+  return amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   language: 'fr',
   setLanguage: () => {},
-  currency: 'EUR',
-  setCurrency: () => {},
-  currencySymbol: '€',
-  convertAmount: (n) => n,
-  formatAmount: (n) => `${n.toFixed(2)} €`,
+  currencySymbol: CURRENCY_SYMBOL,
+  formatAmount: formatEur,
   t: (key: string) => key,
 });
 
-const STORAGE_KEY_CURRENCY = 'remedly_currency';
-
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language] = useState<Language>('fr');
-  const [currency, setCurrencyState] = useState<Currency>('EUR');
-  const [eurToUsdRate, setEurToUsdRate] = useState<number>(1.08); // fallback
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      // Langue forcée en français (l'anglais n'est pas maintenu). Seule la
-      // devise reste réglable indépendamment.
-      const savedCur = localStorage.getItem(STORAGE_KEY_CURRENCY);
-      if (savedCur === 'EUR' || savedCur === 'USD') setCurrencyState(savedCur as Currency);
-    } catch {
-      // ignore localStorage errors
-    }
-  }, []);
-
-  // Fetch EUR/USD live rate from CoinGecko (same API as crypto prices)
-  useEffect(() => {
-    let cancelled = false;
-    async function fetchRate() {
-      try {
-        // CoinGecko exchange_rates: free, no API key needed
-        const res = await fetch('https://api.coingecko.com/api/v3/exchange_rates');
-        const data = await res.json();
-        if (!cancelled && data?.rates?.eur?.value && data?.rates?.usd?.value) {
-          // Both are vs BTC: rate = usd.value / eur.value
-          setEurToUsdRate(data.rates.usd.value / data.rates.eur.value);
-        }
-      } catch {
-        // Keep fallback 1.08 if fetch fails
-      }
-    }
-    fetchRate();
-    // Refresh every 30 minutes
-    const interval = setInterval(fetchRate, 30 * 60 * 1000);
-    return () => { cancelled = true; clearInterval(interval); };
-  }, []);
 
   // Langue forcée en français : setLanguage est conservé pour compatibilité
   // d'API mais n'a plus d'effet (le site reste FR).
   const setLanguage = useCallback((_lang: Language) => {}, []);
 
-  // Devise indépendante de la langue (plus d'auto-switch).
-  const setCurrency = useCallback((cur: Currency) => {
-    setCurrencyState(cur);
-    try { localStorage.setItem(STORAGE_KEY_CURRENCY, cur); } catch {}
-  }, []);
-
-  const currencySymbol = currency === 'EUR' ? '€' : '$';
-
-  const convertAmount = useCallback((eurAmount: number): number => {
-    if (currency === 'EUR') return eurAmount;
-    return eurAmount * eurToUsdRate;
-  }, [currency, eurToUsdRate]);
-
-  const formatAmount = useCallback((eurAmount: number): string => {
-    const val = convertAmount(eurAmount);
-    if (currency === 'EUR') {
-      return `${val.toFixed(2)} €`;
-    }
-    return `$${val.toFixed(2)}`;
-  }, [currency, convertAmount]);
+  const formatAmount = useCallback((eurAmount: number): string => formatEur(eurAmount), []);
 
   const t = useCallback((key: string, params?: Record<string, string | number>): string => {
     let text = dictionaries[language][key] || dictionaries['fr'][key] || key;
@@ -278,10 +231,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const value: LanguageContextType = {
     language,
     setLanguage,
-    currency,
-    setCurrency,
-    currencySymbol,
-    convertAmount,
+    currencySymbol: CURRENCY_SYMBOL,
     formatAmount,
     t,
   };

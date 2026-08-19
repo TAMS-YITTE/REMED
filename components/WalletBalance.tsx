@@ -19,6 +19,14 @@ interface WalletBalanceProps {
   onCreateBitcoinWallet?: () => void;
 }
 
+// Le symbole du contrat ne correspond pas toujours à la clé de prix
+// renvoyée par l'API (POL y est encore listé sous son ancien nom, matic).
+const PRICE_KEY: Record<string, string> = { POL: 'matic' };
+
+function tokenPrice(prices: Record<string, number> | null | undefined, symbol: string) {
+  return prices?.[PRICE_KEY[symbol] ?? symbol.toLowerCase()];
+}
+
 // Defined at module scope (not inside WalletBalance) so React treats it as
 // the same component across renders and updates it in place instead of
 // unmounting/remounting it every time copiedAddress changes.
@@ -120,10 +128,21 @@ export function WalletBalance({
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
+  // Les jetons ERC-20 (LINK, USDC, UNI...) étaient exclus du solde total :
+  // un achat de LINK apparaissait en quantité mais ne comptait nulle part
+  // en euros.
+  const tokensEur = prices && erc20Balances
+    ? Object.entries(erc20Balances).reduce((sum, [sym, bal]) => {
+        const price = tokenPrice(prices, sym);
+        return price ? sum + parseFloat(bal || "0") * price : sum;
+      }, 0)
+    : 0;
+
   const totalEur = prices ? (
     (parseFloat(balance || "0") * prices.eth) +
     (parseFloat(solanaBalance || "0") * prices.sol) +
-    (parseFloat(bitcoinBalance || "0") * prices.btc)
+    (parseFloat(bitcoinBalance || "0") * prices.btc) +
+    tokensEur
   ) : null;
 
   return (
@@ -179,7 +198,14 @@ export function WalletBalance({
                 {isLoadingErc20 ? (
                   <div className="h-4 w-12 bg-white/20 animate-pulse rounded"></div>
                 ) : (
-                  <>{bal} <span className="text-white/60 text-[10px]">{sym}</span></>
+                  <>
+                    {bal} <span className="text-white/60 text-[10px]">{sym}</span>
+                    {tokenPrice(prices, sym) !== undefined && (
+                      <span className="text-white/40 text-[10px] ml-1 font-normal">
+                        (~{(parseFloat(bal) * tokenPrice(prices, sym)!).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })})
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             </div>

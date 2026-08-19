@@ -59,6 +59,15 @@ function balanceOfCall(contract: string, address: string): RpcCall {
   };
 }
 
+// Indexeur d'historique : Etherscan V2 si une clé est configurée, sinon
+// Blockscout (gratuit, sans clé). Les deux exposent les mêmes `action`.
+function historyUrl(action: 'txlist' | 'tokentx', address: string): string {
+  const API_KEY = process.env.ETHERSCAN_API_KEY || '';
+  return API_KEY
+    ? `${ETHERSCAN_API}?chainid=1&module=account&action=${action}&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=${API_KEY}`
+    : `https://eth.blockscout.com/api?module=account&action=${action}&address=${address}&sort=desc&offset=10`;
+}
+
 export async function getWalletData(address: string): Promise<WalletData> {
   try {
     const [balanceHex] = await rpcBatch(ETHEREUM_RPC, [
@@ -67,32 +76,53 @@ export async function getWalletData(address: string): Promise<WalletData> {
 
     const balanceEth = fromHex(balanceHex, 18).toFixed(4);
 
-    let transactions: Transaction[] = [];
+    // `txlist` ne renvoie QUE les transactions natives : un achat de jeton
+    // (LINK, USDC...) arrive par un transfert ERC-20, dont l'adresse de
+    // l'utilisateur n'est ni l'expéditeur ni le destinataire au sens de la
+    // transaction — elle est dans les données de l'appel. Ces achats étaient
+    // donc totalement absents de l'historique. `tokentx` les expose.
+    const [txData, tokenData] = await Promise.all([
+      safeFetch<any>(historyUrl('txlist', address), { next: { revalidate: 10 } }, null),
+      safeFetch<any>(historyUrl('tokentx', address), { next: { revalidate: 10 } }, null),
+    ]);
 
-    // Utilise Blockscout API (gratuit et sans clé requis) avec fallback Etherscan
-    const API_KEY = process.env.ETHERSCAN_API_KEY || '';
-    const apiUrl = API_KEY 
-      ? `${ETHERSCAN_API}?chainid=1&module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=${API_KEY}`
-      : `https://eth.blockscout.com/api?module=account&action=txlist&address=${address}&sort=desc&offset=10`;
-
-    const txData = await safeFetch<any>(
-      apiUrl,
-      { next: { revalidate: 10 } },
-      null
-    );
+    const transactions: Transaction[] = [];
 
     if (txData?.status === "1" && Array.isArray(txData?.result)) {
-      transactions = txData.result.map((tx: any) => ({
+      transactions.push(...txData.result.map((tx: any) => ({
         hash: tx.hash,
         from: tx.from,
         to: tx.to,
         value: tx.value,
         timeStamp: tx.timeStamp,
-        chain: 'ethereum'
+        chain: 'ethereum' as const
+      })));
+    }
+
+    if (tokenData?.status === "1" && Array.isArray(tokenData?.result)) {
+      transactions.push(...tokenData.result.map((tx: any) => {
+        const decimals = Number(tx.tokenDecimal);
+        return {
+          hash: tx.hash,
+          from: tx.from,
+          to: tx.to,
+          value: tx.value,
+          timeStamp: tx.timeStamp,
+          chain: 'ethereum' as const,
+          symbol: tx.tokenSymbol || 'ERC-20',
+          // Un jeton sans décimales déclarées serait affiché à l'unité près :
+          // mieux vaut ne rien afficher que d'inventer une échelle.
+          decimals: Number.isFinite(decimals) ? decimals : undefined,
+          direction: (tx.to || '').toLowerCase() === address.toLowerCase()
+            ? ('in' as const)
+            : ('out' as const),
+        };
       }));
     }
 
-    return { balanceEth, transactions };
+    transactions.sort((a, b) => Number(b.timeStamp) - Number(a.timeStamp));
+
+    return { balanceEth, transactions: transactions.slice(0, 10) };
   } catch (error) {
     console.error("Erreur lors de la récupération des données ETH :", error);
     return { balanceEth: "0.00", transactions: [] };

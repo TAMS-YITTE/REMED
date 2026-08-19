@@ -12,6 +12,11 @@ export interface Transaction {
   // 'none' = aucun mouvement natif (frais payés par un tiers, jeton SPL).
   direction?: 'in' | 'out' | 'none' | 'unknown';
   failed?: boolean;
+  // Renseignés pour un transfert de jeton (ERC-20) : sans eux l'affichage
+  // formaterait le montant comme de l'ETH, avec 18 décimales et le mauvais
+  // symbole.
+  symbol?: string;
+  decimals?: number;
 }
 
 export interface WalletData {

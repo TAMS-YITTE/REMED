@@ -78,6 +78,13 @@ export function TransactionHistory({ transactions, isLoading, walletAddress }: T
         let valueDisplay: string;
         if (tx.value === null) {
           valueDisplay = 'Montant indisponible';
+        } else if (tx.symbol) {
+          // Transfert de jeton (ERC-20) : sans le nombre de décimales du
+          // contrat, on ne sait pas à quelle échelle lire le montant — on
+          // le dit plutôt que d'afficher un chiffre au hasard.
+          valueDisplay = tx.decimals === undefined
+            ? 'Montant indisponible'
+            : `${(Number(tx.value) / 10**tx.decimals).toFixed(4)} ${tx.symbol}`;
         } else if (tx.chain === 'ethereum') {
           valueDisplay = `${(Number(tx.value) / 10**18).toFixed(4)} ETH`;
         } else if (tx.chain === 'solana') {

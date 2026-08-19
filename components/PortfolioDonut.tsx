@@ -4,17 +4,22 @@ interface PortfolioDonutProps {
   ethValue: number;
   solValue: number;
   btcValue: number;
+  // Jetons ERC-20 (LINK, USDC, UNI...) agrégés : sans eux, la répartition
+  // affichait 100 % réparti sur ETH/SOL/BTC en ignorant une partie réelle
+  // du portefeuille.
+  tokensValue?: number;
 }
 
-export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutProps) {
-  const total = ethValue + solValue + btcValue;
+export function PortfolioDonut({ ethValue, solValue, btcValue, tokensValue = 0 }: PortfolioDonutProps) {
+  const total = ethValue + solValue + btcValue + tokensValue;
   const isEmpty = total === 0;
 
-  // Couleurs : ETH (Violet/Bleu), SOL (Vert), BTC (Orange), Vide (Gris)
+  // Couleurs : ETH (Violet/Bleu), SOL (Vert), BTC (Orange), Jetons (Rose), Vide (Gris)
   const colors = {
     eth: '#6366f1', // indigo-500
     sol: '#10b981', // emerald-500
     btc: '#f59e0b', // amber-500
+    tokens: '#ec4899', // pink-500
     empty: '#374151' // gray-700
   };
 
@@ -27,14 +32,17 @@ export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutP
   const ethPercent = isEmpty ? 0 : ethValue / total;
   const solPercent = isEmpty ? 0 : solValue / total;
   const btcPercent = isEmpty ? 0 : btcValue / total;
+  const tokensPercent = isEmpty ? 0 : tokensValue / total;
 
   const ethStrokeDasharray = `${ethPercent * circumference} ${circumference}`;
   const solStrokeDasharray = `${solPercent * circumference} ${circumference}`;
   const btcStrokeDasharray = `${btcPercent * circumference} ${circumference}`;
+  const tokensStrokeDasharray = `${tokensPercent * circumference} ${circumference}`;
 
   const ethOffset = 0;
   const solOffset = - (ethPercent * circumference);
   const btcOffset = solOffset - (solPercent * circumference);
+  const tokensOffset = btcOffset - (btcPercent * circumference);
 
   return (
     <div className="flex items-center gap-8 bg-[#2E3152] border border-white/10 rounded-2xl p-6 shadow-lg">
@@ -87,6 +95,18 @@ export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutP
                   strokeDashoffset={btcOffset}
                 />
               )}
+              {tokensPercent > 0 && (
+                <circle
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  fill="transparent"
+                  stroke={colors.tokens}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray={tokensStrokeDasharray}
+                  strokeDashoffset={tokensOffset}
+                />
+              )}
             </>
           )}
         </svg>
@@ -98,6 +118,9 @@ export function PortfolioDonut({ ethValue, solValue, btcValue }: PortfolioDonutP
           <LegendRow label="Ethereum (ETH)" value={ethValue} total={total} color="bg-indigo-500" />
           <LegendRow label="Solana (SOL)" value={solValue} total={total} color="bg-emerald-500" />
           <LegendRow label="Bitcoin (BTC)" value={btcValue} total={total} color="bg-amber-500" />
+          {tokensValue > 0 && (
+            <LegendRow label="Jetons ERC-20" value={tokensValue} total={total} color="bg-pink-500" />
+          )}
         </div>
       </div>
     </div>

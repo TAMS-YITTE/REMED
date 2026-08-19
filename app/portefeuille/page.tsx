@@ -80,12 +80,14 @@ export default function PortefeuillePage() {
 
   // POL est encore listé sous son ancien nom (matic) côté prix.
   const tokenPriceKey = (symbol: string) => (symbol === 'POL' ? 'matic' : symbol.toLowerCase());
-  const tokensValue = prices
-    ? Object.entries(erc20Balances).reduce((sum, [symbol, bal]) => {
-        const price = prices[tokenPriceKey(symbol)];
-        return price ? sum + parseFloat(bal || '0') * price : sum;
-      }, 0)
-    : 0;
+  const tokenSlices = prices
+    ? Object.entries(erc20Balances)
+        .map(([symbol, bal]) => {
+          const price = prices[tokenPriceKey(symbol)];
+          return { symbol, value: price ? parseFloat(bal || '0') * price : 0 };
+        })
+        .filter((t) => t.value > 0)
+    : [];
 
   const allTransactions: Transaction[] = [
     ...(ethData?.transactions || []),
@@ -159,7 +161,7 @@ export default function PortefeuillePage() {
         )}
 
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }} className="mb-10">
-          <PortfolioDonut ethValue={ethValue} solValue={solValue} btcValue={btcValue} tokensValue={tokensValue} />
+          <PortfolioDonut ethValue={ethValue} solValue={solValue} btcValue={btcValue} tokens={tokenSlices} />
         </motion.div>
 
         {/* CTAs */}

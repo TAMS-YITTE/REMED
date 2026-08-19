@@ -191,24 +191,20 @@ export function WalletBalance({
         </div>
         <div className="flex flex-col gap-2">
           <AddressRow label="Ethereum / EVM" address={walletAddress} copied={copiedAddress === walletAddress} onCopy={handleCopy} balance={balance} isLoadingBalance={isLoading} symbol="ETH" priceEur={prices?.eth} />
+          {/* Les jetons vivent sur l'adresse Ethereum : même adresse, même
+              présentation que les autres lignes, sous leur propre nom. */}
           {erc20Balances && Object.entries(erc20Balances).filter(([_, bal]) => parseFloat(bal) > 0 || isLoadingErc20).map(([sym, bal]) => (
-            <div key={sym} className="flex items-center justify-between gap-3 bg-white/5 p-2 rounded-lg border border-white/5 ml-4">
-              <span className="text-[11px] text-indigo-100 font-medium">{sym} (ERC-20)</span>
-              <div className="text-[12px] font-medium text-white">
-                {isLoadingErc20 ? (
-                  <div className="h-4 w-12 bg-white/20 animate-pulse rounded"></div>
-                ) : (
-                  <>
-                    {bal} <span className="text-white/60 text-[10px]">{sym}</span>
-                    {tokenPrice(prices, sym) !== undefined && (
-                      <span className="text-white/40 text-[10px] ml-1 font-normal">
-                        (~{(parseFloat(bal) * tokenPrice(prices, sym)!).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })})
-                      </span>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
+            <AddressRow
+              key={sym}
+              label={sym}
+              address={walletAddress}
+              copied={copiedAddress === walletAddress}
+              onCopy={handleCopy}
+              balance={bal}
+              isLoadingBalance={isLoadingErc20}
+              symbol={sym}
+              priceEur={tokenPrice(prices, sym)}
+            />
           ))}
           <AddressRow label="Solana" address={solanaWalletAddress} copied={copiedAddress === solanaWalletAddress} onCopy={handleCopy} balance={solanaBalance} isLoadingBalance={isLoadingSolana} symbol="SOL" priceEur={prices?.sol} />
           <AddressRow label="Bitcoin (Taproot)" address={bitcoinWalletAddress} copied={copiedAddress === bitcoinWalletAddress} onCopy={handleCopy} onGenerate={onCreateBitcoinWallet} balance={bitcoinBalance} isLoadingBalance={isLoadingBitcoin} symbol="BTC" priceEur={prices?.btc} />

@@ -43,6 +43,25 @@ function toBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
+// Les erreurs des bibliothèques réseau sont illisibles pour un utilisateur
+// (corps de requête brut, hexadécimal, version de viem). On traduit les cas
+// courants et on garde le texte d'origine en dernier recours.
+function humanError(raw: string, symbol: string): string {
+  const insufficient = raw.match(/have (\d+) want (\d+)/);
+  if (insufficient) {
+    const have = BigInt(insufficient[1]);
+    const want = BigInt(insufficient[2]);
+    const missing = Number(want - have) / 1e18;
+    return (
+      `Solde insuffisant une fois les frais de réseau ajoutés : il manque ${missing.toFixed(6)} ${symbol}. ` +
+      `Sur Ethereum, les frais se paient EN PLUS du montant envoyé — réduisez le montant d'environ ${(missing * 3).toFixed(4)} ${symbol} et réessayez.`
+    );
+  }
+  if (/user rejected|denied/i.test(raw)) return 'Transaction annulée.';
+  if (/nonce/i.test(raw)) return 'Une transaction précédente est encore en cours. Attendez quelques instants.';
+  return raw;
+}
+
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return Promise.race([
     promise,
@@ -311,7 +330,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
       resetAndClose();
     } catch (e: any) {
       console.error(e);
-      setError(e.message || "Erreur lors de l'envoi de la transaction.");
+      setError(humanError(e?.message || '', asset) || "Erreur lors de l'envoi de la transaction.");
     } finally {
       setIsSending(false);
       setStatus('');
@@ -320,8 +339,11 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-[#252844] text-white rounded-2xl w-full max-w-md shadow-xl overflow-hidden border border-white/10">
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+      {/* La hauteur est bornée et le contenu défile : sur un écran court, ou
+          quand un message d'erreur s'allonge, les boutons d'action sortaient
+          de la fenêtre et devenaient inatteignables. */}
+      <div className="bg-[#252844] text-white rounded-2xl w-full max-w-md shadow-xl overflow-hidden border border-white/10 max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b border-white/10 shrink-0">
           <h3 className="font-bold text-lg text-white">Envoyer des cryptos</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white p-1">
             ✕
@@ -329,7 +351,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
         </div>
 
         {step === 1 ? (
-          <div className="p-6">
+          <div className="p-6 overflow-y-auto">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-300 mb-1">Actif</label>
               <select
@@ -432,7 +454,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
               </div>
             </div>
 
-            {error && <div className="mb-4 text-sm text-red-300 bg-red-500/10 border border-red-500/30 p-3 rounded-lg">{error}</div>}
+            {error && <div className="mb-4 text-sm text-red-300 bg-red-500/10 border border-red-500/30 p-3 rounded-lg max-h-32 overflow-y-auto break-words">{error}</div>}
 
             <button
               onClick={handleNext}
@@ -442,7 +464,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
             </button>
           </div>
         ) : (
-          <div className="p-6">
+          <div className="p-6 overflow-y-auto">
             <div className="bg-[#2d3152] p-4 rounded-xl border border-white/10 mb-6">
               <p className="text-center text-sm text-gray-400 mb-1">Vous allez envoyer</p>
               <p className="text-center text-3xl font-bold text-white mb-6">
@@ -476,7 +498,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
               </span>
             </div>
 
-            {error && <div className="mb-4 text-sm text-red-300 bg-red-500/10 border border-red-500/30 p-3 rounded-lg">{error}</div>}
+            {error && <div className="mb-4 text-sm text-red-300 bg-red-500/10 border border-red-500/30 p-3 rounded-lg max-h-32 overflow-y-auto break-words">{error}</div>}
 
             <div className="flex gap-3">
               <button

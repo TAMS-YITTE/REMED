@@ -46,15 +46,28 @@ function toBase64(bytes: Uint8Array): string {
 // Les erreurs des bibliothèques réseau sont illisibles pour un utilisateur
 // (corps de requête brut, hexadécimal, version de viem). On traduit les cas
 // courants et on garde le texte d'origine en dernier recours.
-function humanError(raw: string, symbol: string): string {
+function humanError(raw: string, symbol: string, isToken: boolean): string {
   const insufficient = raw.match(/have (\d+) want (\d+)/);
   if (insufficient) {
+    // Les montants renvoyés par le réseau sont TOUJOURS en ETH (wei) : c'est
+    // l'ETH qui paie le gaz, jamais le jeton transféré.
     const have = BigInt(insufficient[1]);
     const want = BigInt(insufficient[2]);
     const missing = Number(want - have) / 1e18;
+
+    if (isToken) {
+      // Réduire le montant de jetons ne change rien au gaz : le message
+      // doit envoyer vers la seule action utile, approvisionner en ETH.
+      return (
+        `Pas assez d'ETH pour payer les frais de réseau : il manque ${missing.toFixed(8)} ETH. ` +
+        `Les frais d'un envoi de ${symbol} se paient en ETH, pas en ${symbol} — ` +
+        `réduire le montant de ${symbol} n'y changera rien. Envoyez un peu d'ETH sur votre adresse, puis réessayez.`
+      );
+    }
+
     return (
-      `Solde insuffisant une fois les frais de réseau ajoutés : il manque ${missing.toFixed(6)} ${symbol}. ` +
-      `Sur Ethereum, les frais se paient EN PLUS du montant envoyé — réduisez le montant d'environ ${(missing * 3).toFixed(4)} ${symbol} et réessayez.`
+      `Solde insuffisant une fois les frais de réseau ajoutés : il manque ${missing.toFixed(8)} ETH. ` +
+      `Sur Ethereum, les frais se paient EN PLUS du montant envoyé — réduisez le montant et réessayez.`
     );
   }
   if (/user rejected|denied/i.test(raw)) return 'Transaction annulée.';
@@ -345,7 +358,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
       resetAndClose();
     } catch (e: any) {
       console.error(e);
-      setError(humanError(e?.message || '', asset) || "Erreur lors de l'envoi de la transaction.");
+      setError(humanError(e?.message || '', asset, Boolean(token)) || "Erreur lors de l'envoi de la transaction.");
     } finally {
       setIsSending(false);
       setStatus('');

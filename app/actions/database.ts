@@ -138,6 +138,34 @@ export async function saveWallet(privyId: string, address: string, network: stri
   return data;
 }
 
+// Suppression d'une entrée du carnet d'adresses.
+// La suppression est filtrée sur `user_id` : sans ce filtre, connaître un
+// identifiant suffirait à supprimer l'entrée d'un autre utilisateur.
+export async function deleteSavedWallet(privyId: string, walletId: string): Promise<boolean> {
+  const supabase = getAdminClient();
+  if (!supabase) return false;
+
+  const { data: user } = await supabase
+    .from('users')
+    .select('id')
+    .eq('privy_id', privyId)
+    .maybeSingle();
+
+  if (!user) return false;
+
+  const { error } = await supabase
+    .from('saved_wallets')
+    .delete()
+    .eq('id', walletId)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Erreur lors de la suppression du carnet :', error);
+    return false;
+  }
+  return true;
+}
+
 export async function getPurchases(privyId: string, walletAddress?: string) {
   const supabase = getAdminClient();
   if (!supabase) return [];

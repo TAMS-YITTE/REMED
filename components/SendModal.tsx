@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSignTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
 import { useSignRawHash } from '@privy-io/react-auth/extended-chains';
 import { useAuth } from '@/hooks/useAuth';
-import { getSavedWallets, saveWallet } from '@/app/actions/database';
+import { getSavedWallets, saveWallet, deleteSavedWallet } from '@/app/actions/database';
 import { getSolanaBlockhash, sendRawSolanaTransaction } from '@/app/actions/solana';
 import { getBitcoinUtxos, getBitcoinFeeRate, broadcastBitcoinTransaction } from '@/app/actions/bitcoin';
 import { ERC20_TOKENS, getErc20Token, parseUnits, encodeErc20Transfer } from '@/lib/erc20Tokens';
@@ -93,10 +93,12 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
   const [savedWallets, setSavedWallets] = useState<any[]>([]);
   const [isSavingWallet, setIsSavingWallet] = useState(false);
   const [walletLabel, setWalletLabel] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const isSendEnabled = process.env.NEXT_PUBLIC_ENABLE_SEND === 'true';
 
   const isSolana = asset === 'SOL';
+  const currentNetwork = asset === 'SOL' ? 'solana' : asset === 'BTC' ? 'bitcoin' : 'ethereum';
   const isBitcoin = asset === 'BTC';
   const token = isSolana || isBitcoin ? undefined : getErc20Token(asset); // undefined pour ETH natif
   const currentBalance = isSolana
@@ -170,6 +172,19 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
     }
 
     setStep(2);
+  };
+
+  // Le carnet ne montre que les adresses de la chaîne sélectionnée : une
+  // adresse Bitcoin proposée pour un envoi Ethereum invite à une perte.
+  const handleDeleteWallet = async (walletId: string) => {
+    setDeletingId(walletId);
+    try {
+      const ok = await deleteSavedWallet(privyId!, walletId);
+      if (ok) setSavedWallets((list) => list.filter((w) => w.id !== walletId));
+      else setError("Impossible de retirer cette adresse du carnet.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const resetAndClose = () => {
@@ -395,12 +410,44 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
                     }}
                   >
                     <option value="">Carnet d'adresses...</option>
-                    {savedWallets.map((w, i) => (
-                      <option key={i} value={w.address}>{w.label} ({w.network})</option>
-                    ))}
+                    {savedWallets
+                      .filter((w) => w.network === currentNetwork)
+                      .map((w, i) => (
+                        <option key={i} value={w.address}>{w.label} ({w.network})</option>
+                      ))}
                   </select>
                 )}
               </div>
+
+              {/* Le carnet se remplit à chaque envoi et finissait par
+                  accumuler des doublons, sans aucun moyen de les retirer. */}
+              {savedWallets.filter((w) => w.network === currentNetwork).length > 0 && (
+                <div className="mb-2 flex flex-col gap-1">
+                  {savedWallets
+                    .filter((w) => w.network === currentNetwork)
+                    .map((w) => (
+                      <div key={w.id} className="flex items-center justify-between gap-2 text-[11px] bg-white/5 border border-white/10 rounded px-2 py-1">
+                        <button
+                          type="button"
+                          onClick={() => setAddress(w.address)}
+                          className="flex-1 text-left text-gray-300 hover:text-white truncate"
+                          title={w.address}
+                        >
+                          {w.label} — {w.address.slice(0, 10)}…{w.address.slice(-6)}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteWallet(w.id)}
+                          disabled={deletingId === w.id}
+                          className="shrink-0 text-red-300 hover:text-red-200 disabled:opacity-40 px-1"
+                          title="Retirer du carnet"
+                        >
+                          {deletingId === w.id ? '…' : '✕'}
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              )}
               <input
                 type="text"
                 placeholder={isSolana ? 'Adresse Solana...' : isBitcoin ? 'Adresse Bitcoin (bc1...)' : '0x...'}

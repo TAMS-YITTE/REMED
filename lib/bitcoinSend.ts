@@ -64,8 +64,16 @@ export function buildTransfer({
     throw new Error('Incohérence dans le calcul de la transaction : envoi annulé.');
   }
 
+  // Le sighash taproot engage TOUTES les entrées, pas seulement celle qu'on
+  // signe : les tableaux de scripts et de montants doivent donc couvrir
+  // l'ensemble des entrées. Ne passer que l'entrée courante fonctionnait
+  // tant qu'il n'y en avait qu'une, et échouait dès la deuxième
+  // ("Invalid amounts array").
+  const allScripts = inputs.map(() => script);
+  const allAmounts = inputs.map((u) => BigInt(u.value));
+
   const sighashes = inputs.map((_, i) =>
-    hex.encode(tx.preimageWitnessV1(i, [script], btc.SigHash.DEFAULT, [BigInt(inputs[i].value)]))
+    hex.encode(tx.preimageWitnessV1(i, allScripts, btc.SigHash.DEFAULT, allAmounts))
   );
 
   return { inputs, amountSats, feeSats, changeSats, sighashes, tx };

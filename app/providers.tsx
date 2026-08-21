@@ -181,10 +181,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
             },
             // `noPromptOnSignature` figurait ici : cette clé n'existe pas
             // dans le SDK v3 (le cast `as any` masquait l'erreur), elle
-            // était donc ignorée depuis le début. L'équivalent est
-            // `showWalletUIs` — laissé à true, comportement inchangé, mais
-            // désormais explicite et vérifié par le typage.
-            showWalletUIs: true,
+            // était donc ignorée depuis le début — l'interface de Privy
+            // était donc active sans qu'on le sache.
+            //
+            // Elle est désormais désactivée. Au moment de signer, Privy
+            // ouvrait sa propre fenêtre dans une iframe : celle-ci
+            // n'aboutissait pas ("This page couldn't load"), et l'attente
+            // de sa réponse expliquait l'envoi SOL bloqué sans message.
+            // L'application a déjà son écran de confirmation avant tout
+            // envoi (garde-fou du CLAUDE.md), et la validation 2FA passe
+            // par MfaListener ci-dessus.
+            showWalletUIs: false,
           },
 
         }}

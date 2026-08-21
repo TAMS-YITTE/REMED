@@ -157,7 +157,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
       if (isSolana) {
         // Chaque étape est affichée : un envoi qui bloque doit dire OÙ il
         // bloque, sinon il ne reste qu'un spinner muet à interpréter.
-        setStatus('1/3 — Recherche du portefeuille…');
+        setStatus('1/4 — Recherche du portefeuille…');
         const wallet = solanaWallets.find((w) => w.address === solanaWalletAddress);
         if (!wallet) {
           setError(
@@ -170,7 +170,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
         // on le prend juste avant de signer, pas à l'ouverture du modal.
         // `fetch` n'a pas de délai maximal par défaut : sans garde-fou, un
         // RPC qui ne répond jamais fige l'envoi avant même d'atteindre Privy.
-        setStatus('2/3 — Préparation de la transaction…');
+        setStatus('2/4 — Préparation de la transaction…');
         const recent = await withTimeout(
           getSolanaBlockhash(),
           STEP_TIMEOUT_MS,

@@ -56,16 +56,36 @@ réel confirmé de bout en bout (voir section 3).
   dans le simulateur) — vérifier systématiquement les nouveaux imports
   d'images avant de les committer.
 
-## 3. Ce qui n'est toujours pas vérifié en conditions réelles
+## 3. Ce qui est vérifié en conditions réelles (2026-08-21)
 
-- **Aucun achat réel de bout en bout n'a jamais été confirmé** sur ETH, SOL
-  ou BTC avec un vrai compte Privy (pas mock). Le mapping de l'adresse
-  Bitcoin (`user.linkedAccounts` filtré sur `chainType === 'bitcoin-taproot'`)
-  a été codé par déduction depuis la documentation Privy, jamais confirmé
-  contre un vrai objet `user`. Faire ce test avant toute nouvelle feature
-  qui dépend du wallet.
+Les achats **et** les envois sont désormais validés sur mainnet, avec de
+vrais fonds et un vrai compte Privy. Ne plus traiter ces points comme
+incertains, et ne pas refaire le diagnostic depuis le début :
+
+- **Achats** confirmés on-chain sur ETH, BTC (taproot), SOL et LINK
+  (ERC-20). Le mapping de l'adresse Bitcoin via `user.linkedAccounts`
+  filtré sur `chainType === 'bitcoin-taproot'`, codé par déduction, est
+  **validé** : l'adresse reçoit réellement des BTC.
+- **Envois** validés sur les quatre chemins : ETH natif, ERC-20 (25,6 LINK),
+  SOL (`2QcQxRjDqHior…`), BTC taproot (`0541fae7f34ab4ef…`, puis
+  `3b98cea5c3bba6e1…` à deux entrées).
 - **MoonPay est validé (OK) et actif en Mainnet**. L'intégration BANXA est définitivement abandonnée.
-- **Test d'achat réel :** Faire un test d'achat réel sur ETH, SOL ou BTC pour confirmer l'insertion de ligne dans la table `transactions`.
+- `NEXT_PUBLIC_ENABLE_SEND` est à **`true` en production**. La valeur est
+  comparée strictement à la chaîne `'true'`, et figée au build : une
+  modification dans Vercel n'a d'effet qu'après redéploiement.
+
+**Restent non vérifiés** : l'export des clés privées (`ExportKeys`, branché
+sur `/portefeuille` mais jamais exécuté), et l'écriture d'une ligne dans la
+table `transactions` après un achat réel.
+
+**Coût réel d'un achat** : mesuré à ~6 % sur un achat LINK de 250 € (250 €
+payés pour 234,92 € de crypto au cours du moment), alors que le simulateur
+de la page d'accueil annonce 1,99 %. La divulgation tarifaire MoonPay
+confirme le mécanisme : jusqu'à 4,5 % de frais, une majoration de 0,25 à
+10 % hors USD, et surtout un **spread intégré au prix affiché**, jamais
+présenté séparément. Le 1,99 % affiché est donc faux pour le client.
+À corriger en lisant la cotation MoonPay côté navigateur plutôt qu'en
+écrivant un pourcentage en dur.
 
 ## 4. Hygiène technique à ne pas oublier
 
@@ -81,3 +101,42 @@ réel confirmé de bout en bout (voir section 3).
   proches du réel (navigateur, pas juste `npm test`) — plusieurs bugs
   bloquants de cette session (crash post-authentification, page 500) sont
   passés inaperçus des tests unitaires seuls.
+- **Ne jamais caster la config Privy en `as any`.** `noPromptOnSignature`
+  y a survécu des mois alors que cette clé n'existe pas dans le SDK v3 :
+  elle était ignorée, l'interface de Privy restait donc active à l'insu de
+  tous, et sa fenêtre de signature n'aboutissait pas — l'envoi restait figé
+  sans message. La clé correcte est `showWalletUIs`, à `false` puisque
+  l'application a son propre écran de confirmation.
+
+## 5. Pièges Privy identifiés en conditions réelles (à ne pas réintroduire)
+
+Chacun de ces points a coûté un cycle de diagnostic complet :
+
+- **Toujours passer `chain`** à une méthode Solana. Sans lui, Privy diffuse
+  sur son réseau par défaut, où le blockhash mainnet est inconnu : la
+  transaction n'est jamais confirmée et l'attente ne se termine pas.
+  Identifiant CAIP-2 mainnet : `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`.
+- **`useRegisterMfaListener` doit être monté** près de la racine (voir
+  `MfaListener` dans `app/providers.tsx`). Quand la 2FA est active, Privy
+  attend que l'application affiche la saisie ; sans écoute, rien ne
+  s'affiche et la promesse de signature ne se résout jamais.
+- **Ne demander à Privy que la signature**, et diffuser soi-même.
+  `signAndSendTransaction` attend une confirmation par souscription
+  WebSocket qui ne se termine pas ici.
+- **Bitcoin** : Privy ne sait que signer un hash (`useSignRawHash`, tweak
+  BIP-341 appliqué par leurs soins). Le sighash taproot engage **toutes**
+  les entrées — passer seulement l'entrée courante à `preimageWitnessV1`
+  fonctionne à une entrée et échoue dès la deuxième
+  (`Invalid amounts array`). L'arithmétique (entrées, frais, monnaie) est
+  isolée sans dépendance dans `lib/bitcoinPlan.ts` et testée seule : c'est
+  là qu'une erreur enverrait le solde aux mineurs.
+- **Les hooks Privy non-EVM plantent au rendu serveur**
+  (`useWallets was called outside the PrivyProvider`). Les composants qui
+  les utilisent sont chargés en `dynamic(..., { ssr: false })`.
+- **Toute table lue par une action serveur a besoin d'un `GRANT` explicite**
+  pour `service_role`. `saved_wallets` avait SELECT et INSERT mais pas
+  DELETE : la suppression échouait en 42501, sans message exploitable.
+  Migrations dans `supabase/`.
+- **Le gaz d'un transfert ERC-20 se paie en ETH.** Une adresse sans ETH a
+  ses jetons immobilisés, et réduire le montant du jeton n'y change rien —
+  piège classique pour un utilisateur qui vient de vider son ETH.

@@ -23,6 +23,10 @@ jest.mock('@privy-io/react-auth', () => ({
   ),
   usePrivy: () => mockUsePrivy(),
   useWallets: () => mockUseWallets(),
+  // Le listener MFA est monté par Providers : sans lui, Privy attend une
+  // validation que rien n'affiche et la signature ne se résout jamais.
+  useMfa: () => ({ promptMfa: jest.fn().mockResolvedValue(undefined) }),
+  useRegisterMfaListener: jest.fn(),
 }));
 
 // Mocked instead of transformed for real: it pulls in ESM-only transitive

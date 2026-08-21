@@ -1,6 +1,6 @@
 'use client';
 
-import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth';
+import { PrivyProvider, usePrivy, useWallets, useMfa, useRegisterMfaListener } from '@privy-io/react-auth';
 import { useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
 import { useCreateWallet } from '@privy-io/react-auth/extended-chains';
 import { useEffect, useState, createContext } from 'react';
@@ -119,6 +119,25 @@ function RealAuthProvider({ children }: { children: React.ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// Quand un utilisateur a activé la 2FA, Privy exige une validation MFA avant
+// de signer. Sans ce listener, l'événement n'est traité par personne : aucune
+// fenêtre ne s'ouvre, la promesse de signature ne se résout jamais et
+// l'interface tourne indéfiniment (constaté au premier envoi SOL réel).
+// `promptMfa` est la fenêtre de saisie fournie par Privy.
+function MfaListener() {
+  const { promptMfa } = useMfa();
+
+  useRegisterMfaListener({
+    onMfaRequired: () => {
+      promptMfa().catch((error) => {
+        console.error('Erreur lors de la validation MFA :', error);
+      });
+    },
+  });
+
+  return null;
+}
+
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY && !process.env.NEXT_PUBLIC_POSTHOG_KEY.includes('votre')) {
@@ -160,11 +179,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
             solana: {
               createOnLogin: 'users-without-wallets',
             },
-            noPromptOnSignature: true,
-          } as any,
+            // `noPromptOnSignature` figurait ici : cette clé n'existe pas
+            // dans le SDK v3 (le cast `as any` masquait l'erreur), elle
+            // était donc ignorée depuis le début. L'équivalent est
+            // `showWalletUIs` — laissé à true, comportement inchangé, mais
+            // désormais explicite et vérifié par le typage.
+            showWalletUIs: true,
+          },
 
         }}
       >
+        <MfaListener />
         <RealAuthProvider>{children}</RealAuthProvider>
       </PrivyProvider>
     </LanguageProvider>

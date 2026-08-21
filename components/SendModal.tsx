@@ -20,6 +20,20 @@ interface SendModalProps {
 // même format d'adresse 0x) et SOL natif, sur le réseau Solana.
 // BTC reste désactivé : Privy ne diffuse pas les transactions Bitcoin, il
 // faut composer et diffuser la transaction soi-même (voir CLAUDE.md).
+// Identifiant CAIP-2 de la grappe Solana mainnet (hash de genèse tronqué).
+const SOLANA_MAINNET = 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp' as const;
+
+// Un envoi Solana confirme en quelques secondes ; au-delà, quelque chose
+// est bloqué et il vaut mieux le dire que faire tourner un spinner.
+const SEND_TIMEOUT_MS = 60_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error(message)), ms)),
+  ]);
+}
+
 const EVM_ASSETS = ['ETH', ...ERC20_TOKENS.map((t) => t.symbol)];
 const SENDABLE_ASSETS = [...EVM_ASSETS, 'SOL'];
 
@@ -148,7 +162,16 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
           lastValidBlockHeight: BigInt(recent.lastValidBlockHeight),
         });
 
-        const { signature } = await signAndSendTransaction({ transaction, wallet });
+        // Sans `chain`, Privy choisit son réseau par défaut : la transaction
+        // part alors avec un blockhash mainnet sur une autre grappe, n'est
+        // jamais confirmée, et l'interface tourne indéfiniment.
+        // Le délai maximal évite qu'un blocage se traduise par un spinner
+        // muet : l'utilisateur doit savoir que rien n'est parti.
+        const { signature } = await withTimeout(
+          signAndSendTransaction({ transaction, wallet, chain: SOLANA_MAINNET }),
+          SEND_TIMEOUT_MS,
+          "L'envoi n'a pas abouti dans le délai imparti. Vérifiez votre solde avant de réessayer : si la transaction a été diffusée, elle apparaîtra dans votre historique."
+        );
         console.log('Transaction Solana envoyée :', signature);
         resetAndClose();
         return;

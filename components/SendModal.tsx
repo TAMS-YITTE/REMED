@@ -27,6 +27,11 @@ const SOLANA_MAINNET = 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp' as const;
 // est bloqué et il vaut mieux le dire que faire tourner un spinner.
 const SEND_TIMEOUT_MS = 60_000;
 
+// Le blockhash vient d'un simple appel RPC : au-delà de 20 s, il ne
+// répondra pas. `fetch` n'ayant pas de délai maximal par défaut, sans ce
+// garde-fou un RPC muet fige l'envoi avant même d'atteindre Privy.
+const STEP_TIMEOUT_MS = 20_000;
+
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return Promise.race([
     promise,
@@ -49,6 +54,9 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [isSending, setIsSending] = useState(false);
+  // Étape courante de l'envoi, affichée à l'utilisateur : un blocage doit
+  // indiquer où il se produit, pas se réduire à un spinner muet.
+  const [status, setStatus] = useState('');
 
   // Address Book state
   const [savedWallets, setSavedWallets] = useState<any[]>([]);
@@ -140,20 +148,33 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
 
     try {
       if (isSolana) {
+        // Chaque étape est affichée : un envoi qui bloque doit dire OÙ il
+        // bloque, sinon il ne reste qu'un spinner muet à interpréter.
+        setStatus('1/3 — Recherche du portefeuille…');
         const wallet = solanaWallets.find((w) => w.address === solanaWalletAddress);
         if (!wallet) {
-          setError("Portefeuille Solana introuvable. Reconnectez-vous et réessayez.");
+          setError(
+            `Portefeuille Solana introuvable (${solanaWallets.length} portefeuille(s) Solana détecté(s)). Reconnectez-vous et réessayez.`
+          );
           return;
         }
 
         // Un blockhash périmé fait rejeter la transaction par le réseau :
         // on le prend juste avant de signer, pas à l'ouverture du modal.
-        const recent = await getSolanaBlockhash();
+        // `fetch` n'a pas de délai maximal par défaut : sans garde-fou, un
+        // RPC qui ne répond jamais fige l'envoi avant même d'atteindre Privy.
+        setStatus('2/3 — Préparation de la transaction…');
+        const recent = await withTimeout(
+          getSolanaBlockhash(),
+          STEP_TIMEOUT_MS,
+          "Le réseau Solana n'a pas répondu (préparation de la transaction). Rien n'a été envoyé."
+        );
         if (!recent) {
           setError("Réseau Solana injoignable. Réessayez dans un instant.");
           return;
         }
 
+        setStatus('3/3 — Signature et diffusion…');
         const transaction = buildSolTransfer({
           from: wallet.address,
           to: address,
@@ -199,6 +220,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
       setError(e.message || "Erreur lors de l'envoi de la transaction.");
     } finally {
       setIsSending(false);
+      setStatus('');
     }
   };
 
@@ -375,7 +397,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
                 className="flex-1 bg-[#534AB7] text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50 flex justify-center items-center gap-2"
               >
                 {isSending ? (
-                  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Envoi...</>
+                  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> {status || 'Envoi...'}</>
                 ) : (
                   'Confirmer'
                 )}

@@ -5,6 +5,18 @@ import { useAuth } from '@/hooks/useAuth';
 
 jest.mock('@/hooks/useAuth');
 
+// Le bundle Solana de Privy n'est pas transformable par jest (syntaxe non
+// standard dans ses sources). On le remplace : ce test porte sur l'UI du
+// modal, pas sur le SDK.
+jest.mock('@privy-io/react-auth/solana', () => ({
+  useSignAndSendTransaction: () => ({ signAndSendTransaction: jest.fn() }),
+  useWallets: () => ({ ready: true, wallets: [] }),
+}));
+
+jest.mock('@/app/actions/solana', () => ({
+  getSolanaBlockhash: jest.fn(),
+}));
+
 describe('SendModal', () => {
   const mockOnClose = jest.fn();
   const mockSendTransaction = jest.fn();
@@ -110,5 +122,93 @@ describe('SendModal', () => {
       value: '0x6f05b59d3b20000',
       chainId: 1,
     });
+  });
+});
+
+describe('SendModal - envoi Solana', () => {
+  const mockOnClose = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (useAuth as jest.Mock).mockReturnValue({
+      sendTransaction: jest.fn(),
+      solanaWalletAddress: 'G9FJ4p4Jn3DQgyqksPhS5MuHi2VdTE9VGaTDwcFY2TeA',
+    });
+    process.env.NEXT_PUBLIC_ENABLE_SEND = 'true';
+  });
+
+  afterEach(() => {
+    delete process.env.NEXT_PUBLIC_ENABLE_SEND;
+  });
+
+  const props = {
+    isOpen: true,
+    onClose: mockOnClose,
+    balances: { eth: '1.5', sol: '10' },
+  };
+
+  function selectSolana() {
+    const select = screen.getAllByRole('combobox')[0];
+    fireEvent.change(select, { target: { value: 'SOL' } });
+    return select;
+  }
+
+  it('propose SOL à l\'envoi et laisse BTC désactivé', () => {
+    render(<SendModal {...props} />);
+    const select = screen.getAllByRole('combobox')[0] as HTMLSelectElement;
+    const options = Array.from(select.options);
+
+    const sol = options.find((o) => o.value === 'SOL');
+    const btc = options.find((o) => o.value === 'BTC');
+
+    expect(sol).toBeDefined();
+    expect(sol!.disabled).toBe(false);
+    expect(btc!.disabled).toBe(true);
+  });
+
+  it('annonce le réseau Solana une fois SOL sélectionné', () => {
+    render(<SendModal {...props} />);
+    selectSolana();
+    expect(
+      screen.getByText(/Réseau Solana. Envoyez uniquement vers une adresse Solana./i)
+    ).toBeInTheDocument();
+  });
+
+  it('refuse une adresse Ethereum quand SOL est sélectionné (envoi inter-chaînes = fonds perdus)', () => {
+    render(<SendModal {...props} />);
+    selectSolana();
+
+    fireEvent.change(screen.getByPlaceholderText('Adresse Solana...'), {
+      target: { value: '0xA70B325B96Ba7837F49DC750fC6c72ea2C035F99' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '1' } });
+    fireEvent.click(screen.getByRole('button', { name: /continuer/i }));
+
+    expect(screen.getByText("L'adresse Solana n'est pas valide.")).toBeInTheDocument();
+  });
+
+  it('vide l\'adresse quand on change de famille de chaîne', () => {
+    render(<SendModal {...props} />);
+
+    fireEvent.change(screen.getByPlaceholderText('0x...'), {
+      target: { value: '0xA70B325B96Ba7837F49DC750fC6c72ea2C035F99' },
+    });
+    selectSolana();
+
+    expect((screen.getByPlaceholderText('Adresse Solana...') as HTMLInputElement).value).toBe('');
+  });
+
+  it('accepte une adresse Solana valide et affiche le récapitulatif Solana', () => {
+    render(<SendModal {...props} />);
+    selectSolana();
+
+    fireEvent.change(screen.getByPlaceholderText('Adresse Solana...'), {
+      target: { value: '9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM' },
+    });
+    fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '1' } });
+    fireEvent.click(screen.getByRole('button', { name: /continuer/i }));
+
+    expect(screen.getByText('Solana')).toBeInTheDocument();
+    expect(screen.getByText(/payés en SOL/i)).toBeInTheDocument();
   });
 });

@@ -88,6 +88,31 @@ async function fetchLamportDeltas(
   return deltas;
 }
 
+// Un virement SOL doit porter un blockhash récent (validité ~60-90 s).
+// On le lit côté serveur pour rester sur le même RPC que le reste, sans
+// exposer d'endpoint au navigateur.
+export async function getSolanaBlockhash(): Promise<{ blockhash: string; lastValidBlockHeight: string } | null> {
+  const res = await safeFetch<any>(SOLANA_RPC, {
+    method: 'POST',
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'getLatestBlockhash',
+      params: [{ commitment: 'finalized' }]
+    })
+  }, null);
+
+  const value = res?.result?.value;
+  if (!value?.blockhash || value.lastValidBlockHeight === undefined) return null;
+
+  // lastValidBlockHeight dépasse la précision sûre d'un Number côté client :
+  // on le transporte en chaîne et il est relu en BigInt.
+  return {
+    blockhash: value.blockhash,
+    lastValidBlockHeight: String(value.lastValidBlockHeight)
+  };
+}
+
 export async function getSolanaWalletData(address: string): Promise<WalletData> {
   try {
     // 1. Fetch balance

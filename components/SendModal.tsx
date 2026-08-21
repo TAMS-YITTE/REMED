@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
 import { useAuth } from '@/hooks/useAuth';
 import { getSavedWallets, saveWallet } from '@/app/actions/database';
+import { getSolanaBlockhash } from '@/app/actions/solana';
 import { ERC20_TOKENS, getErc20Token, parseUnits, encodeErc20Transfer } from '@/lib/erc20Tokens';
+import { buildSolTransfer, isValidSolanaAddress, solToLamports } from '@/lib/solanaSend';
 
 interface SendModalProps {
   isOpen: boolean;
@@ -13,14 +16,18 @@ interface SendModalProps {
   erc20Balances?: Record<string, string>;
 }
 
-// Actifs envoyables : ETH natif + les ERC-20 mainnet. Tous EVM (chainId 1),
-// même format d'adresse 0x. SOL/BTC restent désactivés (signatures d'autres
-// chaînes, non implémentées/testées).
-const SENDABLE_ASSETS = ['ETH', ...ERC20_TOKENS.map((t) => t.symbol)];
+// Actifs envoyables : ETH natif + les ERC-20 mainnet (tous EVM, chainId 1,
+// même format d'adresse 0x) et SOL natif, sur le réseau Solana.
+// BTC reste désactivé : Privy ne diffuse pas les transactions Bitcoin, il
+// faut composer et diffuser la transaction soi-même (voir CLAUDE.md).
+const EVM_ASSETS = ['ETH', ...ERC20_TOKENS.map((t) => t.symbol)];
+const SENDABLE_ASSETS = [...EVM_ASSETS, 'SOL'];
 
 export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModalProps) {
-  const { sendTransaction, user } = useAuth();
+  const { sendTransaction, user, solanaWalletAddress } = useAuth();
   const privyId = user?.id;
+  const { signAndSendTransaction } = useSignAndSendTransaction();
+  const { wallets: solanaWallets } = useSolanaWallets();
 
   const [step, setStep] = useState<1 | 2>(1);
   const [asset, setAsset] = useState('ETH');
@@ -36,8 +43,13 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
 
   const isSendEnabled = process.env.NEXT_PUBLIC_ENABLE_SEND === 'true';
 
-  const token = getErc20Token(asset); // undefined pour ETH natif
-  const currentBalance = asset === 'ETH' ? (balances.eth || '0') : (erc20Balances?.[asset] || '0');
+  const isSolana = asset === 'SOL';
+  const token = isSolana ? undefined : getErc20Token(asset); // undefined pour ETH natif
+  const currentBalance = isSolana
+    ? (balances.sol || '0')
+    : asset === 'ETH'
+      ? (balances.eth || '0')
+      : (erc20Balances?.[asset] || '0');
 
   useEffect(() => {
     if (isOpen && privyId) {
@@ -71,8 +83,14 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
       return;
     }
 
-    // Tous les actifs envoyables sont EVM : adresse 0x attendue.
-    if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
+    // Une adresse d'une chaîne envoyée sur une autre chaîne = fonds perdus
+    // sans recours : on refuse avant d'aller plus loin.
+    if (isSolana) {
+      if (!isValidSolanaAddress(address)) {
+        setError("L'adresse Solana n'est pas valide.");
+        return;
+      }
+    } else if (!/^0x[a-fA-F0-9]{40}$/.test(address)) {
       setError("L'adresse Ethereum n'est pas valide.");
       return;
     }
@@ -84,7 +102,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
 
     if (isSavingWallet && walletLabel && privyId) {
       try {
-        await saveWallet(privyId, address, 'ethereum', walletLabel);
+        await saveWallet(privyId, address, isSolana ? 'solana' : 'ethereum', walletLabel);
       } catch (err) {
         console.error('Failed to save wallet:', err);
       }
@@ -107,6 +125,35 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
     setError('');
 
     try {
+      if (isSolana) {
+        const wallet = solanaWallets.find((w) => w.address === solanaWalletAddress);
+        if (!wallet) {
+          setError("Portefeuille Solana introuvable. Reconnectez-vous et réessayez.");
+          return;
+        }
+
+        // Un blockhash périmé fait rejeter la transaction par le réseau :
+        // on le prend juste avant de signer, pas à l'ouverture du modal.
+        const recent = await getSolanaBlockhash();
+        if (!recent) {
+          setError("Réseau Solana injoignable. Réessayez dans un instant.");
+          return;
+        }
+
+        const transaction = buildSolTransfer({
+          from: wallet.address,
+          to: address,
+          lamports: solToLamports(amount),
+          blockhash: recent.blockhash,
+          lastValidBlockHeight: BigInt(recent.lastValidBlockHeight),
+        });
+
+        const { signature } = await signAndSendTransaction({ transaction, wallet });
+        console.log('Transaction Solana envoyée :', signature);
+        resetAndClose();
+        return;
+      }
+
       let txConfig;
       if (asset === 'ETH') {
         // Envoi natif ETH (chemin validé en réel).
@@ -148,18 +195,31 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
               <label className="block text-sm font-medium text-gray-300 mb-1">Actif</label>
               <select
                 value={asset}
-                onChange={(e) => setAsset(e.target.value)}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  // Changer de famille de chaîne rend l'adresse saisie
+                  // invalide : on la vide plutôt que de risquer un envoi
+                  // vers une adresse de l'autre réseau.
+                  if ((next === 'SOL') !== isSolana) {
+                    setAddress('');
+                    setError('');
+                  }
+                  setAsset(next);
+                }}
                 className="w-full bg-[#1a1c2e] border border-white/15 text-white rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 {SENDABLE_ASSETS.map((sym) => (
                   <option key={sym} value={sym}>
-                    {sym === 'ETH' ? 'Ethereum (ETH)' : sym}
+                    {sym === 'ETH' ? 'Ethereum (ETH)' : sym === 'SOL' ? 'Solana (SOL)' : sym}
                   </option>
                 ))}
-                <option value="SOL" disabled>Solana (bientôt)</option>
                 <option value="BTC" disabled>Bitcoin (bientôt)</option>
               </select>
-              <p className="text-[11px] text-gray-500 mt-1">Réseau Ethereum. Envoyez uniquement vers une adresse Ethereum (0x…).</p>
+              <p className="text-[11px] text-gray-500 mt-1">
+                {isSolana
+                  ? 'Réseau Solana. Envoyez uniquement vers une adresse Solana.'
+                  : 'Réseau Ethereum. Envoyez uniquement vers une adresse Ethereum (0x…).'}
+              </p>
             </div>
 
             <div className="mb-4">
@@ -181,7 +241,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
               </div>
               <input
                 type="text"
-                placeholder="0x..."
+                placeholder={isSolana ? 'Adresse Solana...' : '0x...'}
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full bg-[#1a1c2e] border border-white/15 text-white placeholder-gray-500 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono text-sm"
@@ -252,7 +312,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Réseau</span>
-                  <span className="font-medium text-white">Ethereum</span>
+                  <span className="font-medium text-white">{isSolana ? 'Solana' : 'Ethereum'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Vers</span>
@@ -262,7 +322,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
                 </div>
                 <div className="flex justify-between pt-3 border-t border-white/10">
                   <span className="text-gray-400">Frais réseau</span>
-                  <span className="font-medium text-white">payés en ETH</span>
+                  <span className="font-medium text-white">payés en {isSolana ? 'SOL' : 'ETH'}</span>
                 </div>
               </div>
             </div>

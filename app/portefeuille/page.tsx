@@ -11,13 +11,21 @@ import type { WalletData, Transaction } from '@/app/actions/utils';
 import { WalletBalance } from '@/components/WalletBalance';
 import { TransactionHistory } from '@/components/TransactionHistory';
 import { PortfolioDonut } from '@/components/PortfolioDonut';
-import { SendModal } from '@/components/SendModal';
+import dynamic from 'next/dynamic';
 import { Navbar } from '@/components/Navbar';
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { AuthButton } from '@/components/AuthButton';
 import { Footer } from '@/components/Footer';
+
+// Les hooks Solana de Privy lisent un contexte qui n'existe pas au rendu
+// serveur : appelés pendant le SSR ils lèvent "useWallets was called outside
+// the PrivyProvider component" et la page part en 500. Le modal est donc
+// chargé uniquement côté navigateur.
+const SendModal = dynamic(() => import('@/components/SendModal').then((m) => m.SendModal), {
+  ssr: false,
+});
 
 export default function PortefeuillePage() {
   const { isReady, authenticated, user, walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet } = useAuth();

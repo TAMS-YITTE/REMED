@@ -141,9 +141,12 @@ export async function saveWallet(privyId: string, address: string, network: stri
 // Suppression d'une entrée du carnet d'adresses.
 // La suppression est filtrée sur `user_id` : sans ce filtre, connaître un
 // identifiant suffirait à supprimer l'entrée d'un autre utilisateur.
-export async function deleteSavedWallet(privyId: string, walletId: string): Promise<boolean> {
+export async function deleteSavedWallet(
+  privyId: string,
+  walletId: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
   const supabase = getAdminClient();
-  if (!supabase) return false;
+  if (!supabase) return { ok: false, error: 'Base de données indisponible.' };
 
   const { data: user } = await supabase
     .from('users')
@@ -151,19 +154,27 @@ export async function deleteSavedWallet(privyId: string, walletId: string): Prom
     .eq('privy_id', privyId)
     .maybeSingle();
 
-  if (!user) return false;
+  if (!user) return { ok: false, error: 'Compte introuvable.' };
 
-  const { error } = await supabase
+  const { error, count } = await supabase
     .from('saved_wallets')
-    .delete()
+    .delete({ count: 'exact' })
     .eq('id', walletId)
     .eq('user_id', user.id);
 
   if (error) {
     console.error('Erreur lors de la suppression du carnet :', error);
-    return false;
+    // Le motif exact (souvent "permission denied", faute de GRANT sur la
+    // table) doit remonter : un message générique a déjà fait perdre du
+    // temps sur ce projet.
+    return { ok: false, error: `${error.message}${error.code ? ` (${error.code})` : ''}` };
   }
-  return true;
+
+  // Aucune ligne supprimée sans erreur = la ligne n'appartient pas à ce
+  // compte, ou a déjà disparu.
+  if (count === 0) return { ok: false, error: 'Adresse introuvable dans votre carnet.' };
+
+  return { ok: true };
 }
 
 export async function getPurchases(privyId: string, walletAddress?: string) {

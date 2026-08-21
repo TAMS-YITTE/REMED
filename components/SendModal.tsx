@@ -192,9 +192,9 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
   const handleDeleteWallet = async (walletId: string) => {
     setDeletingId(walletId);
     try {
-      const ok = await deleteSavedWallet(privyId!, walletId);
-      if (ok) setSavedWallets((list) => list.filter((w) => w.id !== walletId));
-      else setError("Impossible de retirer cette adresse du carnet.");
+      const result = await deleteSavedWallet(privyId!, walletId);
+      if (result.ok) setSavedWallets((list) => list.filter((w) => w.id !== walletId));
+      else setError(`Suppression impossible : ${result.error}`);
     } finally {
       setDeletingId(null);
     }

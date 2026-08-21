@@ -9,12 +9,13 @@ jest.mock('@/hooks/useAuth');
 // standard dans ses sources). On le remplace : ce test porte sur l'UI du
 // modal, pas sur le SDK.
 jest.mock('@privy-io/react-auth/solana', () => ({
-  useSignAndSendTransaction: () => ({ signAndSendTransaction: jest.fn() }),
+  useSignTransaction: () => ({ signTransaction: jest.fn() }),
   useWallets: () => ({ ready: true, wallets: [] }),
 }));
 
 jest.mock('@/app/actions/solana', () => ({
   getSolanaBlockhash: jest.fn(),
+  sendRawSolanaTransaction: jest.fn(),
 }));
 
 describe('SendModal', () => {

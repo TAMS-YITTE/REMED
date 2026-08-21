@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
+import { useSignTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana';
 import { useAuth } from '@/hooks/useAuth';
 import { getSavedWallets, saveWallet } from '@/app/actions/database';
-import { getSolanaBlockhash } from '@/app/actions/solana';
+import { getSolanaBlockhash, sendRawSolanaTransaction } from '@/app/actions/solana';
 import { ERC20_TOKENS, getErc20Token, parseUnits, encodeErc20Transfer } from '@/lib/erc20Tokens';
 import { buildSolTransfer, isValidSolanaAddress, solToLamports } from '@/lib/solanaSend';
 
@@ -32,6 +32,13 @@ const SEND_TIMEOUT_MS = 60_000;
 // garde-fou un RPC muet fige l'envoi avant même d'atteindre Privy.
 const STEP_TIMEOUT_MS = 20_000;
 
+// Le RPC Solana attend la transaction en base64 ; Privy la rend en octets.
+function toBase64(bytes: Uint8Array): string {
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
 function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
   return Promise.race([
     promise,
@@ -45,7 +52,7 @@ const SENDABLE_ASSETS = [...EVM_ASSETS, 'SOL'];
 export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModalProps) {
   const { sendTransaction, user, solanaWalletAddress } = useAuth();
   const privyId = user?.id;
-  const { signAndSendTransaction } = useSignAndSendTransaction();
+  const { signTransaction } = useSignTransaction();
   const { wallets: solanaWallets } = useSolanaWallets();
 
   const [step, setStep] = useState<1 | 2>(1);
@@ -174,7 +181,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
           return;
         }
 
-        setStatus('3/3 — Signature et diffusion…');
+        setStatus('3/4 — Signature…');
         const transaction = buildSolTransfer({
           from: wallet.address,
           to: address,
@@ -183,17 +190,31 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
           lastValidBlockHeight: BigInt(recent.lastValidBlockHeight),
         });
 
-        // Sans `chain`, Privy choisit son réseau par défaut : la transaction
-        // part alors avec un blockhash mainnet sur une autre grappe, n'est
-        // jamais confirmée, et l'interface tourne indéfiniment.
-        // Le délai maximal évite qu'un blocage se traduise par un spinner
-        // muet : l'utilisateur doit savoir que rien n'est parti.
-        const { signature } = await withTimeout(
-          signAndSendTransaction({ transaction, wallet, chain: SOLANA_MAINNET }),
+        // On ne demande QUE la signature à Privy. Sa méthode
+        // signAndSendTransaction diffuse puis attend la confirmation via une
+        // souscription WebSocket qui ne se terminait jamais ici : l'envoi
+        // restait bloqué indéfiniment sans qu'aucune transaction ne parte
+        // (vérifié on-chain, solde inchangé). La diffusion est donc faite
+        // par notre propre RPC, celui qui répond déjà à l'étape 2.
+        const { signedTransaction } = await withTimeout(
+          signTransaction({ transaction, wallet, chain: SOLANA_MAINNET }),
           SEND_TIMEOUT_MS,
-          "L'envoi n'a pas abouti dans le délai imparti. Vérifiez votre solde avant de réessayer : si la transaction a été diffusée, elle apparaîtra dans votre historique."
+          "La signature n'a pas abouti dans le délai imparti. Rien n'a été envoyé."
         );
-        console.log('Transaction Solana envoyée :', signature);
+
+        setStatus('4/4 — Diffusion…');
+        const result = await withTimeout(
+          sendRawSolanaTransaction(toBase64(signedTransaction)),
+          STEP_TIMEOUT_MS,
+          "Le réseau Solana n'a pas répondu pendant la diffusion. Vérifiez votre historique avant de réessayer."
+        );
+
+        if ('error' in result) {
+          setError(result.error);
+          return;
+        }
+
+        console.log('Transaction Solana envoyée :', result.signature);
         resetAndClose();
         return;
       }

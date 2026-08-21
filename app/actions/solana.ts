@@ -113,6 +113,34 @@ export async function getSolanaBlockhash(): Promise<{ blockhash: string; lastVal
   };
 }
 
+// Diffusion d'une transaction déjà signée.
+// Privy sait signer ET diffuser, mais sa diffusion attend la confirmation
+// via une souscription WebSocket qui, en pratique, ne se termine jamais ici :
+// l'envoi restait bloqué à l'étape "signature et diffusion". On ne lui
+// demande donc plus que la signature, et on diffuse par le même RPC que le
+// reste de l'application.
+export async function sendRawSolanaTransaction(
+  base64Transaction: string
+): Promise<{ signature: string } | { error: string }> {
+  const res = await safeFetch<any>(SOLANA_RPC, {
+    method: 'POST',
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'sendTransaction',
+      params: [base64Transaction, { encoding: 'base64', preflightCommitment: 'confirmed' }]
+    })
+  }, null);
+
+  if (!res) return { error: "Réseau Solana injoignable au moment de la diffusion." };
+  // Le RPC refuse explicitement une transaction invalide : on remonte son
+  // message plutôt qu'un échec générique.
+  if (res.error) return { error: res.error.message || 'Transaction refusée par le réseau.' };
+  if (typeof res.result !== 'string') return { error: 'Réponse inattendue du réseau Solana.' };
+
+  return { signature: res.result };
+}
+
 export async function getSolanaWalletData(address: string): Promise<WalletData> {
   try {
     // 1. Fetch balance

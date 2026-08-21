@@ -12,7 +12,11 @@ const config = {
     '^@/(.*)$': '<rootDir>/$1',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(jose|@privy-io)/)'
+    // @scure/@noble sont livrés en ESM : sans transformation, l'import de
+    // la construction de transaction Bitcoin échoue au parsing.
+    // Séparateur explicite : sous Windows les chemins utilisent «\», que
+    // «/node_modules/» ne reconnaît pas.
+    'node_modules[/\\\\](?!(jose|@privy-io|@scure|@noble)[/\\\\])'
   ],
 }
 

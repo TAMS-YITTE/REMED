@@ -70,3 +70,60 @@ export async function getBitcoinWalletData(address: string): Promise<WalletData>
     return { balanceBtc: "0.00", transactions: [] };
   }
 }
+
+// --- Envoi ---
+// Privy ne sait que signer un hash pour Bitcoin : la composition et la
+// diffusion de la transaction sont à notre charge.
+
+export interface BitcoinUtxo {
+  txid: string;
+  vout: number;
+  value: number;
+}
+
+export async function getBitcoinUtxos(address: string): Promise<BitcoinUtxo[]> {
+  const utxos = await safeFetch<any[]>(
+    `https://mempool.space/api/address/${address}/utxo`,
+    { cache: 'no-store' },
+    []
+  );
+  if (!Array.isArray(utxos)) return [];
+
+  // Une entrée non confirmée peut disparaître d'une réorganisation : on ne
+  // dépense que du confirmé.
+  return utxos
+    .filter((u) => u?.status?.confirmed && Number.isFinite(u.value))
+    .map((u) => ({ txid: u.txid, vout: u.vout, value: Number(u.value) }));
+}
+
+export async function getBitcoinFeeRate(): Promise<number> {
+  const fees = await safeFetch<any>(
+    'https://mempool.space/api/v1/fees/recommended',
+    { cache: 'no-store' },
+    null
+  );
+  const rate = Number(fees?.halfHourFee);
+  // Sous-estimer les frais fait rejeter la transaction : à défaut de
+  // réponse, on retient une valeur prudente plutôt que zéro.
+  return Number.isFinite(rate) && rate > 0 ? rate : 5;
+}
+
+export async function broadcastBitcoinTransaction(
+  txHex: string
+): Promise<{ txid: string } | { error: string }> {
+  try {
+    const res = await fetch('https://mempool.space/api/tx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: txHex,
+    });
+    const body = (await res.text()).trim();
+    // mempool.space renvoie le txid en clair, ou le motif du refus.
+    if (!res.ok) return { error: body || `Diffusion refusée (HTTP ${res.status}).` };
+    if (!/^[0-9a-f]{64}$/i.test(body)) return { error: body || 'Réponse inattendue du réseau Bitcoin.' };
+    return { txid: body };
+  } catch (error) {
+    console.error('Erreur lors de la diffusion BTC :', error);
+    return { error: 'Réseau Bitcoin injoignable au moment de la diffusion.' };
+  }
+}

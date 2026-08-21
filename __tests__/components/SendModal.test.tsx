@@ -18,6 +18,25 @@ jest.mock('@/app/actions/solana', () => ({
   sendRawSolanaTransaction: jest.fn(),
 }));
 
+jest.mock('@privy-io/react-auth/extended-chains', () => ({
+  useSignRawHash: () => ({ signRawHash: jest.fn() }),
+}));
+
+// @scure/btc-signer est en ESM pur : hors sujet pour un test d'interface.
+// L'arithmétique Bitcoin, elle, est testée à part dans bitcoinPlan.test.ts.
+jest.mock('@/lib/bitcoinSend', () => ({
+  btcToSats: (v: string) => BigInt(Math.round(Number(v) * 1e8)),
+  buildTransfer: jest.fn(),
+  finalizeTransfer: jest.fn(),
+  isValidBitcoinAddress: (v: string) => /^(bc1|[13])[a-zA-Z0-9]{20,}$/.test(v),
+}));
+
+jest.mock('@/app/actions/bitcoin', () => ({
+  getBitcoinUtxos: jest.fn(),
+  getBitcoinFeeRate: jest.fn(),
+  broadcastBitcoinTransaction: jest.fn(),
+}));
+
 describe('SendModal', () => {
   const mockOnClose = jest.fn();
   const mockSendTransaction = jest.fn();
@@ -154,7 +173,7 @@ describe('SendModal - envoi Solana', () => {
     return select;
   }
 
-  it('propose SOL à l\'envoi et laisse BTC désactivé', () => {
+  it('propose SOL et BTC à l\'envoi', () => {
     render(<SendModal {...props} />);
     const select = screen.getAllByRole('combobox')[0] as HTMLSelectElement;
     const options = Array.from(select.options);
@@ -164,7 +183,8 @@ describe('SendModal - envoi Solana', () => {
 
     expect(sol).toBeDefined();
     expect(sol!.disabled).toBe(false);
-    expect(btc!.disabled).toBe(true);
+    expect(btc).toBeDefined();
+    expect(btc!.disabled).toBe(false);
   });
 
   it('annonce le réseau Solana une fois SOL sélectionné', () => {

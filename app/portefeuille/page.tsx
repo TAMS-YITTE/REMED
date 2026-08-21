@@ -27,6 +27,12 @@ const SendModal = dynamic(() => import('@/components/SendModal').then((m) => m.S
   ssr: false,
 });
 
+// Même raison : les hooks d'export lisent le contexte Privy, absent au
+// rendu serveur.
+const ExportKeys = dynamic(() => import('@/components/ExportKeys').then((m) => m.ExportKeys), {
+  ssr: false,
+});
+
 export default function PortefeuillePage() {
   const { isReady, authenticated, user, walletAddress, solanaWalletAddress, bitcoinWalletAddress, createBitcoinWallet } = useAuth();
   
@@ -198,6 +204,14 @@ export default function PortefeuillePage() {
               />
             </div>
           </div>
+
+        <div className="mt-10">
+          <ExportKeys
+            walletAddress={walletAddress}
+            solanaWalletAddress={solanaWalletAddress}
+            bitcoinWalletAddress={bitcoinWalletAddress}
+          />
+        </div>
 
         <SendModal
           isOpen={isSendModalOpen}

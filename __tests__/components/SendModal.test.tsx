@@ -33,7 +33,7 @@ jest.mock('@/lib/bitcoinSend', () => ({
 
 jest.mock('@/app/actions/bitcoin', () => ({
   getBitcoinUtxos: jest.fn(),
-  getBitcoinFeeRate: jest.fn(),
+  getBitcoinFeeRates: jest.fn(),
   broadcastBitcoinTransaction: jest.fn(),
 }));
 

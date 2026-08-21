@@ -96,16 +96,35 @@ export async function getBitcoinUtxos(address: string): Promise<BitcoinUtxo[]> {
     .map((u) => ({ txid: u.txid, vout: u.vout, value: Number(u.value) }));
 }
 
-export async function getBitcoinFeeRate(): Promise<number> {
+export interface BitcoinFeeRates {
+  economique: number;
+  normal: number;
+  rapide: number;
+}
+
+export async function getBitcoinFeeRates(): Promise<BitcoinFeeRates> {
   const fees = await safeFetch<any>(
     'https://mempool.space/api/v1/fees/recommended',
     { cache: 'no-store' },
     null
   );
-  const rate = Number(fees?.halfHourFee);
+
   // Sous-estimer les frais fait rejeter la transaction : à défaut de
-  // réponse, on retient une valeur prudente plutôt que zéro.
-  return Number.isFinite(rate) && rate > 0 ? rate : 5;
+  // réponse, on retient des valeurs prudentes plutôt que zéro.
+  const read = (value: unknown, fallback: number) => {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : fallback;
+  };
+
+  // Marge de +1 sat/vB : le débit du réseau peut monter entre la
+  // préparation de la transaction et sa diffusion. C'est exactement ce qui
+  // a laissé une transaction coincée plusieurs heures à 1,05 sat/vB alors
+  // que le réseau était passé à 4.
+  return {
+    economique: read(fees?.hourFee, 3) + 1,
+    normal: read(fees?.halfHourFee, 5) + 1,
+    rapide: read(fees?.fastestFee, 10) + 1,
+  };
 }
 
 export async function broadcastBitcoinTransaction(

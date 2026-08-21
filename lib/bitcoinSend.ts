@@ -50,6 +50,11 @@ export function buildTransfer({
       index: utxo.vout,
       witnessUtxo: { script, amount: BigInt(utxo.value) },
       sighashType: btc.SigHash.DEFAULT,
+      // Signale RBF : sans ça, une transaction sous-payée reste coincée
+      // sans aucun recours possible (constaté en réel, plusieurs heures
+      // d'attente à 1,05 sat/vB). Avec RBF, elle peut être remplacée par
+      // une version mieux payée.
+      sequence: 0xfffffffd,
     });
   }
 

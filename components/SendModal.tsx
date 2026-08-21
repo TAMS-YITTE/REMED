@@ -4,7 +4,7 @@ import { useSignRawHash } from '@privy-io/react-auth/extended-chains';
 import { useAuth } from '@/hooks/useAuth';
 import { getSavedWallets, saveWallet, deleteSavedWallet } from '@/app/actions/database';
 import { getSolanaBlockhash, sendRawSolanaTransaction } from '@/app/actions/solana';
-import { getBitcoinUtxos, getBitcoinFeeRate, broadcastBitcoinTransaction } from '@/app/actions/bitcoin';
+import { getBitcoinUtxos, getBitcoinFeeRates, broadcastBitcoinTransaction } from '@/app/actions/bitcoin';
 import { ERC20_TOKENS, getErc20Token, parseUnits, encodeErc20Transfer } from '@/lib/erc20Tokens';
 import { buildSolTransfer, isValidSolanaAddress, solToLamports } from '@/lib/solanaSend';
 import { btcToSats, buildTransfer, finalizeTransfer, isValidBitcoinAddress } from '@/lib/bitcoinSend';
@@ -107,6 +107,9 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
   const [isSavingWallet, setIsSavingWallet] = useState(false);
   const [walletLabel, setWalletLabel] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  // Priorite des frais Bitcoin : le reseau peut monter en quelques minutes,
+  // l utilisateur doit pouvoir arbitrer entre cout et delai.
+  const [btcPriority, setBtcPriority] = useState<'economique' | 'normal' | 'rapide'>('normal');
 
   const isSendEnabled = process.env.NEXT_PUBLIC_ENABLE_SEND === 'true';
 
@@ -221,8 +224,8 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
         }
 
         setStatus('1/4 — Lecture de vos fonds…');
-        const [utxos, feeRate] = await withTimeout(
-          Promise.all([getBitcoinUtxos(bitcoinWalletAddress), getBitcoinFeeRate()]),
+        const [utxos, feeRates] = await withTimeout(
+          Promise.all([getBitcoinUtxos(bitcoinWalletAddress), getBitcoinFeeRates()]),
           STEP_TIMEOUT_MS,
           "Le réseau Bitcoin n'a pas répondu. Rien n'a été envoyé."
         );
@@ -239,7 +242,7 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
           fromAddress: bitcoinWalletAddress,
           toAddress: address,
           amountSats: btcToSats(amount),
-          feeRate,
+          feeRate: feeRates[btcPriority],
         });
 
         setStatus(`3/4 — Signature (${plan.sighashes.length} entrée(s))…`);
@@ -410,6 +413,39 @@ export function SendModal({ isOpen, onClose, balances, erc20Balances }: SendModa
                     ? 'Réseau Bitcoin. Envoyez uniquement vers une adresse Bitcoin.'
                     : 'Réseau Ethereum. Envoyez uniquement vers une adresse Ethereum (0x…).'}
               </p>
+
+              {/* Le débit du réseau Bitcoin peut doubler en quelques minutes.
+                  Sans ce choix, une transaction préparée au calme se
+                  retrouve sous-payée et attend des heures. */}
+              {isBitcoin && (
+                <div className="mt-3">
+                  <label className="block text-[11px] font-medium text-gray-400 mb-1">Priorité</label>
+                  <div className="flex gap-1 bg-[#1a1c2e] border border-white/15 rounded-lg p-1">
+                    {([
+                      { key: 'economique', label: 'Économique', hint: '~1 h ou plus' },
+                      { key: 'normal', label: 'Normal', hint: '~30 min' },
+                      { key: 'rapide', label: 'Rapide', hint: 'prochain bloc' },
+                    ] as const).map((option) => (
+                      <button
+                        key={option.key}
+                        type="button"
+                        onClick={() => setBtcPriority(option.key)}
+                        className={`flex-1 px-2 py-1.5 rounded text-[11px] font-medium transition-colors ${
+                          btcPriority === option.key
+                            ? 'bg-indigo-500 text-white'
+                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        }`}
+                        title={option.hint}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-1">
+                    Les frais réels dépendent du réseau au moment de l'envoi.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="mb-4">
